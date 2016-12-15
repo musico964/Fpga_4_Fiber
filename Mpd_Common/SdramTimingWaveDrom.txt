@@ -1,0 +1,21 @@
+wavedrom.googlecode.com/svn/trunk/editor.html
+
+
+{ "signal" : [
+  { "name": "Phy_Clk",    "wave": "P.......|......" },
+  {},
+[ "Write",
+  { "name": "Write_req",  "wave": "0.10....|..10.."},
+  { "name": "Ready",      "wave": "0....10.|1....0"},
+  { "name": "Addr/Data",  "wave": "x3..x...|x3..x.",   "data": ["Valid", "Valid"] },
+],
+  {},
+[ "Read",
+  { "name": "Read_req",   "wave": "0.10....|.10..."},
+  { "name": "Ready",      "wave": "0...10..|1....0" },
+  { "name": "Data_Valid", "wave": "0.....10|....10" },
+  { "name": "Addr",       "wave": "x4..x...|4..x..",   "data": ["Valid", "Valid"] },
+  { "name": "Data",       "wave": "x.....5x|....5x",   "data": ["Valid", "Valid"] },
+],
+]}
+           

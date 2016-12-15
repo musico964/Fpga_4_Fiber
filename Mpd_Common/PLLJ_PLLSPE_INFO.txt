@@ -1,0 +1,25 @@
+PLL_Name	AdcPll:ExternalClockGenerator|altpll:altpll_component|pll
+PLLJITTER	64
+PLLSPEmax	141
+PLLSPEmin	-72
+
+PLL_Name	DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|pll
+PLLJITTER	72
+PLLSPEmax	112
+PLLSPEmin	-75
+
+PLL_Name	Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|channel_quad[0].pll0
+PLLJITTER	NA
+PLLSPEmax	NA
+PLLSPEmin	NA
+
+PLL_Name	Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|channel_tx[0].transmit
+PLLJITTER	NA
+PLLSPEmax	NA
+PLLSPEmin	NA
+
+PLL_Name	MainPll:InternalClockGenerator|altpll:altpll_component|pll
+PLLJITTER	70
+PLLSPEmax	313
+PLLSPEmin	-57
+

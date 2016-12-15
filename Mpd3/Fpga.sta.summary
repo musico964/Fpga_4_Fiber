@@ -1,0 +1,813 @@
+------------------------------------------------------------
+TimeQuest Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow Model Setup 'Ck_100MHz_virt'
+Slack : -7.367
+TNS   : -505.085
+
+Type  : Slow Model Setup 'ADC_LCLK2'
+Slack : -7.177
+TNS   : -195.094
+
+Type  : Slow Model Setup 'ADC_LCLK1'
+Slack : -6.424
+TNS   : -908.689
+
+Type  : Slow Model Setup 'n/a'
+Slack : -3.903
+TNS   : -13.157
+
+Type  : Slow Model Setup 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : -3.897
+TNS   : -78.799
+
+Type  : Slow Model Setup 'CLK_IN_P0'
+Slack : -3.580
+TNS   : -3.580
+
+Type  : Slow Model Setup 'ADC_FRAME_CK1'
+Slack : -3.557
+TNS   : -385.366
+
+Type  : Slow Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : -3.275
+TNS   : -811.537
+
+Type  : Slow Model Setup 'Ck_10MHz_virt'
+Slack : -3.104
+TNS   : -3.104
+
+Type  : Slow Model Setup 'ADC_FRAME_CK2'
+Slack : -2.910
+TNS   : -368.385
+
+Type  : Slow Model Setup 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : -0.383
+TNS   : -0.766
+
+Type  : Slow Model Setup 'Ck_40MHz_virt'
+Slack : -0.045
+TNS   : -0.045
+
+Type  : Slow Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 0.106
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 0.654
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 1.665
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 1.693
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 2.283
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 2.313
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 4.042
+TNS   : 0.000
+
+Type  : Slow Model Setup 'MASTER_CLOCK'
+Slack : 4.676
+TNS   : 0.000
+
+Type  : Slow Model Setup 'Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|rx_coreclk_in[0]'
+Slack : 11.434
+TNS   : 0.000
+
+Type  : Slow Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_resync'
+Slack : 102.256
+TNS   : 0.000
+
+Type  : Slow Model Setup 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 828.871
+TNS   : 0.000
+
+Type  : Slow Model Hold 'Ck_40MHz_virt'
+Slack : -8.427
+TNS   : -17.387
+
+Type  : Slow Model Hold 'ADC_LCLK1'
+Slack : -4.440
+TNS   : -18.073
+
+Type  : Slow Model Hold 'ADC_LCLK2'
+Slack : -0.761
+TNS   : -12.041
+
+Type  : Slow Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 0.091
+TNS   : 0.000
+
+Type  : Slow Model Hold 'ADC_FRAME_CK1'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'ADC_FRAME_CK2'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 0.514
+TNS   : 0.000
+
+Type  : Slow Model Hold 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 0.515
+TNS   : 0.000
+
+Type  : Slow Model Hold 'MASTER_CLOCK'
+Slack : 0.515
+TNS   : 0.000
+
+Type  : Slow Model Hold 'CLK_IN_P0'
+Slack : 0.524
+TNS   : 0.000
+
+Type  : Slow Model Hold 'n/a'
+Slack : 0.593
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 0.635
+TNS   : 0.000
+
+Type  : Slow Model Hold 'Ck_100MHz_virt'
+Slack : 0.799
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 1.202
+TNS   : 0.000
+
+Type  : Slow Model Hold 'Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|rx_coreclk_in[0]'
+Slack : 1.615
+TNS   : 0.000
+
+Type  : Slow Model Hold 'Ck_10MHz_virt'
+Slack : 3.104
+TNS   : 0.000
+
+Type  : Slow Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_resync'
+Slack : 102.152
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : -7.561
+TNS   : -22.312
+
+Type  : Slow Model Recovery 'ADC_LCLK2'
+Slack : -4.391
+TNS   : -43.910
+
+Type  : Slow Model Recovery 'ADC_LCLK1'
+Slack : -3.456
+TNS   : -102.629
+
+Type  : Slow Model Recovery 'CLK_IN_P0'
+Slack : -2.700
+TNS   : -106.304
+
+Type  : Slow Model Recovery 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : -2.583
+TNS   : -382.284
+
+Type  : Slow Model Recovery 'ADC_FRAME_CK2'
+Slack : -1.409
+TNS   : -901.760
+
+Type  : Slow Model Recovery 'ADC_FRAME_CK1'
+Slack : -1.383
+TNS   : -885.120
+
+Type  : Slow Model Recovery 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : -0.604
+TNS   : -0.604
+
+Type  : Slow Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 0.264
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 1.867
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 1.926
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'MASTER_CLOCK'
+Slack : 2.000
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 2.082
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 2.420
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 3.036
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 3.337
+TNS   : 0.000
+
+Type  : Slow Model Recovery 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 101.590
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 0.612
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 1.090
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 1.418
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 1.476
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 1.520
+TNS   : 0.000
+
+Type  : Slow Model Removal 'MASTER_CLOCK'
+Slack : 1.960
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 2.131
+TNS   : 0.000
+
+Type  : Slow Model Removal 'ADC_FRAME_CK1'
+Slack : 2.328
+TNS   : 0.000
+
+Type  : Slow Model Removal 'ADC_FRAME_CK2'
+Slack : 2.354
+TNS   : 0.000
+
+Type  : Slow Model Removal 'ADC_LCLK1'
+Slack : 2.469
+TNS   : 0.000
+
+Type  : Slow Model Removal 'CLK_IN_P0'
+Slack : 3.276
+TNS   : 0.000
+
+Type  : Slow Model Removal 'ADC_LCLK2'
+Slack : 4.147
+TNS   : 0.000
+
+Type  : Slow Model Removal 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 4.531
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 5.110
+TNS   : 0.000
+
+Type  : Slow Model Removal 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 7.089
+TNS   : 0.000
+
+Type  : Slow Model Removal 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 7.398
+TNS   : 0.000
+
+Type  : Slow Model Removal 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 102.983
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'ADC_LCLK1'
+Slack : 0.082
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'ADC_LCLK2'
+Slack : 0.082
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 1.064
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 1.430
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_SDRAM_CK_mimic_launch_clock'
+Slack : 1.430
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 1.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 1.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 1.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 1.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_resync'
+Slack : 1.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 1.640
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'CLK_IN_P0'
+Slack : 2.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 3.288
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'MASTER_CLOCK'
+Slack : 4.123
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|rx_coreclk_in[0]'
+Slack : 5.250
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'ADC_FRAME_CK1'
+Slack : 10.990
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'ADC_FRAME_CK2'
+Slack : 10.990
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 11.623
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'GXB_CK'
+Slack : 12.325
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 49.123
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 415.789
+TNS   : 0.000
+
+Type  : Fast Model Setup 'ADC_LCLK1'
+Slack : -5.221
+TNS   : -411.407
+
+Type  : Fast Model Setup 'ADC_LCLK2'
+Slack : -2.789
+TNS   : -87.118
+
+Type  : Fast Model Setup 'CLK_IN_P0'
+Slack : -0.860
+TNS   : -0.860
+
+Type  : Fast Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 0.269
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 0.655
+TNS   : 0.000
+
+Type  : Fast Model Setup 'n/a'
+Slack : 1.027
+TNS   : 0.000
+
+Type  : Fast Model Setup 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 1.187
+TNS   : 0.000
+
+Type  : Fast Model Setup 'Ck_100MHz_virt'
+Slack : 1.198
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 1.497
+TNS   : 0.000
+
+Type  : Fast Model Setup 'ADC_FRAME_CK1'
+Slack : 1.574
+TNS   : 0.000
+
+Type  : Fast Model Setup 'ADC_FRAME_CK2'
+Slack : 1.824
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 2.884
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 3.076
+TNS   : 0.000
+
+Type  : Fast Model Setup 'Ck_10MHz_virt'
+Slack : 3.499
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 3.823
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 3.916
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 4.564
+TNS   : 0.000
+
+Type  : Fast Model Setup 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 5.625
+TNS   : 0.000
+
+Type  : Fast Model Setup 'MASTER_CLOCK'
+Slack : 7.660
+TNS   : 0.000
+
+Type  : Fast Model Setup 'Ck_40MHz_virt'
+Slack : 8.272
+TNS   : 0.000
+
+Type  : Fast Model Setup 'Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|rx_coreclk_in[0]'
+Slack : 13.575
+TNS   : 0.000
+
+Type  : Fast Model Setup 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_resync'
+Slack : 101.826
+TNS   : 0.000
+
+Type  : Fast Model Setup 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 831.608
+TNS   : 0.000
+
+Type  : Fast Model Hold 'Ck_40MHz_virt'
+Slack : -8.635
+TNS   : -24.372
+
+Type  : Fast Model Hold 'Ck_100MHz_virt'
+Slack : -4.598
+TNS   : -268.157
+
+Type  : Fast Model Hold 'Ck_10MHz_virt'
+Slack : -3.499
+TNS   : -3.499
+
+Type  : Fast Model Hold 'ADC_LCLK1'
+Slack : -1.931
+TNS   : -3.891
+
+Type  : Fast Model Hold 'ADC_LCLK2'
+Slack : -0.212
+TNS   : -0.686
+
+Type  : Fast Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : -0.132
+TNS   : -2.417
+
+Type  : Fast Model Hold 'CLK_IN_P0'
+Slack : -0.090
+TNS   : -0.090
+
+Type  : Fast Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : -0.001
+TNS   : -0.001
+
+Type  : Fast Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 0.212
+TNS   : 0.000
+
+Type  : Fast Model Hold 'ADC_FRAME_CK1'
+Slack : 0.213
+TNS   : 0.000
+
+Type  : Fast Model Hold 'ADC_FRAME_CK2'
+Slack : 0.213
+TNS   : 0.000
+
+Type  : Fast Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 0.213
+TNS   : 0.000
+
+Type  : Fast Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 0.214
+TNS   : 0.000
+
+Type  : Fast Model Hold 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 0.215
+TNS   : 0.000
+
+Type  : Fast Model Hold 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 0.216
+TNS   : 0.000
+
+Type  : Fast Model Hold 'MASTER_CLOCK'
+Slack : 0.216
+TNS   : 0.000
+
+Type  : Fast Model Hold 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 0.220
+TNS   : 0.000
+
+Type  : Fast Model Hold 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 0.224
+TNS   : 0.000
+
+Type  : Fast Model Hold 'n/a'
+Slack : 0.385
+TNS   : 0.000
+
+Type  : Fast Model Hold 'Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|rx_coreclk_in[0]'
+Slack : 0.521
+TNS   : 0.000
+
+Type  : Fast Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 0.581
+TNS   : 0.000
+
+Type  : Fast Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 0.664
+TNS   : 0.000
+
+Type  : Fast Model Hold 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_resync'
+Slack : 102.863
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : -3.923
+TNS   : -4.952
+
+Type  : Fast Model Recovery 'ADC_LCLK2'
+Slack : -1.721
+TNS   : -17.210
+
+Type  : Fast Model Recovery 'ADC_LCLK1'
+Slack : -1.439
+TNS   : -42.888
+
+Type  : Fast Model Recovery 'CLK_IN_P0'
+Slack : -0.613
+TNS   : -21.576
+
+Type  : Fast Model Recovery 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 1.689
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'ADC_FRAME_CK2'
+Slack : 2.249
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'ADC_FRAME_CK1'
+Slack : 2.267
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 2.535
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 2.918
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 3.652
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 3.712
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 3.903
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'MASTER_CLOCK'
+Slack : 3.948
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 4.107
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 4.251
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 6.547
+TNS   : 0.000
+
+Type  : Fast Model Recovery 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 104.125
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 0.070
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 0.485
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 0.618
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 0.644
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 0.671
+TNS   : 0.000
+
+Type  : Fast Model Removal 'ADC_FRAME_CK1'
+Slack : 0.784
+TNS   : 0.000
+
+Type  : Fast Model Removal 'ADC_FRAME_CK2'
+Slack : 0.802
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 0.895
+TNS   : 0.000
+
+Type  : Fast Model Removal 'ADC_LCLK1'
+Slack : 0.963
+TNS   : 0.000
+
+Type  : Fast Model Removal 'CLK_IN_P0'
+Slack : 1.323
+TNS   : 0.000
+
+Type  : Fast Model Removal 'MASTER_CLOCK'
+Slack : 1.584
+TNS   : 0.000
+
+Type  : Fast Model Removal 'ADC_LCLK2'
+Slack : 1.699
+TNS   : 0.000
+
+Type  : Fast Model Removal 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 1.844
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 2.193
+TNS   : 0.000
+
+Type  : Fast Model Removal 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 3.039
+TNS   : 0.000
+
+Type  : Fast Model Removal 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 3.163
+TNS   : 0.000
+
+Type  : Fast Model Removal 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 100.620
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'ADC_LCLK1'
+Slack : 0.681
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'ADC_LCLK2'
+Slack : 0.681
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk4'
+Slack : 1.500
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk1'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk2'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk5'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_dqsin_SDRAM_DQS'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_mimic'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_postamble'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_ddr_resync'
+Slack : 1.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf_inst|DdrSdramIf_controller_phy_inst|DdrSdramIf_phy_inst|DdrSdramIf_phy_SDRAM_CK_mimic_launch_clock'
+Slack : 2.124
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'CLK_IN_P0'
+Slack : 2.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'DdrSdramIf:DdrSdramIf_inst|DdrSdramIf_controller_phy:DdrSdramIf_controller_phy_inst|DdrSdramIf_phy:DdrSdramIf_phy_inst|DdrSdramIf_phy_alt_mem_phy:DdrSdramIf_phy_alt_mem_phy_inst|DdrSdramIf_phy_alt_mem_phy_clk_reset:clk|DdrSdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|_clk0'
+Slack : 3.810
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'MASTER_CLOCK'
+Slack : 4.370
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|rx_coreclk_in[0]'
+Slack : 5.700
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'ADC_FRAME_CK1'
+Slack : 11.448
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'ADC_FRAME_CK2'
+Slack : 11.448
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk2'
+Slack : 11.870
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'GXB_CK'
+Slack : 13.000
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk4'
+Slack : 49.370
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'GlobalPll:ClockGenerator|altpll:altpll_component|_clk5'
+Slack : 416.036
+TNS   : 0.000
+
+------------------------------------------------------------

@@ -1,0 +1,62 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2010 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 0 0 216 96)
+	(text "IntDivide" (rect 77 3 151 22)(font "Arial" (font_size 10)))
+	(text "inst" (rect 8 77 31 92)(font "Arial" ))
+	(port
+		(pt 0 24)
+		(input)
+		(text "numer[18..0]" (rect 0 0 86 16)(font "Arial" (font_size 8)))
+		(text "numer[18..0]" (rect 20 16 93 32)(font "Arial" (font_size 8)))
+		(line (pt 0 24)(pt 16 24)(line_width 3))
+	)
+	(port
+		(pt 0 40)
+		(input)
+		(text "denom[7..0]" (rect 0 0 81 16)(font "Arial" (font_size 8)))
+		(text "denom[7..0]" (rect 20 32 89 48)(font "Arial" (font_size 8)))
+		(line (pt 0 40)(pt 16 40)(line_width 3))
+	)
+	(port
+		(pt 216 24)
+		(output)
+		(text "quotient[18..0]" (rect 0 0 97 16)(font "Arial" (font_size 8)))
+		(text "quotient[18..0]" (rect 114 16 197 32)(font "Arial" (font_size 8)))
+		(line (pt 216 24)(pt 200 24)(line_width 3))
+	)
+	(port
+		(pt 216 40)
+		(output)
+		(text "remain[7..0]" (rect 0 0 81 16)(font "Arial" (font_size 8)))
+		(text "remain[7..0]" (rect 128 32 197 48)(font "Arial" (font_size 8)))
+		(line (pt 216 40)(pt 200 40)(line_width 3))
+	)
+	(drawing
+		(text "Denom is UNSIGNED" (rect 75 66 173 80)(font "Arial" ))
+		(text "Numer is UNSIGNED" (rect 78 50 174 64)(font "Arial" ))
+		(line (pt 16 16)(pt 16 80)(line_width 1))
+		(line (pt 200 16)(pt 200 80)(line_width 1))
+		(line (pt 16 16)(pt 200 16)(line_width 1))
+		(line (pt 16 80)(pt 200 80)(line_width 1))
+	)
+)
