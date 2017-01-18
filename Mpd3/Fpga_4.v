@@ -125,23 +125,23 @@ output SPARE5, SPARE6, SPARE7, SPARE8, SPARE9, SPARE10;
 
 // End of port interface definition
 
-
+	reg BUSY_OUT;
 	wire [11:0] adc0, adc1, adc2, adc3, adc4, adc5, adc6, adc7;
 	wire [11:0] adc8, adc9, adc10, adc11, adc12, adc13, adc14, adc15;
 	wire [11:0] adcx0, adcx1, adcx2, adcx3, adcx4, adcx5, adcx6, adcx7;
 	wire [11:0] adcx8, adcx9, adcx10, adcx11, adcx12, adcx13, adcx14, adcx15;
-	wire [63:0] user_d, Sdram_User_Data, Sdram_Fifo_Output_Data;
+	wire [63:0] Sdram_Fifo_Output_Data;
 
 	wire [3:0] internal_user_in;
 
 	wire ck_40MHz_Apv, ck_40MHz_Adc, ck_60MHz, ck_1MHz, time_clock, Vme_clock;
-	wire ck_10MHz, ck_10MHz_AdcSpi;
+	wire ck_10MHz;
 	wire Vme_DataReadout_ceB;
 	wire ObufStatus_ceB, AdcConfig_ceB, I2C_Controller_ceB, Sdram0_ceB, Sdram1_ceB, Vme_Sdram_ceB, Vme_ConfigReg_ceB;
 	wire Histogrammer0_ceB, Histogrammer1_ceB, ApvFifo_ceB, ThrRam_ceB, PedRam_ceB;
 	wire [31:0] missing_trigger_count, apv_trigger_count, incoming_trigger_count;
 	wire [15:0] ApvSynced, ApvFifoEmpty, ApvFifoFull, ApvError, ApvEnable, ApvFifo_read, ApvFifoRd_EVB,
-		OneMoreEvent, ApvEndFrame, ApvFrameGate;
+		OneMoreEvent, ApvEndFrame, ApvFrameGate, ApvFifoFullLatched, ProcFifoFullLatched;
 	wire [31:0] IoConfig, TrigGenConfig, ReadoutConfig;
 	wire [2:0] TrigMode, ReadoutMode;
 	wire [7:0] ApvSyncPeriod;
@@ -196,12 +196,14 @@ output SPARE5, SPARE6, SPARE7, SPARE8, SPARE9, SPARE10;
 	wire [7:0] EventPerBlock;
 	wire inv_in01, inv_in23, inv_out01, inv_out23;
 
+	wire mem_local_read_req, mem_local_write_req;
 	wire [24:0] mem_local_addr;
+	wire [31:0] mem_local_wdata;
+	wire [31:0] mem_local_rdata;
 	wire mem_local_size;
 	wire [3:0]  mem_local_be;
-	wire [31:0] mem_local_rdata, mem_local_wdata;
-	wire local_burstbegin, SdramInitialized, mem_local_write_req;
-	wire mem_local_read_req, mem_local_ready, mem_local_rdata_valid;
+	wire local_burstbegin, SdramInitialized;
+	wire mem_local_ready, mem_local_rdata_valid;
 	reg Vme_user_waitB;
 	reg [31:0] mem_local_rdata_latched;
 	wire mem_aux_full_rate_clk, mem_aux_half_rate_clk, dll_reference_clk;
@@ -219,7 +221,7 @@ output SPARE5, SPARE6, SPARE7, SPARE8, SPARE9, SPARE10;
 	wire [7:0] trigger_time_fifo_data, EventBuilder_BlockCnt;
 
 	wire [31:0] BusyThreshold, BusyThresholdLocal;
-	wire FifoLevel1, FifoLevel2;
+	wire FifoLevel1, FifoLevel2, EvbFifoAlmostFull;
 	wire [1:0] Vme_histo_reg, Fiber_histo_reg, histo_reg;
 
 	wire FIR_enable, sel_time_clk;
@@ -234,19 +236,28 @@ output SPARE5, SPARE6, SPARE7, SPARE8, SPARE9, SPARE10;
 	wire [31:0] Fiber_addr_bus;	//	??? [15:0] ???
 	wire [31:0] Fiber_dout_bus, Fiber_din_bus, AuroraEventData, AuroraEventDataTest;
 	wire Fiber_wr_bus, Fiber_rd_bus, Fiber_ack_bus, Fiber_data_re, Fiber_activity; // Fiber_nack_bus;
-	reg APV_RESET;
+	reg APV_RESET, AllClear;
 	wire [15:0] fir_coeff0, fir_coeff1, fir_coeff2, fir_coeff3, fir_coeff4, fir_coeff5, fir_coeff6, fir_coeff7;
 	wire [15:0] fir_coeff8, fir_coeff9, fir_coeff10, fir_coeff11, fir_coeff12, fir_coeff13, fir_coeff14, fir_coeff15;
+	wire EvbFifoFullLatched, EventFifoFullLatched, TimeFifoFullLatched,OutputFifoFullLatched;
+	wire Enable_Slave_Terminate;
+	wire User_Reset;
+
+wire [31:0] data_from_vme, data_from_fiber, data_from_master, data_to_fiber;
+reg [63:0] data_to_master;
+wire [31:0] dout_reg, dout_adc, dout_histo0, dout_histo1, Channel_Direct_Data, asmi_rupd_dout;
+wire [7:0] dout_i2c;
+wire Dtack_Rd, Berr_Rd, Retry_Rd;
+wire asmi_ceB, rupd_ceB;
 
 assign VME_LIOb = 1;
 assign MII_MDC = 0;
 assign MII_TX_EN = 0;
 assign MII_TXD = 4'b0;
-
+assign MII_25MHZ_CLOCK = 0;
 assign TOKEN_OUT_P0 = TOKEN_IN_P0;
 assign TOKEN_OUT_P2 = TOKEN_IN_P2;
 assign TRIG_OUT = 0;
-assign BUSY_OUT = internal_trigger_disabled | (FifoLevel1&UseSdramFifo);
 assign STATBIT_A_OUT = 0;
 assign SD_LINK_OUT = 0;
 
@@ -265,7 +276,6 @@ assign READ2 = 1'b0;	// Additional control signals not yet implemented
 assign READ_CLK1 = 1'b0;// Additional control signals not yet implemented
 assign READ_CLK2 = 1'b0;// Additional control signals not yet implemented
 
-assign ck_10MHz_AdcSpi = ck_10MHz;
 assign ADC_RESETb = RSTb_sync;
 assign ADC_CONV_CK1 = ck_40MHz_Adc;
 assign ADC_CONV_CK2 = ck_40MHz_Adc;
@@ -326,6 +336,7 @@ assign ReadoutMode = ReadoutConfig[2:0];
 //						ApvReadoutMode_Processed = (DAQ_MODE == 3'b011);
 assign FIR_enable = ReadoutConfig[4];
 assign sel_time_clk = ReadoutConfig[5];
+assign Enable_Slave_Terminate = ReadoutConfig[8];
 assign Pack24BitData = ReadoutConfig[13];
 assign Data64Bit = ReadoutConfig[14];	// Must be 0 (32 bit) if Fiber interface is enabled
 assign UseSdramFifo = ReadoutConfig[15];
@@ -362,16 +373,21 @@ assign incoming_trigger = (EnTrig1P0 & TRIG1_IN) |
 
 assign sync = (EnSyncP0 & SYNC_IN) | (EnSyncFront & internal_user_in[1]) | sw_apv_reset;
 
+
+assign data_from_master  = Fiber_enabled ?  data_from_fiber : data_from_vme;
+
 // MASTER_RESETb synchronizer
-SyncReset ResetSynchronizer(.CK(MASTER_CLOCK), .ASYNC_RSTb(MASTER_RESETb),
+SyncReset ResetSynchronizer(.CK(MASTER_CLOCK), .ASYNC_RSTb(MASTER_RESETb & ~User_Reset),
 	.SYNC_RSTb(RSTb_sync));
 
 assign APV_CLOCK = ck_40MHz_Apv;
 assign time_clock = sel_time_clk ? CLK_IN_P0 : APV_CLOCK;
 
 	always @(posedge APV_CLOCK) 
+	begin
 		APV_RESET <= RSTb_sync & ~i2c_ApvReset;
-
+		BUSY_OUT <= internal_trigger_disabled | (FifoLevel1&UseSdramFifo) | (EvbFifoAlmostFull&~UseSdramFifo);
+	end
 	OneShot TurnOnLed0(.OUT(LED[0]), .START(VME_DTACK_EN | Fiber_activity), .CK(ck_1MHz), .RSTb(RSTb_sync));
 	OneShot TurnOnLed1(.OUT(LED[1]), .START(APV_TRIGGER),  .CK(ck_1MHz), .RSTb(RSTb_sync));
 	OneShot TurnOnLed2(.OUT(LED[2]), .START(~I2C_SCL),     .CK(ck_1MHz), .RSTb(RSTb_sync));
@@ -397,30 +413,26 @@ GlobalPll ClockGenerator(
 	.c0(ck_60MHz),
 	.c1(ck_40MHz_Adc),
 	.c2(ck_40MHz_Apv),
-	.c3(MII_25MHZ_CLOCK),
+	.c3(),		// was MII_25MHZ_CLOCK
 	.c4(ck_10MHz),
 	.c5(ck_1MHz));	// 1.2 MHz
 	
 assign Sdram_Fifo_Re = Fiber_enabled ? Fiber_data_re : (~Vme_user_reB & ~DataReadout_ceB);
 
 assign mem_local_addr      = ~UseSdramFifo ? {Sdram_Bank[3:0], Vme_user_addr[20:0]} : Sdram_Fifo_addr;
-assign mem_local_wdata     = ~UseSdramFifo ? user_d[31:0] : Sdram_Fifo_wdata;
+assign mem_local_wdata     = ~UseSdramFifo ? data_from_vme : Sdram_Fifo_wdata;
 assign mem_local_write_req = ~UseSdramFifo ? (~Vme_user_weB & ~Sdram_ceB) : Sdram_Fifo_write_req;
 assign mem_local_read_req  = ~UseSdramFifo ? (~Vme_user_reB & ~Sdram_ceB) : Sdram_Fifo_read_req;
-assign user_d = ((Sdram_ceB == 0 || DataReadout_ceB == 0) && Vme_user_oeB == 0) ? Sdram_User_Data : 64'bz;
 assign mem_local_be = 4'b1111;
 assign mem_local_size = 1'b1;
 assign local_burstbegin = 1'b1;
 
-assign EventBuilder_Read = ~UseSdramFifo ? (Enable_EventBuilder & (ApvFifo_read[0] | Fiber_data_re)) :
+//assign EventBuilder_Read = ~UseSdramFifo ? (Enable_EventBuilder & (ApvFifo_read[0] | Fiber_data_re)) :
+assign EventBuilder_Read = ~UseSdramFifo ? (Fiber_enabled ? Fiber_data_re : ApvFifo_read[0]) :
 	Sdram_Fifo_Evb_rd;
 
-assign Sdram_User_Data = ~UseSdramFifo ? {32'b0,mem_local_rdata_latched} : Sdram_Fifo_Output_Data;
-
-//	always @(posedge Vme_clock) 
-//		Fiber_enabled <= (Fiber_up & ~Vme_Fiber_disable);
 assign Fiber_enabled = ~Vme_Fiber_disable;
-assign Fiber_activity = Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame;
+assign Fiber_activity = Fiber_enabled & (Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame | AuroraEndOfFrameTest);
 
 // For SDRAM Vme accesses: TEST ONLY
 
@@ -430,12 +442,15 @@ assign Fiber_activity = Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame;
 			Vme_user_waitB <= 1;
 		else
 		begin
-			if( mem_local_read_req == 1 && UseSdramFifo == 0 && Sdram_ceB == 0 )
+			if( mem_local_read_req == 1 && UseSdramFifo == 0 )
 				Vme_user_waitB <= 0;
 			if( mem_local_rdata_valid == 1 )
 				Vme_user_waitB <= 1;
 		end
 	end
+
+	always @(posedge Vme_clock)
+		AllClear <= AllFifoClear | apv_reset101;
 
 // Data register
 	always @(posedge Vme_clock or negedge RSTb_sync)
@@ -449,9 +464,25 @@ assign Fiber_activity = Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame;
 		end
 	end
 
-
+	always @(*)
+	begin
+		case({(ObufStatus_ceB & ApvFifo_ceB & ThrRam_ceB & PedRam_ceB), DataReadout_ceB, Sdram_ceB, Histogrammer1_ceB,
+				Histogrammer0_ceB, I2C_Controller_ceB, AdcConfig_ceB, ConfigReg_ceB, asmi_ceB&rupd_ceB})
+			9'b111111110: data_to_master <= {32'b0, asmi_rupd_dout};
+			9'b111111101: data_to_master <= {32'b0, dout_reg};
+			9'b111111011: data_to_master <= {32'b0, dout_adc};
+			9'b111110111: data_to_master <= {56'b0, dout_i2c};
+			9'b111101111: data_to_master <= {32'b0, dout_histo0};
+			9'b111011111: data_to_master <= {32'b0, dout_histo1};
+			9'b110111111: data_to_master <= {32'b0, mem_local_rdata_latched};
+			9'b101111111: data_to_master <= Sdram_Fifo_Output_Data;
+			9'b011111111: data_to_master <= {32'b0, Channel_Direct_Data};
+			default: data_to_master <= 64'b0;
+		endcase
+	end
+	
 FastSdramFifoIf SdramFifoHandler(.RSTb(RSTb_sync), .CLK(Vme_clock),
-	.ENABLE(UseSdramFifo), .CLEAR_ADDR(AllFifoClear),
+	.ENABLE(UseSdramFifo), .CLEAR_ADDR(AllClear),
 	.SDRAM_WRITE_REQ(Sdram_Fifo_write_req), .SDRAM_READY(mem_local_ready),
 	.SDRAM_READ_REQ(Sdram_Fifo_read_req), .SDRAM_DATA_VALID(mem_local_rdata_valid),
 	.SDRAM_INPUT_DATA(Sdram_Fifo_wdata), .SDRAM_ADDR(Sdram_Fifo_addr), .SDRAM_RDATA(mem_local_rdata),
@@ -459,11 +490,13 @@ FastSdramFifoIf SdramFifoHandler(.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.SDRAM_WORD_COUNT(Sdram_Fifo_WordCount), .SDRAM_OVERRUN(Sdram_Fifo_Overrun),
 	.USER_RE(Sdram_Fifo_Re), .USER_DATA(Sdram_Fifo_Output_Data),
 	.USER_64BIT(Data64Bit), .PACK_DATA(Pack24BitData),
-	.RD_EVB(Sdram_Fifo_Evb_rd), .WC_EVB(EventBuilder_Wc), .DATA_EVB(EvBuilderDataOut),
+	.RD_EVB(Sdram_Fifo_Evb_rd), .WC_EVB(EventBuilder_Wc),.DATA_EVB(EvBuilderDataOut),
+	.EMPTY_EVB(EventBuilder_Empty), .FULL_EVB(EventBuilder_Full),
 	.OUTPUT_FIFO_EMPTY(Output_Fifo_Empty), .OUTPUT_FIFO_FULL(Output_Fifo_Full),
 	.OUTPUT_FIFO_WC(Output_Fifo_Wc),
 	.LEVEL1_THRESHOLD(BusyThreshold), .LEVEL2_THRESHOLD(BusyThresholdLocal),
-	.FIFO_LEVEL1(FifoLevel1), .FIFO_LEVEL2(FifoLevel2)
+	.FIFO_LEVEL1(FifoLevel1), .FIFO_LEVEL2(FifoLevel2), .OUTPUT_FIFO_FULL_L(OutputFifoFullLatched),
+	.DATA_TO_FIBER(data_to_fiber)
 	);
 
 DdrSdramIf DdrSdramIf_inst(
@@ -507,7 +540,7 @@ DdrSdramIf DdrSdramIf_inst(
 	.pll_ref_clk (MASTER_CLOCK),// input 100 MHz
 	.reset_phy_clk_n (),		// output
 	.reset_request_n (),		// output
-	.soft_reset_n (1'b1)
+	.soft_reset_n (1'b1)		// 200-300 us are needed before initialization
     );
 
 	mpd_fiber_interface AuroraInterface(
@@ -554,6 +587,7 @@ DdrSdramIf DdrSdramIf_inst(
 		.CLK(Vme_clock),		// input, system
 		.RSTb(RSTb_sync),		// input, system
 		.ENABLE(Fiber_enabled),
+		.USE_SDRAM_FIFO(UseSdramFifo),
 		
 		.FIBER_RESET(Fiber_reset),			// output, to AuroraInterface
 		.FIBER_CHANNEL_UP(Fiber_up),		// input, from AuroraInterface
@@ -575,7 +609,7 @@ DdrSdramIf DdrSdramIf_inst(
 		.EVT_FIFO_EMPTY(UseSdramFifo ? Output_Fifo_Empty : EventBuilder_Empty),	// input, form Output FIFO Buffer
 
 // Local Interface syncronous with CLK
-		.EVB_DATA(UseSdramFifo ? Sdram_Fifo_Output_Data[31:0] : {8'h0,EvBuilderDataOut}),	// input
+		.EVB_DATA(UseSdramFifo ? data_to_fiber : {8'h0,EvBuilderDataOut}),	// input
 		.FIBER_USER_REb(Fiber_user_reB),	// output
 		.FIBER_USER_WEb(Fiber_user_weB),	// output
 		.FIBER_USER_OEb(Fiber_user_oeB),	// output
@@ -583,14 +617,18 @@ DdrSdramIf DdrSdramIf_inst(
 		.FIBER_CONFIGREG_CEb(Fiber_ConfigReg_ceB),	// output
 		.FIBER_HISTO_REG(Fiber_histo_reg),	// output
 		.FIBER_USER_ADDR(Fiber_user_addr),	// output
-		.FIBER_USER_DATA(user_d[31:0])		// inout
+		.FIBER_USER_DATA_IN(data_to_master[31:0]),	// input
+		.FIBER_USER_DATA_OUT(data_from_fiber)		// output
 	);
-	
+/*
 frame_generator TestFiber(
 		.CK(Vme_clock),
 		.RSTb(RSTb_sync), .PERIOD(AuroraTestPeriod),
 		.FULL(AuroraFifoFull), .ENABLE(AuroraTestEnable & Fiber_enabled & Fiber_up),
 		.WR(AuroraFifoWriteTest), .DATA(AuroraEventDataTest), .EOF(AuroraEndOfFrameTest));
+*/
+assign AuroraEventDataTest = 32'b0;
+assign AuroraEndOfFrameTest = 1'b0;
 
 VmeSlaveIf VmeIf(
 	.VME_A(VME_A[31:1]), .VME_AM(VME_AM), .VME_D(VME_D),
@@ -604,18 +642,18 @@ VmeSlaveIf VmeIf(
 	.VME_DATA_DIR(VME_DDIR), .VME_DBUF_OEb(VME_DOEb),
 	.VME_ADDR_DIR(VME_ADIR), .VME_ABUF_OEb(VME_AOEb),
 	.USER_D64(1'b1),	// Permit VME 64 bit data transactions
-	.USER_VME64BIT(),	// 64 bit VME data transaction
 	.USER_ADDR(Vme_user_addr), // 22 bit
-	.USER_DATA(user_d), // 64 bit
+	.USER_DATA_IN(data_to_master), // 64 bit
+	.USER_DATA_OUT(data_from_vme), //32 bit
 	.USER_WEb(Vme_user_weB), .USER_REb(Vme_user_reB), .USER_OEb(Vme_user_oeB),
 	.USER_CEb(Vme_user_ceB), // 8 bit
 	.HISTO_REG(Vme_histo_reg),
 	.USER_WAITb(Vme_user_waitB),
-	.VME_CYCLE_IN_PROGRESS(),
+	.SLAVE_TERMINATE_2E(Output_Fifo_Empty & Enable_Slave_Terminate),
 	.RESETb(RSTb_sync),
 	.CLK(Vme_clock),
 	.CONFIG_CEb(Vme_ConfigReg_ceB), .SDRAM_CEb(Vme_Sdram_ceB), .OBUF_CEb(Vme_DataReadout_ceB),
-	.ASMI_CEb(), .RUPD_CEb(),
+	.ASMI_CEb(asmi_ceB), .RUPD_CEb(rupd_ceB),
 	.TOKEN_IN(), .END_OF_DATA(), .TOKEN_OUT(), .TOKEN(),
 	.GXB_TX_DISABLE(GXB_TX_DISABLE), .GXB_PRESENT(GXB_PRESENT), .GXB_RX_LOS(GXB_RX_LOS),
 	.FIBER_RESET(Vme_Fiber_reset), .FIBER_DISABLE(Vme_Fiber_disable),
@@ -623,10 +661,20 @@ VmeSlaveIf VmeIf(
 	.FIBER_ERR_COUNT(Fiber_err_count), .SDRAM_BANK(Sdram_Bank)
 	);
 
+AsmiRemote RemoteUpdate_AsmiIf(
+	.VME_CLK(Vme_clock), .RESETb(RSTb_sync),
+	.USER_ADDR(Vme_user_addr[1:0]),
+	.USER_DATA_IN(data_from_vme), .USER_DATA_OUT(asmi_rupd_dout), .ASMI_CEb(asmi_ceB), .RUPD_CEb(rupd_ceB),
+	.USER_WEb(Vme_user_weB), .USER_REb(Vme_user_reB), .USER_OEb(Vme_user_oeB),
+	.PERIPH_CK(ck_10MHz)
+);
+
 RegisterBank ConfigRegisters_and_Rom(
-	.RSTb(RSTb_sync), .CLK(Vme_clock), .ADDR(user_addr[17:0]), .DATA(user_d),
+	.RSTb(RSTb_sync), .CLK(Vme_clock), .ADDR(user_addr[17:0]),
+	.DATA_IN(data_from_master), .DATA_OUT(dout_reg),
 	.WEb(user_weB), .REb(user_reB), .OEb(user_oeB), .CEb(ConfigReg_ceB),
-	.RESET_REG(), .SAMPLE_PER_EVENT(SamplePerEvent), .EVENT_PER_BLOCK(EventPerBlock),
+	.USER_RESET(User_Reset), //.RESET_REG(),
+	.SAMPLE_PER_EVENT(SamplePerEvent), .EVENT_PER_BLOCK(EventPerBlock),
 	.BUSY_THRESHOLD(BusyThreshold), .BUSY_THRESHOLD_LOCAL(BusyThresholdLocal),
 	.IO_CONFIG(IoConfig), .READOUT_CONFIG(ReadoutConfig), .TRIGGER_CONFIG(TrigGenConfig),
 	.TRIGGER_DELAY(TriggerDelay), .SYNC_PERIOD(ApvSyncPeriod), .MARKER_CHANNEL(MarkerCh),
@@ -641,13 +689,14 @@ RegisterBank ConfigRegisters_and_Rom(
 AdcConfigMachine AdcConfigurator(
 	.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.WEb(user_weB), .REb(user_reB), .OEb(user_oeB), .CEb(AdcConfig_ceB),
-	.USER_DATA(user_d),
-	.AdcConfigClk(ck_10MHz_AdcSpi),
+	.DATA_IN(data_from_master), .DATA_OUT(dout_adc),
+	.AdcConfigClk(ck_10MHz),
 	.ADC_CS1b(ADC_CS1b), .ADC_CS2b(ADC_CS2b), .ADC_SCLK(ADC_SCLK), .ADC_SDA(ADC_SDA));
 
 i2c_master_top I2C_Controller(
 	.wb_clk_i(Vme_clock), .wb_rst_i(1'b0), .arst_i(RSTb_sync), .wb_adr_i(user_addr[2:0]),
-	.dat(user_d), .weB(user_weB), .reB(user_reB), .oeB(user_oeB), .ceB(I2C_Controller_ceB),
+	.wb_dat_i(data_from_master[7:0]), .wb_dat_o(dout_i2c),
+	.weB(user_weB), .reB(user_reB), .oeB(user_oeB), .ceB(I2C_Controller_ceB),
 	.scl_pad_i(I2C_SCL), .scl_pad_o(), .scl_padoen_o(scl_oeB),
 	.sda_pad_i(I2C_SDA_IN), .sda_pad_o(), .sda_padoen_o(sda_oeB),
 	.ApvReset(i2c_ApvReset) );
@@ -750,14 +799,16 @@ Histogrammer AdcHisto0(.LCLK(ADC_LCLK1), .ADCLK(ADC_FRAME_CK1),
 	.ADC_PDATA4(adcx4), .ADC_PDATA5(adcx5), .ADC_PDATA6(adcx6), .ADC_PDATA7(adcx7),
 	.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.WEb(user_weB), .REb(user_reB), .OEb(user_oeB), .CEb(Histogrammer0_ceB),
-	.USER_ADDR({histo_reg[0], user_addr[11:0]}), .USER_DATA(user_d));
+	.USER_ADDR({histo_reg[0], user_addr[11:0]}),
+	.DATA_IN(data_from_master), .DATA_OUT(dout_histo0));
 
 Histogrammer AdcHisto1(.LCLK(ADC_LCLK2), .ADCLK(ADC_FRAME_CK2),
 	.ADC_PDATA0(adcx8), .ADC_PDATA1(adcx9), .ADC_PDATA2(adcx10), .ADC_PDATA3(adcx11),
 	.ADC_PDATA4(adcx12), .ADC_PDATA5(adcx13), .ADC_PDATA6(adcx14), .ADC_PDATA7(adcx15),
 	.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.WEb(user_weB), .REb(user_reB), .OEb(user_oeB), .CEb(Histogrammer1_ceB),
-	.USER_ADDR({histo_reg[1], user_addr[11:0]}), .USER_DATA(user_d));
+	.USER_ADDR({histo_reg[1], user_addr[11:0]}),
+	.DATA_IN(data_from_master), .DATA_OUT(dout_histo1));
 
 
 TrigGen ApvTriggerHandler(.APV_TRG(APV_TRIGGER), .RESET101(apv_reset101), .RSTb(RSTb_sync),
@@ -774,7 +825,7 @@ TrigGen ApvTriggerHandler(.APV_TRG(APV_TRIGGER), .RESET101(apv_reset101), .RSTb(
 
 TrigMeas TriggerMeasurements(.FAST_CK(ADC_LCLK1), .RSTb(RSTb_sync),
 	.START_TDC(APV_CLOCK), .STOP_TDC(incoming_trigger),
-	.ALL_CLEAR(AllFifoClear|apv_reset101), .TDC_SELECT(tdc_select),
+	.ALL_CLEAR(AllClear), .TDC_SELECT(tdc_select),
 	.TRIGGER_TIME_FIFO_RD(trigger_time_fifo_rd|trigger_time_fifo_rd_evb),  .TRIGGER_TIME_FIFO_CK(Vme_clock),
 	.TRIGGER_TIME_FIFO(trigger_time_fifo_data),
 	.TRIGGER_TIME_FIFO_FULL(trigger_time_fifo_full), .TRIGGER_TIME_FIFO_EMPTY(trigger_time_fifo_empty));
@@ -799,17 +850,18 @@ EightChannels ApvProcessor_0_7(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK1), .PROCE
 	.FIFO_EMPTY(ApvFifoEmpty[7:0]), .FIFO_FULL(ApvFifoFull[7:0]),
 	.FIFO_RD(Enable_EventBuilder ? ApvFifoRd_EVB[7:0] : ApvFifo_read[7:0]),
 	.HIGH_ONE(one_threshold), .LOW_ZERO(zero_threshold),
-	.ALL_CLEAR(AllFifoClear|apv_reset101), .DAQ_MODE(ReadoutMode),
+	.ALL_CLEAR(AllClear), .DAQ_MODE(ReadoutMode),
 	.USED_FIFO_WORDS0(used_fifo_words0), .USED_FIFO_WORDS1(used_fifo_words1),
 	.USED_FIFO_WORDS2(used_fifo_words2), .USED_FIFO_WORDS3(used_fifo_words3),
 	.USED_FIFO_WORDS4(used_fifo_words4), .USED_FIFO_WORDS5(used_fifo_words5),
 	.USED_FIFO_WORDS6(used_fifo_words6), .USED_FIFO_WORDS7(used_fifo_words7),
 	.ONE_MORE_EVENT(OneMoreEvent[7:0]), .DECR_EVENT_COUNTER(DecrEventCounter),
 	.NO_MORE_SPACE(no_more_space07), .SPACE_AVAILABLE(space_available07),
-	.RAM_ADDR(user_addr[6:0]), .RAM_DIN(user_d[31:0]),
+	.RAM_ADDR(user_addr[6:0]), .RAM_DIN(data_from_master),
 	.WE_PED_RAM(we_ped_ram[7:0]), .RE_PED_RAM(re_ped_ram[7:0]),
 	.WE_THR_RAM(we_thr_ram[7:0]), //.RE_THR_RAM(re_thr_ram[7:0]),
-	.MODULE_ID(~VME_GA[4:0]), .MARKER_CH(MarkerCh), .SAMPLE_PER_EVENT(SamplePerEvent)
+	.MODULE_ID(~VME_GA[4:0]), .MARKER_CH(MarkerCh), .SAMPLE_PER_EVENT(SamplePerEvent),
+	.APV_FIFO_FULL_L(ApvFifoFullLatched[7:0]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[7:0])
 	);
 
 EightChannels ApvProcessor_8_15(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROCESS_CLK(Vme_clock),
@@ -830,17 +882,18 @@ EightChannels ApvProcessor_8_15(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROC
 	.FIFO_EMPTY(ApvFifoEmpty[15:8]), .FIFO_FULL(ApvFifoFull[15:8]),
 	.FIFO_RD(Enable_EventBuilder ? ApvFifoRd_EVB[15:8] : ApvFifo_read[15:8]),
 	.HIGH_ONE(one_threshold), .LOW_ZERO(zero_threshold),
-	.ALL_CLEAR(AllFifoClear|apv_reset101), .DAQ_MODE(ReadoutMode),
+	.ALL_CLEAR(AllClear), .DAQ_MODE(ReadoutMode),
 	.USED_FIFO_WORDS0(used_fifo_words8), .USED_FIFO_WORDS1(used_fifo_words9),
 	.USED_FIFO_WORDS2(used_fifo_words10), .USED_FIFO_WORDS3(used_fifo_words11),
 	.USED_FIFO_WORDS4(used_fifo_words12), .USED_FIFO_WORDS5(used_fifo_words13),
 	.USED_FIFO_WORDS6(used_fifo_words14), .USED_FIFO_WORDS7(used_fifo_words15),
 	.ONE_MORE_EVENT(OneMoreEvent[15:8]), .DECR_EVENT_COUNTER(DecrEventCounter),
 	.NO_MORE_SPACE(no_more_space815), .SPACE_AVAILABLE(space_available815),
-	.RAM_ADDR(user_addr[6:0]), .RAM_DIN(user_d[31:0]),
+	.RAM_ADDR(user_addr[6:0]), .RAM_DIN(data_from_master),
 	.WE_PED_RAM(we_ped_ram[15:8]), .RE_PED_RAM(re_ped_ram[15:8]),
 	.WE_THR_RAM(we_thr_ram[15:8]), //.RE_THR_RAM(re_thr_ram[15:8]),
-	.MODULE_ID(~VME_GA[4:0]), .MARKER_CH(MarkerCh), .SAMPLE_PER_EVENT(SamplePerEvent)
+	.MODULE_ID(~VME_GA[4:0]), .MARKER_CH(MarkerCh), .SAMPLE_PER_EVENT(SamplePerEvent),
+	.APV_FIFO_FULL_L(ApvFifoFullLatched[15:8]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[15:8])
 	);
 
 FifoIf DebugFifoIf(.FIFO_RD(ApvFifo_read),
@@ -865,27 +918,30 @@ FifoIf DebugFifoIf(.FIFO_RD(ApvFifo_read),
 	.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.WEb(user_weB), .REb(user_reB), .OEb(user_oeB),
 	.FIFO_CEb(ApvFifo_ceB), .THR_CEb(ThrRam_ceB), .PED_CEb(PedRam_ceB), .OBUF_STATUS_CEb(ObufStatus_ceB),
-	.USER_ADDR(user_addr[15:0]), .USER_DATA(user_d),
+	.USER_ADDR(user_addr[15:0]),
+	.DATA_OUT(Channel_Direct_Data),
 	.MISSED_TRIGGER(missing_trigger_count), .INCOMING_TRIGGER_CNT(incoming_trigger_count),
 	.WE_PED_RAM(we_ped_ram), .RE_PED_RAM(re_ped_ram),
 	.WE_THR_RAM(we_thr_ram), //.RE_THR_RAM(re_thr_ram),
 	.EV_BUILDER_DATA_OUT(EvBuilderDataOut), .EV_BUILDER_ENABLE(Enable_EventBuilder),
 	.EV_BUILDER_FIFO_EMPTY(EventBuilder_Empty), .EV_BUILDER_FIFO_FULL(EventBuilder_Full),
-	.EV_BUILDER_FIFO_WC(EventBuilder_Wc),
+	.EV_BUILDER_FIFO_WC({4'h0,EventBuilder_Wc}),
 	.EV_BUILDER_EV_CNT(EventBuilder_EvCnt), .EV_BUILDER_BLOCK_CNT(EventBuilder_BlockCnt),
 	.TRIGGER_COUNTER(apv_trigger_count), .SDRAM_INITIALIZED(SdramInitialized),
 	.TRIGGER_TIME_FIFO_RD(trigger_time_fifo_rd), .TRIGGER_TIME_FIFO(trigger_time_fifo_data),
 	.TRIGGER_TIME_FIFO_FULL(trigger_time_fifo_full), .TRIGGER_TIME_FIFO_EMPTY(trigger_time_fifo_empty),
 	.SDRAM_FIFO_WRITE_ADDRESS(Sdram_Fifo_Write_Address), .SDRAM_FIFO_READ_ADDRESS(Sdram_Fifo_Read_Address),
 	.SDRAM_FIFO_OVERRUN(Sdram_Fifo_Overrun), .SDRAM_FIFO_WORDCOUNT(Sdram_Fifo_WordCount),
-	.OUTPUT_FIFO_FULL(Output_Fifo_Full), .OUTPUT_FIFO_EMPTY(Output_Fifo_Empty), .OUTPUT_FIFO_WC(Output_Fifo_Wc)
+	.OUTPUT_FIFO_FULL(Output_Fifo_Full), .OUTPUT_FIFO_EMPTY(Output_Fifo_Empty), .OUTPUT_FIFO_WC(Output_Fifo_Wc),
+	.APV_FIFO_FULL_L(ApvFifoFullLatched), .PROC_FIFO_FULL_L(ProcFifoFullLatched), .OUTPUT_FIFO_FULL_L(OutputFifoFullLatched),
+	.EVB_FIFO_FULL_L(EvbFifoFullLatched), .EVENT_FIFO_FULL_L(EventFifoFullLatched), .TIME_FIFO_FULL_L(TimeFifoFullLatched)
 	);
 
 	
 EventBuilder TheBuilder(.RSTb(RSTb_sync), .TIME_CLK(time_clock), .CLK(Vme_clock),
 //	.TRIGGER(incoming_trigger),	// Incoming trigger pulse
 	.TRIGGER(apv_trigger_pulse),	// Pulse sent to APVs
-	.ALL_CLEAR(AllFifoClear|apv_reset101),
+	.ALL_CLEAR(AllClear),
 	.SAMPLE_PER_EVENT(SamplePerEvent), .EVENT_PER_BLOCK(EventPerBlock),
 	.ENABLE_MASK(ApvEnable), .ENABLE_EVBUILD(Enable_EventBuilder),
 	.TRIGGER_TIME_FIFO(trigger_time_fifo_data), .TRIGGER_TIME_FIFO_RD(trigger_time_fifo_rd_evb),
@@ -900,12 +956,16 @@ EventBuilder TheBuilder(.RSTb(RSTb_sync), .TIME_CLK(time_clock), .CLK(Vme_clock)
 	.DATA_RD(ApvFifoRd_EVB), .EVENT_PRESENT(OneMoreEvent),
 	.DECREMENT_EVENT_COUNT(DecrEventCounter), .MODULE_ID(~VME_GA[4:0]),
 	.DATA_OUT(EvBuilderDataOut), .EMPTY(EventBuilder_Empty), .FULL(EventBuilder_Full),
+	.ALMOST_FULL(EvbFifoAlmostFull),
 	.DATA_OUT_CNT(EventBuilder_Wc), .DATA_OUT_RD(EventBuilder_Read),
-	.EV_CNT(EventBuilder_EvCnt), .BLOCK_CNT(EventBuilder_BlockCnt));
+	.EV_CNT(EventBuilder_EvCnt), .BLOCK_CNT(EventBuilder_BlockCnt),
+	.EVB_FIFO_FULL_L(EvbFifoFullLatched), .EVENT_FIFO_FULL_L(EventFifoFullLatched), .TIME_FIFO_FULL_L(TimeFifoFullLatched)
+	);
 
 
 endmodule
 
+/*
 //
 // Test modules to exercise fiber event data interface
 //
@@ -1008,7 +1068,7 @@ module frame_generator(input CK, input RSTb, input [7:0] PERIOD, input FULL, inp
 			begin
 				if( start_frame_gen == 1 )
 					frame_gen_enable <= 1;
-				if( addr == 16 )
+				if( addr == 17 )
 					frame_gen_enable <= 0;
 			end
 		end
@@ -1029,7 +1089,7 @@ module frame_generator(input CK, input RSTb, input [7:0] PERIOD, input FULL, inp
 					addr <= addr + 1;
 				else
 					addr <= 0;
-				if( addr == 15 )
+				if( addr == 16 )
 				begin
 					EOF <= 1;
 				end
@@ -1049,7 +1109,7 @@ module frame_generator(input CK, input RSTb, input [7:0] PERIOD, input FULL, inp
 		end
 		else
 		begin
-			if( addr >= 0 && addr <= 15 && FULL == 0 && frame_gen_enable == 1 )
+			if( addr >= 0 && addr <= 16 && FULL == 0 && frame_gen_enable == 1 )
 				WR <= 1;
 			else
 				WR <= 0;
@@ -1057,3 +1117,4 @@ module frame_generator(input CK, input RSTb, input [7:0] PERIOD, input FULL, inp
 	end
 	
 endmodule
+*/

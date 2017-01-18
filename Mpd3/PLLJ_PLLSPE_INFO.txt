@@ -8,12 +8,17 @@ PLLJITTER	48
 PLLSPEmax	30
 PLLSPEmin	-72
 
-PLL_Name	Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|channel_quad[0].pll0
+PLL_Name	mpd_fiber_interface:AuroraInterface|aurora_8b10b_arria_gxb:aurora_8b10b_arria_gxb_inst|aurora_8b10b_v5_3:aurora_8b10b_v5_3_inst|aurora_8b10b_v5_3_GTX_WRAPPER:gtx_wrapper_i|gxb_transceiver:gxb_transceiver_inst|alt2gxb:alt2gxb_component|channel_quad[0].pll0
 PLLJITTER	NA
 PLLSPEmax	NA
 PLLSPEmin	NA
 
-PLL_Name	Gxb:OpticalLinkIf|alt2gxb:alt2gxb_component|channel_tx[0].transmit
+PLL_Name	mpd_fiber_interface:AuroraInterface|aurora_8b10b_arria_gxb:aurora_8b10b_arria_gxb_inst|aurora_8b10b_v5_3:aurora_8b10b_v5_3_inst|aurora_8b10b_v5_3_GTX_WRAPPER:gtx_wrapper_i|gxb_transceiver:gxb_transceiver_inst|alt2gxb:alt2gxb_component|channel_rec[0].receive
+PLLJITTER	NA
+PLLSPEmax	NA
+PLLSPEmin	NA
+
+PLL_Name	mpd_fiber_interface:AuroraInterface|aurora_8b10b_arria_gxb:aurora_8b10b_arria_gxb_inst|aurora_8b10b_v5_3:aurora_8b10b_v5_3_inst|aurora_8b10b_v5_3_GTX_WRAPPER:gtx_wrapper_i|gxb_transceiver:gxb_transceiver_inst|alt2gxb:alt2gxb_component|channel_tx[0].transmit
 PLLJITTER	NA
 PLLSPEmax	NA
 PLLSPEmin	NA

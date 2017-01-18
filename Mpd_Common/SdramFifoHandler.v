@@ -520,7 +520,7 @@ Fifo_8192x64 OutputFifo(.aclr(~RSTb|CLEAR_ADDR), .clock(CLK),
 	.data(Data64Bit), .wrreq(OutputFifoWr),
 	.q(DataOut64bit), .rdreq(USER_RE),
 	.empty(OUTPUT_FIFO_EMPTY), .full(OUTPUT_FIFO_FULL), .usedw(OUTPUT_FIFO_WC));
-
+	
 SReg OutputFifoFullReg(.CK(CLK), .RSTb(RSTb), .CLR(CLEAR_ADDR), .SET(OUTPUT_FIFO_FULL), .OUT(OUTPUT_FIFO_FULL_L));
 
 always @(posedge CLK)

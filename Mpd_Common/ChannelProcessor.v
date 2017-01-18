@@ -156,10 +156,18 @@ assign enabled_mean = ENABLE_BASE_SUB ? MEAN : 12'b0;
 assign FIFO_USED_WORDS[11] = FIFO_FULL;
 assign THRESHOLD_ADDRESS = ThrAddr[6:0];
 
+`ifdef MPD3
+Fifo_1024x21 TempFifo21( .aclr(~RSTb), .clock(CLK),
+	.data(fifo_data_in), .wrreq(fifo_out_wr),
+	.empty(FIFO_EMPTY), .full(FIFO_FULL), .rdreq(OUT_FIFO_RD), .q(FIFO_DATA_OUT),
+	.usedw(FIFO_USED_WORDS[9:0]));
+assign FIFO_USED_WORDS[10] = 0;
+`else
 Fifo_2048x21 TempFifo21( .aclr(~RSTb), .clock(CLK),
 	.data(fifo_data_in), .wrreq(fifo_out_wr),
 	.empty(FIFO_EMPTY), .full(FIFO_FULL), .rdreq(OUT_FIFO_RD), .q(FIFO_DATA_OUT),
 	.usedw(FIFO_USED_WORDS[10:0]));
+`endif
 
 Sub13 BaselineSubtractor(.dataa(DATA_IN), .datab({1'b0,enabled_mean}),
 	.result(data_minus_baseline));

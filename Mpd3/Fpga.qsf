@@ -577,7 +577,6 @@ set_global_assignment -name LL_HEIGHT 5 -section_id "AdcDeser:AdcDeser1"
 set_global_assignment -name LL_WIDTH 6 -section_id "AdcDeser:AdcDeser1"
 set_global_assignment -name LL_ORIGIN X1_Y18 -section_id "AdcDeser:AdcDeser1"
 set_instance_assignment -name LL_MEMBER_OF "AdcDeser:AdcDeser1" -to "AdcDeser:AdcDeser1" -section_id "AdcDeser:AdcDeser1"
-# set_global_assignment -name MISC_FILE "C:/Users/musico/INFN/Jlab12/Vme/Fpga_0/Fpga.dpf"
 
 set_global_assignment -name PRE_FLOW_SCRIPT_FILE "quartus_sh:SaveCompileTime.tcl"
 
@@ -625,14 +624,16 @@ set_instance_assignment -name LL_MEMBER_OF LoResTdc -to "TrigMeas:TriggerMeasure
 set_global_assignment -name LL_ORIGIN X1_Y1 -section_id HiResTdc
 set_global_assignment -name LL_STATE LOCKED -section_id HiResTdc
 
-# set_global_assignment -name QIP_FILE ./MainPll.qip
-# set_global_assignment -name QIP_FILE ./AdcPll.qip
 
 set_global_assignment -name VERILOG_MACRO "MPD3=1"
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_instance_assignment -name PARTITION_HIERARCHY adcde_ce6789f6b1bda6acdfac2de38ddff5791 -to "AdcDeser:AdcDeser0" -section_id "AdcDeser:AdcDeser0"
-set_instance_assignment -name PARTITION_HIERARCHY adcde_7334cb947c9244b65ecb94947349c541 -to "AdcDeser:AdcDeser1" -section_id "AdcDeser:AdcDeser1"
+set_global_assignment -name STRATIXII_CONFIGURATION_DEVICE EPCS128
+set_global_assignment -name STRATIX_UPDATE_MODE REMOTE
 set_global_assignment -name VERILOG_FILE ../Mpd_Common/Fifo_8192x64.v
+set_global_assignment -name QIP_FILE ../Mpd_Common/z_remote.qip
+set_global_assignment -name QIP_FILE ../Mpd_Common/z_asmi.qip
+set_global_assignment -name VERILOG_FILE ../Mpd_Common/RemoteUpdateIf.v
+set_global_assignment -name VERILOG_FILE ../Mpd_Common/AsmiRemote.v
+set_global_assignment -name VERILOG_FILE ../Mpd_Common/AsmiIf.v
 set_global_assignment -name VERILOG_FILE ../Fir_Modules/MultAdd2.v
 set_global_assignment -name VERILOG_FILE ../Fir_Modules/fir_12tap_rs.v
 set_global_assignment -name VERILOG_FILE ../Fir_Modules/MultAdd4.v
@@ -697,7 +698,7 @@ set_global_assignment -name VERILOG_FILE ../MPD_Common/i2c_master_top.v
 set_global_assignment -name VERILOG_FILE ../MPD_Common/AdcConfig.v
 set_global_assignment -name VERILOG_FILE ../MPD_Common/AdcDeser.v
 set_global_assignment -name VERILOG_FILE ../MPD_Common/VmeSlaveIf.v
-set_global_assignment -name VERILOG_FILE RegisterBank.v
+set_global_assignment -name VERILOG_FILE ../MPD_Common/RegisterBank.v
 set_global_assignment -name VERILOG_FILE Fpga_4.v
 set_global_assignment -name QIP_FILE ../MPD_Common/DdrIn.qip
 set_global_assignment -name QIP_FILE GlobalPll.qip
@@ -713,3 +714,7 @@ set_global_assignment -name QIP_FILE ../MPD_Common/DcFifo_32x12.qip
 set_global_assignment -name QIP_FILE ../MPD_Common/ApvDataFifo_1024x13.qip
 set_global_assignment -name QIP_FILE DdrSdramIf/DdrSdramIf.qip
 set_global_assignment -name QIP_FILE ../MPD_Common/TdcFifo_1024x8.qip
+set_global_assignment -name QIP_FILE ../Mpd_Common/Fifo_1024x21.qip
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY adcde_ce6789f6b1bda6acdfac2de38ddff5791 -to "AdcDeser:AdcDeser0" -section_id "AdcDeser:AdcDeser0"
+set_instance_assignment -name PARTITION_HIERARCHY adcde_7334cb947c9244b65ecb94947349c541 -to "AdcDeser:AdcDeser1" -section_id "AdcDeser:AdcDeser1"
