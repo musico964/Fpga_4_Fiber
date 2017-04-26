@@ -2,7 +2,7 @@ This is the implementation of the FPGA v4 for the Multi Purpose Digitizer (MPD)
 used for GEM detector readout in the SBS setup at Jefferson Laboratory (USA).
 
 Directory structure
-
+```
 .			Here can be run simulations with MODELSIM (see z_README.txt). TestBench.v is the simulation top level
 |			DdrSdramIf_phy_alt_mem_phy_pll.mif is needed by ModelSim (copied from DdrSdramIf)
 |
@@ -26,5 +26,5 @@ Directory structure
     +-- Tdc		Trials for Trigger pulses TDC, final version moved to Mpd_Common. No more used
     |
     +-- Sort		Trial code to compute median value of serial incoming data. To be used in future.
-	
+```	
 	
