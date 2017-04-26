@@ -208,7 +208,7 @@ end
 initial
 begin
 	Sleep(2);
-	use_sdram = 1;
+	use_sdram = 0;
 	dump_fout = 0;
 	MaxTrigOut = 1;
 	apv_SampleMode = 1;	// 0 = 3 samples, 1 = 1 sample
@@ -310,7 +310,7 @@ begin
 	Sleep(25);
 	$display("***   ADC configurator Test");
 	ADC_Config_Test;
-
+*/
 
 	Sleep(25);
 	$display("***   I2C Write Test");
@@ -319,7 +319,7 @@ begin
 	$display("***   I2C Read Test");
 	I2C_Byte_Read_Test;
 	Sleep(200);
-
+/*
 	Sleep(25);
 	HiSpeed_Test;
 
@@ -357,7 +357,7 @@ begin
 
 	$display("***   Event Building test on channel 0,1,2,3");
 //	SingleChannel_EventBuilding_Test(1, use_sdram, 0);	// check use_sdram
-	MultiChannel_EventBuilding_Test(16'hFFFF, use_sdram, 1, 20, 1);	// fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
+//	MultiChannel_EventBuilding_Test(16'hFFFF, use_sdram, 1, 20, 1);	// fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
 
 //	SingleChannelSample_Test(8);
 //	SingleChannelSample_Test(8);
@@ -1127,7 +1127,8 @@ begin
 	while( rd_data[1] == 1 )			// Poll for completion
 		VME_A24D32_Read(I2C_base+16, rd_data);
 
-	VME_A24D32_Write(I2C_base+16, 32'h0000_0020);	// Read byte command
+//	VME_A24D32_Write(I2C_base+16, 32'h0000_0020);	// Read byte command + NACK
+	VME_A24D32_Write(I2C_base+16, 32'h0000_0028);	// Read byte command
 	rd_data[1] = 1;
 	while( rd_data[1] == 1 )			// Poll for completion
 		VME_A24D32_Read(I2C_base+16, rd_data);

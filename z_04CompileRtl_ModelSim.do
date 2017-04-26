@@ -1,7 +1,9 @@
 
 vlog -vlog01compat -work work {./Mpd4/Fpga_4.v}
-vlog -vlog01compat -work work {./Mpd4/RegisterBank.v}
+#vlog -vlog01compat -work work {./Mpd4/RegisterBank.v}
+vlog -vlog01compat -work work {./RegisterBank.v}
 
+vlog -vlog01compat -work work {./Mpd_Common/BidirBuf.v}
 vlog -vlog01compat -work work {./Mpd_Common/VmeSlaveIf.v}
 vlog -vlog01compat -work work {./Mpd_Common/AdcConfig.v}
 vlog -vlog01compat -work work {./Mpd_Common/AdcDeser.v}

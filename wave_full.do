@@ -102,6 +102,12 @@ add wave -noupdate -divider I2C_Controller
 add wave -noupdate -label CEb /_a_TestBench/Dut/I2C_Controller/ceB
 add wave -noupdate -label SCL /_a_TestBench/Dut/I2C_SCL
 add wave -noupdate -label SDA /_a_TestBench/Dut/I2C_SDA_OUT
+add wave -noupdate -label scl_pad_i /_a_TestBench/Dut/I2C_Controller/scl_pad_i
+add wave -noupdate -label scl_pad_o /_a_TestBench/Dut/I2C_Controller/scl_pad_o
+add wave -noupdate -label scl_padoen_o /_a_TestBench/Dut/I2C_Controller/scl_padoen_o
+add wave -noupdate -label sda_pad_i /_a_TestBench/Dut/I2C_Controller/sda_pad_i
+add wave -noupdate -label sda_pad_o /_a_TestBench/Dut/I2C_Controller/sda_pad_o
+add wave -noupdate -label sda_padoen_o /_a_TestBench/Dut/I2C_Controller/sda_padoen_o
 add wave -noupdate -divider TheBuilder
 add wave -noupdate -label DATA_RD -radix hexadecimal /_a_TestBench/Dut/TheBuilder/DATA_RD
 add wave -noupdate -label EVENT_PRESENT -radix hexadecimal /_a_TestBench/Dut/TheBuilder/EVENT_PRESENT
@@ -156,4 +162,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {356830 ps} {7425430 ps}
+WaveRestoreZoom {26097792 ps} {58005380 ps}
