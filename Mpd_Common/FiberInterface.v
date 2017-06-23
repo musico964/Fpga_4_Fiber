@@ -105,10 +105,13 @@ module FiberInterface(
 endmodule
 
 module aurora_reset_generator(input CK, input RSTb, input ENABLE, output reg RESET_OUT);
-//parameter timeout = 125 * 5000;	// 5 ms @125 MHz
-//parameter timeout = 125 * 50;	// 50 us @125 MHz (to speedup simulation)
+`ifdef REDUCED_TIMEOUT
+parameter timeout = 110 * 90;	// 90 us @110 MHz (to speedup simulation)
+//parameter timeout = 125 * 90;	// 90 us @125 MHz (to speedup simulation)
+`else
 parameter timeout = 110 * 5000;	// 5 ms @110 MHz
-//parameter timeout = 110 * 50;	// 50 us @110 MHz (to speedup simulation)
+//parameter timeout = 125 * 5000;	// 5 ms @125 MHz
+`endif
 
 reg [19:0] count;
 reg first_time;
@@ -235,7 +238,8 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 		input [31:0] EVT_FIFO_DATA);		// from Output FIFO Buffer
 
 	reg [7:0] fsm_status;
-	reg IN_FIFO_RD_int, OUT_FIFO_WR_int, block_trailer_dly;
+	reg IN_FIFO_RD_int, OUT_FIFO_WR_int;
+//	reg block_trailer_dly;
 	wire block_trailer, channel_free;
 
 
@@ -243,8 +247,8 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 // Read data up to a BLOCK_TRAILER (or max num of words) if EVT_FIFO_EMPTY is cleared
 // How to handle EVT_FIFO_FULL ?
 
-//	assign channel_free = ~IN_FIFO_EMPTY & ~OUT_FIFO_FULL;
-	assign channel_free = ~IN_FIFO_EMPTY & ~OUT_FIFO_FULL & ~block_trailer_dly;
+	assign channel_free = ~IN_FIFO_EMPTY & ~OUT_FIFO_FULL;
+//	assign channel_free = ~IN_FIFO_EMPTY & ~OUT_FIFO_FULL & ~block_trailer_dly;
 	assign IN_FIFO_RD = IN_FIFO_RD_int & channel_free;
 	assign OUT_FIFO_WR = (OUT_FIFO_WR_int & channel_free) | (EVT_FIFO_END & ~OUT_FIFO_FULL);
 //	assign IN_FIFO_RD = IN_FIFO_RD_int;
@@ -252,8 +256,8 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 //	assign block_trailer = (EVT_FIFO_DATA[23:19] == {1'b1, 4'h1}) ? ~IN_FIFO_EMPTY : 0;	// 32 bit old format
 	assign block_trailer = (EVT_FIFO_DATA[23:20] == {3'h1, 1'b0}) ? ~IN_FIFO_EMPTY : 0;	// 24 bit format
 	
-	always @(posedge CLK)
-		block_trailer_dly <= block_trailer & USE_SDRAM_FIFO;
+//	always @(posedge CLK)
+//		block_trailer_dly <= block_trailer & USE_SDRAM_FIFO;
 
 	always @(posedge CLK or negedge RSTb)
 	begin
@@ -275,8 +279,8 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 								fsm_status <= 1;
 						end
 				8'd1:	begin
-							OUT_FIFO_WR_int <= channel_free;
-							IN_FIFO_RD_int <= channel_free;
+							OUT_FIFO_WR_int <= channel_free & ~block_trailer;
+							IN_FIFO_RD_int <= channel_free & ~block_trailer;
 							if( block_trailer == 1 && channel_free == 1 )
 							begin
 //								IN_FIFO_RD_int <= 0;
@@ -286,14 +290,14 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 							begin
 								if( OUT_FIFO_FULL )
 								begin
-									OUT_FIFO_WR_int <= 0;
-									IN_FIFO_RD_int <= 0;
+//									OUT_FIFO_WR_int <= 0;
+//									IN_FIFO_RD_int <= 0;
 									fsm_status <= 3;
 								end
 								if( IN_FIFO_EMPTY )
 								begin
-									OUT_FIFO_WR_int <= 0;
-									IN_FIFO_RD_int <= 0;
+//									OUT_FIFO_WR_int <= 0;
+//									IN_FIFO_RD_int <= 0;
 									fsm_status <= 4;
 								end
 							end

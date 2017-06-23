@@ -467,6 +467,7 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						data_bus <= `APV_CH_DATA;
 						if( OutputFifoAlmostFull == 0 )	// proceed only if there is room to store at least one complete frame
 						begin
+$display("@%0t EventBuilder LoopSampleCounter = %d, ChCounter = %d", $stime, LoopSampleCounter, ChCounter);
 							DATA_RD[ChCounter[3:0]] <= 1;
 							fsm_status <= 7;
 						end
@@ -478,7 +479,7 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						OutputFifo_Write <= 1;
 						if( ChannelData_a[20:19] == 2'b11 || LoopDataCounter > `MAX_LOOP_DATA ) // Channel Trailer ID
 						begin
-$display("@%0t EventBuilder Channel Trailer: 0x%0x", $stime, `APV_CH_DATA);
+$display("@%0t EventBuilder Channel Trailer[%d]: 0x%0x", $stime, ChCounter, `APV_CH_DATA);
 //							OutputFifo_Write <= 0;
 							DATA_RD[ChCounter[3:0]] <= 0;
 							fsm_status <= 8;
