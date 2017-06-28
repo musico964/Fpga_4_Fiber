@@ -717,6 +717,7 @@ set_global_assignment -name VERILOG_FILE ../Mpd_Common/AdcConfig.v
 set_global_assignment -name VERILOG_FILE ../Mpd_Common/AdcDeser.v
 set_global_assignment -name VERILOG_FILE ../Mpd_Common/VmeSlaveIf.v
 set_global_assignment -name VERILOG_FILE ../Mpd_Common/RegisterBank.v
+set_global_assignment -name VERILOG_FILE ../Mpd_Common/Sorter.v
 set_global_assignment -name VERILOG_FILE Fpga_4.v
 set_global_assignment -name QIP_FILE Ddr2SdramIf/Ddr2SdramIf.qip
 set_global_assignment -name QIP_FILE Ddr2SdramIf/Ddr2SdramIf_phy.qip

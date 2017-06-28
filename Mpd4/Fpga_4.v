@@ -250,7 +250,7 @@ output SPARE_CLK_TTL;	// 2.5 V clock
 	wire [15:0] fir_coeff8, fir_coeff9, fir_coeff10, fir_coeff11, fir_coeff12, fir_coeff13, fir_coeff14, fir_coeff15;
 	wire EvbFifoFullLatched, EventFifoFullLatched, TimeFifoFullLatched,OutputFifoFullLatched;
 	wire Enable_Slave_Terminate;
-	wire User_Reset;
+	wire User_Reset, ComputeMedian;
 
 wire [31:0] data_from_vme, data_from_fiber, data_from_master, data_to_fiber;
 reg [63:0] data_to_master;
@@ -325,6 +325,7 @@ assign ReadoutMode = ReadoutConfig[2:0];
 //						ApvReadoutMode_Simple    = (DAQ_MODE == 3'b001);
 //						SampleMode               = (DAQ_MODE == 3'b010);
 //						ApvReadoutMode_Processed = (DAQ_MODE == 3'b011);
+assign ComputeMedian = ReadoutConfig[3];	// 0 = mean value, 1 = median value as APV common mode baseline
 assign FIR_enable = ReadoutConfig[4];
 assign sel_time_clk = ReadoutConfig[5];
 assign Enable_Slave_Terminate = ReadoutConfig[8];
@@ -506,7 +507,7 @@ assign Fiber_activity = Fiber_enabled & (Fiber_wr_bus | Fiber_rd_bus | AuroraEnd
 			default: data_to_master <= 64'b0;
 		endcase
 	end
-	
+/*	
 FastSdramFifoIf SdramFifoHandler(.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.ENABLE(UseSdramFifo), .CLEAR_ADDR(AllClear),
 	.SDRAM_WRITE_REQ(Sdram_Fifo_write_req), .SDRAM_READY(mem_local_ready),
@@ -569,7 +570,7 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 	.reset_request_n (),		// output
 	.soft_reset_n (1'b1)		// 200-300 us are needed before initialization
     );
-
+*/ assign Vme_clock = MASTER_CLOCK; 
 	mpd_fiber_interface AuroraInterface(
 			.FIBER_USER_CLK(ck_125MHz_out),		// output
 
@@ -904,7 +905,7 @@ EightChannels ApvProcessor_0_7(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK1), .PROCE
 	.WE_PED_RAM(we_ped_ram[7:0]), .RE_PED_RAM(re_ped_ram[7:0]),
 	.WE_THR_RAM(we_thr_ram[7:0]), //.RE_THR_RAM(re_thr_ram[7:0]),
 	.MODULE_ID(~VME_GA[4:0]), .MARKER_CH(MarkerCh), .SAMPLE_PER_EVENT(SamplePerEvent),
-	.APV_FIFO_FULL_L(ApvFifoFullLatched[7:0]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[7:0])
+	.APV_FIFO_FULL_L(ApvFifoFullLatched[7:0]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[7:0]), .COMPUTE_MEDIAN(ComputeMedian)
 	);
 
 EightChannels ApvProcessor_8_15(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROCESS_CLK(Vme_clock),
@@ -936,7 +937,7 @@ EightChannels ApvProcessor_8_15(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROC
 	.WE_PED_RAM(we_ped_ram[15:8]), .RE_PED_RAM(re_ped_ram[15:8]),
 	.WE_THR_RAM(we_thr_ram[15:8]), //.RE_THR_RAM(re_thr_ram[15:8]),
 	.MODULE_ID(~VME_GA[4:0]), .MARKER_CH(MarkerCh), .SAMPLE_PER_EVENT(SamplePerEvent),
-	.APV_FIFO_FULL_L(ApvFifoFullLatched[15:8]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[15:8])
+	.APV_FIFO_FULL_L(ApvFifoFullLatched[15:8]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[15:8]), .COMPUTE_MEDIAN(ComputeMedian)
 	);
 
 FifoIf DebugFifoIf(.FIFO_RD(ApvFifo_read),

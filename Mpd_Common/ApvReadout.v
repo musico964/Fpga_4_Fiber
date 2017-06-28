@@ -16,7 +16,7 @@ module ApvReadout(RSTb, CLK, ENABLE, ADC_PDATA, SYNC_PERIOD, SYNCED, ERROR,
 	HIGH_ONE, LOW_ZERO, FIFO_CLEAR, DAQ_MODE,
 	NO_MORE_SPACE_FOR_EVENT, USED_FIFO_WORDS, ONE_MORE_EVENT,
 	PEDESTAL_ADDRESS, PEDESTAL_DATA, OFFSET, MEAN, RD_NEXT_MEAN,
-	MARKER_CH, SAMPLE_PER_EVENT
+	MARKER_CH, SAMPLE_PER_EVENT, COMPUTE_MEDIAN
 	);
 
 input RSTb, CLK, ENABLE;
@@ -39,11 +39,13 @@ output [11:0] MEAN;
 input RD_NEXT_MEAN;
 input [7:0] MARKER_CH;
 input [4:0] SAMPLE_PER_EVENT;
+input COMPUTE_MEDIAN;
 
 reg END_FRAME, HEADER_SEEN;
 reg fifo_write, data_frame, analog_data;
 reg [7:0] fsm_status;
 reg [7:0] fsm2_status;
+reg [7:0] fsm3_status;
 reg [7:0] bit_count;
 reg [11:0] header_sr;
 reg logic_one_reg, logic_zero_reg;
@@ -62,12 +64,14 @@ reg [18:0] accumulator;
 reg [7:0] n_channel;
 wire [18:0] logic_mean;
 wire [7:0] logic_remainder;
-reg mean_fifo_write, complete_event;
+reg mean_fifo_write, complete_event, median_fifo_write;
 reg [11:0] computed_mean;
+wire [11:0] computed_median;
 wire MeanFifoEmpty;
 reg [4:0] ApvSampleCounter;
 wire [3:0] ApvSampleCounterMinusOne;
 reg ClearApvSampleCounter;
+reg AdcPdataValid, SorterReset;
 
 assign ERROR = write_fifo_full;
 
@@ -116,10 +120,13 @@ ApvDataFifo_1024x13 DataFifo(
 	.wrempty(write_fifo_empty),
 	.wrfull(write_fifo_full));
 
-DcFifo_32x12 MeanFifo(.aclr(~RSTb),
-	.data(computed_mean), .rdclk(FIFO_RD_CLK), .rdreq(RD_NEXT_MEAN),
-	.wrclk(CLK), .wrreq(mean_fifo_write), .q(MEAN), .rdempty(MeanFifoEmpty));
+DcFifo_32x12 BaselineFifo(.aclr(~RSTb),
+	.data(COMPUTE_MEDIAN ? computed_mean : computed_median), .rdclk(FIFO_RD_CLK), .rdreq(RD_NEXT_MEAN),
+	.wrclk(CLK), .wrreq(mean_fifo_write | median_fifo_write), .q(MEAN), .rdempty(MeanFifoEmpty));
 
+Sorter #(12,32) MedianCalculator(.CLK(CLK), .RST(~RSTb|SorterReset), .DIN(ADC_PDATA), .VALID(AdcPdataValid), .DO(computed_median), .N_CELLS());
+	
+	
 // Synchronizer
 always @(posedge CLK)
 begin
@@ -295,7 +302,7 @@ begin
 	end
 end
 
-// Compute Baseline
+// Compute Mean value Baseline
 always @(posedge CLK or negedge RSTb)
 begin
 	if( RSTb == 0 )
@@ -313,7 +320,7 @@ begin
 				accumulator <= 0;
 				n_channel <= 0;
 				mean_fifo_write <= 0;
-				if( HEADER_SEEN == 1 )
+				if( HEADER_SEEN == 1 && COMPUTE_MEDIAN == 0 )
 					fsm2_status <= 1;
 			    end
 			1: begin
@@ -351,6 +358,49 @@ begin
 		   endcase
 	end
 end
+
+// Compute Median value Baseline
+always @(posedge CLK or negedge RSTb)
+begin
+	if( RSTb == 0 )
+	begin
+		fsm3_status <= 0;
+		AdcPdataValid <= 0;
+		SorterReset <= 0;
+		median_fifo_write <= 0;
+	end
+	else
+	begin
+		case( fsm3_status )
+			0: begin
+				SorterReset <= 1;
+				AdcPdataValid <= 0;
+				median_fifo_write <= 0;
+				if( HEADER_SEEN == 1 && COMPUTE_MEDIAN == 1 )
+					fsm3_status <= 1;
+			    end
+			1: begin
+				SorterReset <= 0;
+				if( PEDESTAL_DATA != 12'hFFF )
+					AdcPdataValid <= 1;
+				else
+					AdcPdataValid <= 0;
+				if( PEDESTAL_ADDRESS == 7'h1F )	// compute only for the 1st quarter of channels
+					fsm3_status <= 2;
+			    end
+			2: begin
+				fsm3_status <= 3;
+			    end
+			3: begin
+				median_fifo_write <= 1;
+				fsm3_status <= 0;
+			    end
+
+			default: fsm3_status <= 0;
+		   endcase
+	end
+end
+
 endmodule
 
 
