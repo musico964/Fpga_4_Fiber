@@ -255,7 +255,7 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 	reg IN_FIFO_RD_int, OUT_FIFO_WR_int;
 	reg block_trailer_dly;
 	wire block_trailer, channel_free;
-
+	reg eob_sent;
 
 //`define BLOCK_TRAILER	{1'b1, 4'h1, MODULE_ID, 2'b0, BlockWordCounter}
 // Read data up to a BLOCK_TRAILER (or max num of words) if EVT_FIFO_EMPTY is cleared
@@ -267,7 +267,8 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 //	assign OUT_FIFO_WR = (OUT_FIFO_WR_int & channel_free) | (EVT_FIFO_END & ~OUT_FIFO_FULL);
 	assign OUT_FIFO_WR = (OUT_FIFO_WR_int & ~OUT_FIFO_FULL) | (EVT_FIFO_END & ~OUT_FIFO_FULL);
 //	assign block_trailer = (EVT_FIFO_DATA[23:19] == {1'b1, 4'h1}) ? ~IN_FIFO_EMPTY : 0;	// 32 bit old format
-	assign block_trailer = (EVT_FIFO_DATA[23:20] == {3'h1, 1'b0}) ? 1 : 0;	// 24 bit format
+//	assign block_trailer = (EVT_FIFO_DATA[23:20] == {3'h1, 1'b0}) ? 1 : 0;	// 24 bit format
+	assign block_trailer = (EVT_FIFO_DATA[23:20] == {3'h1, 1'b0}) ? ~eob_sent : 0;	// 24 bit format
 	
 	always @(posedge CLK)
 		block_trailer_dly <= block_trailer;
@@ -280,6 +281,7 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 			OUT_FIFO_WR_int <= 0;
 			IN_FIFO_RD_int <= 0;
 			EVT_FIFO_END <= 0;
+			eob_sent <= 0;
 		end
 		else
 		begin
@@ -289,12 +291,18 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 							IN_FIFO_RD_int <= 0;
 							EVT_FIFO_END <= 0;
 							if( ENABLE & channel_free )
+							begin
+								IN_FIFO_RD_int <= eob_sent;
 								fsm_status <= 1;
+							end
 						end
 				8'd1:	begin
+							eob_sent <= 0;
 							IN_FIFO_RD_int <= channel_free & ~block_trailer;
 							OUT_FIFO_WR_int <= IN_FIFO_RD_int & ~IN_FIFO_EMPTY;
-							if( block_trailer == 1 && channel_free == 1 )
+//							if( channel_free )
+//								eob_sent <= 0;
+							if( block_trailer == 1 && channel_free == 1 && eob_sent == 0 )
 							begin
 //								IN_FIFO_RD_int <= 0;
 								EVT_FIFO_END <= 1;
@@ -323,6 +331,7 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 							end
 						end
 				8'd2:	begin
+							eob_sent <= 1;
 							IN_FIFO_RD_int <= 0;
 							EVT_FIFO_END <= 0;
 							if( ~OUT_FIFO_FULL )
@@ -330,6 +339,7 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 						end
 				8'd3:	begin
 							EVT_FIFO_END <= 1;
+							eob_sent <= 1;
 							IN_FIFO_RD_int <= ~OUT_FIFO_FULL;
 							if( ~OUT_FIFO_FULL )
 								fsm_status <= 6;
@@ -338,6 +348,7 @@ module EvtHandler(input CLK, input RSTb, input ENABLE, input USE_SDRAM_FIFO,
 							IN_FIFO_RD_int <= 0;
 							OUT_FIFO_WR_int <= 0;
 							EVT_FIFO_END <= 1;
+							eob_sent <= 1;
 							if( ~OUT_FIFO_FULL )
 								fsm_status <= 0;
 						end
