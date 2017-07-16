@@ -614,7 +614,6 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 		.CLK(Vme_clock),		// input, system
 		.RSTb(RSTb_sync),		// input, system
 		.ENABLE(Fiber_enabled),
-		.USE_SDRAM_FIFO(UseSdramFifo),
 		
 		.FIBER_RESET(Fiber_reset),			// output, to AuroraInterface
 		.FIBER_CHANNEL_UP(Fiber_up),		// input, from AuroraInterface
@@ -633,10 +632,10 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 		.EVT_FIFO_DATA(AuroraEventData),	// output, to AuroraInterface
 		.EVT_FIFO_END(AuroraEndOfFrame),	// output, to AuroraInterface
 		.EVT_FIFO_RD(Fiber_data_re),		// output, to Output FIFO Buffer
-		.EVT_FIFO_EMPTY(UseSdramFifo ? Output_Fifo_Empty : EventBuilder_Empty),	// input, form Output FIFO Buffer
+		.EVT_FIFO_EMPTY(EventBuilder_Empty),	// input, form Output FIFO Buffer
 
 // Local Interface syncronous with CLK
-		.EVB_DATA(UseSdramFifo ? data_to_fiber : {8'h0,EvBuilderDataOut}),	// input
+		.EVB_DATA({8'h0,EvBuilderDataOut}),	// input
 		.FIBER_USER_REb(Fiber_user_reB),	// output
 		.FIBER_USER_WEb(Fiber_user_weB),	// output
 		.FIBER_USER_OEb(Fiber_user_oeB),	// output
