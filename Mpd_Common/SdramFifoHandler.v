@@ -481,7 +481,8 @@ reg [7:0] FIFO_BLOCK_CNT;
 
 wire WriteFsmIdle, ReadFsmIdle;
 //wire GetFormattedData, FormattedDataNotAvailable, FormattedDataAvailable;
-wire LoadMsb, LoadLsb, OutputFifoWr, OutputFifoEndOfBlock;
+wire LoadMsb, LoadLsb, OutputFifoWr;
+wire OutputFifoEndOfBlockIn, OutputFifoEndOfBlockOut;
 
 wire [63:0] Data64Bit, DataOut64bit;
 wire [31:0] SdramWordCount32;
@@ -495,7 +496,10 @@ assign SdramWordCount32 = {7'h0, SDRAM_WORD_COUNT};
 
 
 assign SDRAM_ADDR = WriteFsmIdle ? SDRAM_READ_ADDRESS : SDRAM_WRITE_ADDRESS;
-assign OutputFifoEndOfBlock = (Data64Bit[55:52] == 4'b0010 || Data64Bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+//assign OutputFifoEndOfBlockIn = (Data64Bit[55:52] == 4'b0010 || Data64Bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+//assign OutputFifoEndOfBlockOut = (DataOut64bit[55:52] == 4'b0010 || DataOut64bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+assign OutputFifoEndOfBlockIn = (Data64Bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+assign OutputFifoEndOfBlockOut = (DataOut64bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
 
 /*
 Sdram2432Formatter EvbFormatter(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE),
@@ -525,7 +529,7 @@ SdramBlockReadMachine ReadHandler(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE), .CLEA
 	.LOAD_LSB(LoadLsb), .LOAD_MSB(LoadMsb), .USER_64BIT(USER_64BIT),
 	.OUTPUT_FIFO_WR(OutputFifoWr), .OUTPUT_FIFO_WC(OUTPUT_FIFO_WC),
 	.OUTPUT_FIFO_EMPTY(OUTPUT_FIFO_EMPTY), .OUTPUT_FIFO_FULL(OUTPUT_FIFO_FULL),
-	.EMPTY_EVB(EMPTY_EVB), .OUTPUT_FIFO_EOB(OutputFifoEndOfBlock)
+	.EMPTY_EVB(EMPTY_EVB), .OUTPUT_FIFO_EOB(OutputFifoEndOfBlockIn)
 	);
 	
 Reg32 LsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadLsb), .D(SDRAM_RDATA), .Q(Data64Bit[63:32]));
@@ -570,18 +574,27 @@ begin
 	else
 	begin
 		OutputFifoRdDly <= USER_RE;
-		if( OutputFifoEndOfBlock )
-			case( {OutputFifoRdDly, OutputFifoWr} )
-				2'b00: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
-				2'b01: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
-				2'b10: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
-				2'b11: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
-			endcase
-		else
-			begin
-				IncrBlockCounter <= 0;
-				DecrBlockCounter <= 0;
-			end
+		case( {OutputFifoEndOfBlockIn, OutputFifoEndOfBlockOut, OutputFifoRdDly, OutputFifoWr} )
+			4'b0000: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0001: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0010: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0011: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			
+			4'b0100: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0101: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0110: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
+			4'b0111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			
+			4'b1000: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1001: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
+			4'b1010: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1011: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			
+			4'b1100: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1101: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
+			4'b1110: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
+			4'b1111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+		endcase
 	end
 end
 
@@ -596,9 +609,9 @@ begin
 			FIFO_BLOCK_CNT <= 8'h0;
 		else
 		begin
-			if( IncrBlockCounter == 1 )
+			if( IncrBlockCounter == 1 && FIFO_BLOCK_CNT < 8'hFF )
 				FIFO_BLOCK_CNT <= FIFO_BLOCK_CNT + 1;
-			if( DecrBlockCounter == 1 )
+			if( DecrBlockCounter == 1 && FIFO_BLOCK_CNT > 0 )
 				FIFO_BLOCK_CNT <= FIFO_BLOCK_CNT - 1;
 		end
 	end

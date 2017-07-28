@@ -24,6 +24,8 @@ add wave -noupdate -label MemRdata -radix hexadecimal /_a_TestBench/Dut/mem_loca
 add wave -noupdate -label MemReady /_a_TestBench/Dut/mem_local_ready
 add wave -noupdate -label MemValid /_a_TestBench/Dut/mem_local_rdata_valid
 add wave -noupdate -divider SdramFifoIf
+add wave -noupdate -label IncrBlockCnt /_a_TestBench/Dut/SdramFifoHandler/IncrBlockCounter
+add wave -noupdate -label DecrBlockCnt /_a_TestBench/Dut/SdramFifoHandler/DecrBlockCounter
 add wave -noupdate -label Clk /_a_TestBench/Dut/SdramFifoHandler/CLK
 add wave -noupdate -label RdEvb /_a_TestBench/Dut/SdramFifoHandler/RD_EVB
 add wave -noupdate -label EmptyEvb /_a_TestBench/Dut/SdramFifoHandler/EMPTY_EVB
@@ -50,6 +52,7 @@ add wave -noupdate -label SdramBurstCount -radix unsigned /_a_TestBench/Dut/Sdra
 add wave -noupdate -label OutBurstSize -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/OutBurstSize
 add wave -noupdate -label BurstSize -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/BurstSize
 add wave -noupdate -label Data64Bit -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/Data64Bit
+add wave -noupdate -label DataOut64bit /_a_TestBench/Dut/SdramFifoHandler/DataOut64bit
 add wave -noupdate -label OutputFifoWr /_a_TestBench/Dut/SdramFifoHandler/OutputFifoWr
 add wave -noupdate -label OutputFifoEmpty /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_EMPTY
 add wave -noupdate -label OutputFifoFull /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_FULL
@@ -93,7 +96,7 @@ add wave -noupdate -label ClearLoopDataCounter /_a_TestBench/Dut/TheBuilder/Clea
 add wave -noupdate -label IncrementBlockCounter /_a_TestBench/Dut/TheBuilder/IncrementBlockCounter
 add wave -noupdate -label ClearBlockWordCounter /_a_TestBench/Dut/TheBuilder/ClearBlockWordCounter
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {302875200 ps} 0}
+WaveRestoreCursors {{Cursor 1} {306993600 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 138
 configure wave -valuecolwidth 89
@@ -109,4 +112,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {302321136 ps} {302639288 ps}
+WaveRestoreZoom {308688328 ps} {310069036 ps}
