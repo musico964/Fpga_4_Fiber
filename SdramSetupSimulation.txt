@@ -1,0 +1,13 @@
+SDRAM Setup for faster simulation
+---------------------------------
+
+Look at: Ddr2SdramIf_phy_alt_mem_phy_seq.vhd
+and follow instruction at line 887 and more
+
+set REDUCE_SIM_TIME = 1 in:
+
+Ddr2SdramIf_phy_alt_mem_phy.v line 153
+Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper.v line 136
+
+The startup time of DDR2 should be about 220 us.
+

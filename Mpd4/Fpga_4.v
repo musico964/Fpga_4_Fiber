@@ -225,7 +225,7 @@ output SPARE_CLK_TTL;	// 2.5 V clock
 	wire [12:0] Output_Fifo_Wc;
 
 	wire trigger_time_fifo_rd, trigger_time_fifo_rd_evb, trigger_time_fifo_full, trigger_time_fifo_empty, tdc_select;
-	wire [7:0] trigger_time_fifo_data, EventBuilder_BlockCnt;
+	wire [7:0] trigger_time_fifo_data, EventBuilder_BlockCnt, Obuf_BlockCnt;
 
 	wire ck_40MHz_from_Bkplane, P0CkPll_Locked, ck_40MHz_Main;
 	wire pll_clock_switch0, pll_clock_switch1;
@@ -522,7 +522,7 @@ FastSdramFifoIf SdramFifoHandler(.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.OUTPUT_FIFO_WC(Output_Fifo_Wc),
 	.LEVEL1_THRESHOLD(BusyThreshold), .LEVEL2_THRESHOLD(BusyThresholdLocal),
 	.FIFO_LEVEL1(FifoLevel1), .FIFO_LEVEL2(FifoLevel2), .OUTPUT_FIFO_FULL_L(OutputFifoFullLatched),
-	.DATA_TO_FIBER(data_to_fiber)
+	.DATA_TO_FIBER(data_to_fiber),  .FIFO_BLOCK_CNT(Obuf_BlockCnt)
 	);
 
 Ddr2SdramIf Ddr2SdramIf_inst(
@@ -968,7 +968,7 @@ FifoIf DebugFifoIf(.FIFO_RD(ApvFifo_read),
 	.EV_BUILDER_DATA_OUT(EvBuilderDataOut), .EV_BUILDER_ENABLE(Enable_EventBuilder),
 	.EV_BUILDER_FIFO_EMPTY(EventBuilder_Empty), .EV_BUILDER_FIFO_FULL(EventBuilder_Full),
 	.EV_BUILDER_FIFO_WC({4'h0,EventBuilder_Wc}),
-	.EV_BUILDER_EV_CNT(EventBuilder_EvCnt), .EV_BUILDER_BLOCK_CNT(EventBuilder_BlockCnt),
+	.EV_BUILDER_EV_CNT(EventBuilder_EvCnt), .EV_BUILDER_BLOCK_CNT(EventBuilder_BlockCnt), .OBUF_BLOCK_CNT(Obuf_BlockCnt),
 	.TRIGGER_COUNTER(apv_trigger_count), .SDRAM_INITIALIZED(SdramInitialized),
 	.TRIGGER_TIME_FIFO_RD(trigger_time_fifo_rd), .TRIGGER_TIME_FIFO(trigger_time_fifo_data),
 	.TRIGGER_TIME_FIFO_FULL(trigger_time_fifo_full), .TRIGGER_TIME_FIFO_EMPTY(trigger_time_fifo_empty),

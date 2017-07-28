@@ -961,13 +961,13 @@ package body Ddr2SdramIf_phy_alt_mem_phy_record_pkg IS
     function defaults return t_preset_cal is
         variable output : t_preset_cal;
     begin
-        output.codvw_phase  := 0;
-        output.codvw_size   := 0;
-        output.wlat         := 0;
-        output.rlat         := 0;
-        output.rdv_lat      := 0;
+        output.codvw_phase  := 30;
+        output.codvw_size   := 24;
+        output.wlat         := 3;
+        output.rlat         := 14;
+        output.rdv_lat      := 25;
         output.ac_1t        := '1'; -- default on for FR
-        output.poa_lat      := 0;
+        output.poa_lat      := 20;
         return output;
     end function;
 

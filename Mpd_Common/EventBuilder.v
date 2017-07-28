@@ -406,7 +406,6 @@ $display("@%0t EventBuilder BLOCK_HEADER: 0x%0x", $stime, `BLOCK_HEADER);
 					end
 				2:	begin	// Start Event: EVENT_HEADER
 $display("@%0t EventBuilder EVENT_HEADER: 0x%0x", $stime, `EVENT_HEADER);
-						IncrementBlockCounter <= 0;
 						data_bus <= `EVENT_HEADER;
 						OutputFifo_Write <= 1;
 						EventCounterFifo_Read <= 1;
@@ -532,7 +531,6 @@ $display("@%0t EventBuilder Event Trailer: 0x%0x", $stime, `EVENT_TRAILER);
 						OutputFifo_Write <= 0;
 						if( LoopEventCounter >= EVENT_PER_BLOCK )
 						begin
-							IncrementBlockCounter <= 1;
 							data_bus <= `FILLER_WORD;
 							FillerWordsCounter <= NumberFillerWords;
 							fsm_status <= 13;
@@ -546,7 +544,6 @@ $display("@%0t EventBuilder Event Trailer: 0x%0x", $stime, `EVENT_TRAILER);
 					end
 				13:	begin	// Insert filler words if needed: TO BE CHECKED!!!
 $display("@%0t EventBuilder Inserting %d filler words", $stime, FillerWordsCounter);
-							IncrementBlockCounter <= 0;
 							OutputFifo_Write <= (NumberFillerWords > 0) ? 1 : 0;
 							if( FillerWordsCounter > 0 )
 								FillerWordsCounter <= FillerWordsCounter - 1;
@@ -559,6 +556,7 @@ $display("@%0t EventBuilder Inserting %d filler words", $stime, FillerWordsCount
 					end
 				14:	begin
 $display("@%0t EventBuilder Block Trailer: 0x%0x", $stime, `BLOCK_TRAILER);
+						IncrementBlockCounter <= 1;
 						data_bus <= `BLOCK_TRAILER;
 						OutputFifo_Write <= 1;
 						fsm_status <= 0;

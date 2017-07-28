@@ -13,21 +13,9 @@ add wave -noupdate -label VME_DTACK /_a_TestBench/Dut/VmeIf/VME_DTACK
 add wave -noupdate -label VME_BERR /_a_TestBench/Dut/VmeIf/VME_BERR
 add wave -noupdate -label VME_RETRY /_a_TestBench/Dut/VME_RETRYb
 add wave -noupdate -label module_selected /_a_TestBench/Dut/VmeIf/module_selected
-add wave -noupdate -label internal_data -radix hexadecimal /_a_TestBench/Dut/VmeIf/internal_data
-add wave -noupdate -label data_from_master -radix hexadecimal /_a_TestBench/Dut/data_from_master
-add wave -noupdate -label data_to_master -radix hexadecimal /_a_TestBench/Dut/data_to_master
-add wave -noupdate -label USER_ADDR -radix hexadecimal /_a_TestBench/Dut/VmeIf/USER_ADDR
-add wave -noupdate -label USER_WAITb /_a_TestBench/Dut/VmeIf/USER_WAITb
-add wave -noupdate -label USER_WEb /_a_TestBench/Dut/VmeIf/USER_WEb
-add wave -noupdate -label USER_REb /_a_TestBench/Dut/VmeIf/USER_REb
-add wave -noupdate -label USER_OEb /_a_TestBench/Dut/VmeIf/USER_OEb
 add wave -noupdate -label OBUF_CEb /_a_TestBench/Dut/VmeIf/OBUF_CEb
-add wave -noupdate -label 2eBeats -radix hexadecimal /_a_TestBench/Dut/VmeIf/DataCycleController/BEATS
-add wave -noupdate -label 2eRate -radix hexadecimal /_a_TestBench/Dut/VmeIf/DataCycleController/RATE
-add wave -noupdate -label 2eXam -radix hexadecimal /_a_TestBench/Dut/VmeIf/DataCycleController/XAM
-add wave -noupdate -label 2eBeatCounter -radix hexadecimal /_a_TestBench/Dut/VmeIf/DataCycleController/beat_counter
-add wave -noupdate -color Cyan -label DataCycleStatus -radix unsigned /_a_TestBench/Dut/VmeIf/DataCycleController/status
 add wave -noupdate -divider Sdram
+add wave -noupdate -label SdramInitialized /_a_TestBench/Dut/SdramInitialized
 add wave -noupdate -label MemReadReq /_a_TestBench/Dut/mem_local_read_req
 add wave -noupdate -label MemWriteReq /_a_TestBench/Dut/mem_local_write_req
 add wave -noupdate -label MemAddr -radix hexadecimal /_a_TestBench/Dut/mem_local_addr
@@ -42,32 +30,34 @@ add wave -noupdate -label EmptyEvb /_a_TestBench/Dut/SdramFifoHandler/EMPTY_EVB
 add wave -noupdate -label SdramAddr -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/SDRAM_ADDR
 add wave -noupdate -label SdramWrAddr -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/SDRAM_WRITE_ADDRESS
 add wave -noupdate -label SdramRdAddr -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/SDRAM_READ_ADDRESS
-add wave -noupdate -label SdramWordCount -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/SDRAM_WORD_COUNT
+add wave -noupdate -label SdramWordCount -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/SDRAM_WORD_COUNT
 add wave -noupdate -label SdramWriteReq /_a_TestBench/Dut/SdramFifoHandler/SDRAM_WRITE_REQ
 add wave -noupdate -label SdramReadReq /_a_TestBench/Dut/SdramFifoHandler/SDRAM_READ_REQ
 add wave -noupdate -label SdramReady /_a_TestBench/Dut/SdramFifoHandler/SDRAM_READY
 add wave -noupdate -label SdramDataValid /_a_TestBench/Dut/SdramFifoHandler/SDRAM_DATA_VALID
 add wave -noupdate -label ReadFsmIdle /_a_TestBench/Dut/SdramFifoHandler/ReadFsmIdle
 add wave -noupdate -label WriteFsmIdle /_a_TestBench/Dut/SdramFifoHandler/WriteFsmIdle
-add wave -noupdate -label SdramBurstCount -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/SdramBurstCount
-add wave -noupdate -label OutBurstCount -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/OutBurstCount
-add wave -noupdate -color Gold -label fsmReqStatus -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/fsm_req_status
+add wave -noupdate -color Orange -label fsmWRstatus -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/WriteHandler/fsm_status
+add wave -noupdate -color Firebrick -label fsmReqStatus -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/fsm_req_status
 add wave -noupdate -color Gold -label fsmRdStatus -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/fsm_rd_status
+add wave -noupdate -label Flushing /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/Flushing
+add wave -noupdate -label DataInside /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/DataInside
 add wave -noupdate -label LoadLSB /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/LOAD_LSB
 add wave -noupdate -label LoadMSB /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/LOAD_MSB
 add wave -noupdate -label OddData /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/odd_data
 add wave -noupdate -label LoadSdramBurstCnt /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/LoadSdramBurstCount
-add wave -noupdate -label LoadOutBurstCnt /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/LoadOutBurstCount
+add wave -noupdate -label SdramBurstCount -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/SdramBurstCount
+add wave -noupdate -label OutBurstSize -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/OutBurstSize
+add wave -noupdate -label BurstSize -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/BurstSize
+add wave -noupdate -label Data64Bit -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/Data64Bit
 add wave -noupdate -label OutputFifoWr /_a_TestBench/Dut/SdramFifoHandler/OutputFifoWr
 add wave -noupdate -label OutputFifoEmpty /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_EMPTY
 add wave -noupdate -label OutputFifoFull /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_FULL
 add wave -noupdate -label OutputFifoWc -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_WC
 add wave -noupdate -label UserRe /_a_TestBench/Dut/SdramFifoHandler/USER_RE
-add wave -noupdate -label EvbFifoFullL /_a_TestBench/Dut/EvbFifoFullLatched
-add wave -noupdate -label EvtCntFifoFullL /_a_TestBench/Dut/EventFifoFullLatched
-add wave -noupdate -label TimeFifoFullL /_a_TestBench/Dut/TimeFifoFullLatched
-add wave -noupdate -label OutFifoFullL /_a_TestBench/Dut/OutputFifoFullLatched
 add wave -noupdate -divider TheBuilder
+add wave -noupdate -label APV_TRIGGER /_a_TestBench/Dut/APV_TRIGGER
+add wave -noupdate -label adc0 -radix hexadecimal /_a_TestBench/Dut/adc0
 add wave -noupdate -label DATA_RD -radix hexadecimal /_a_TestBench/Dut/TheBuilder/DATA_RD
 add wave -noupdate -label EVENT_PRESENT -radix hexadecimal /_a_TestBench/Dut/TheBuilder/EVENT_PRESENT
 add wave -noupdate -label EV_CNT -radix hexadecimal /_a_TestBench/Dut/TheBuilder/EV_CNT
@@ -103,9 +93,10 @@ add wave -noupdate -label ClearLoopDataCounter /_a_TestBench/Dut/TheBuilder/Clea
 add wave -noupdate -label IncrementBlockCounter /_a_TestBench/Dut/TheBuilder/IncrementBlockCounter
 add wave -noupdate -label ClearBlockWordCounter /_a_TestBench/Dut/TheBuilder/ClearBlockWordCounter
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {489589628 ps} 0}
-configure wave -namecolwidth 150
-configure wave -valuecolwidth 78
+WaveRestoreCursors {{Cursor 1} {302875200 ps} 0}
+quietly wave cursor active 1
+configure wave -namecolwidth 138
+configure wave -valuecolwidth 89
 configure wave -justifyvalue left
 configure wave -signalnamewidth 0
 configure wave -snapdistance 10
@@ -118,4 +109,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {489570020 ps} {490373940 ps}
+WaveRestoreZoom {302321136 ps} {302639288 ps}

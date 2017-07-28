@@ -133,7 +133,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper (
   localparam PRESET_RLAT                   = 0;
   localparam FORCE_HC                      = 0;
   localparam MEM_IF_DQS_CAPTURE_EN         = 1;
-  localparam REDUCE_SIM_TIME               = 0;
+  localparam REDUCE_SIM_TIME               = 1;
   localparam TINIT_TCK                     = 20000;
   localparam TINIT_RST                     = 0;
   localparam GENERATE_ADDITIONAL_DBG_RTL   = 0;
