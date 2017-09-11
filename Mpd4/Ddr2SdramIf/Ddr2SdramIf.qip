@@ -42,7 +42,10 @@ set_global_assignment -name SEARCH_PATH [file join $::quartus(qip_path) ddr2_hig
 set_global_assignment -name OCP_FILE [file join $::quartus(qip_path) ddr2_high_performance_controller-library/auk_ddr_hp_controller.ocp ]
 set_global_assignment -name EDA_DESIGN_EXTRA_ALTERA_SIM_LIB stratixii_ver -section_id eda_simulation
 set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf.v ]
+set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf_bb.v ]
+set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf.bsf ]
 set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf.qip ]
+set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf.html ]
 set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf_example_driver.v ]
 set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) Ddr2SdramIf_example_top.v ]
 set_global_assignment -name SDC_FILE [file join $::quartus(qip_path) Ddr2SdramIf_example_top.sdc ]

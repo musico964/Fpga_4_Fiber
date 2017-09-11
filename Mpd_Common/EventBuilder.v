@@ -544,7 +544,7 @@ $display("@%0t EventBuilder Event Trailer: 0x%0x", $stime, `EVENT_TRAILER);
 					end
 				13:	begin	// Insert filler words if needed: TO BE CHECKED!!!
 $display("@%0t EventBuilder Inserting %d filler words", $stime, FillerWordsCounter);
-							OutputFifo_Write <= (NumberFillerWords > 0) ? 1 : 0;
+							OutputFifo_Write <= (FillerWordsCounter > 0) ? 1 : 0;
 							if( FillerWordsCounter > 0 )
 								FillerWordsCounter <= FillerWordsCounter - 1;
 							else

@@ -245,9 +245,9 @@ input OUTPUT_FIFO_EMPTY, OUTPUT_FIFO_FULL;
 input EMPTY_EVB;
 input OUTPUT_FIFO_EOB;
 
-reg SDRAM_READ_REQ_x, FSM_IDLE, OUTPUT_FIFO_WR;
+reg SDRAM_READ_REQ_x, OUTPUT_FIFO_WR;
 reg [24:0] SDRAM_READ_ADDRESS;
-reg req_fsm_idle, rd_fsm_idle, odd_data;
+reg req_fsm_idle, odd_data;
 reg LoadSdramBurstCount, Flushing, DataInside;
 reg [7:0] SdramBurstCount;
 reg [7:0] fsm_req_status, fsm_rd_status;
@@ -262,9 +262,7 @@ assign SDRAM_READ_REQ = ( SdramBurstCount > 0 && SDRAM_FIFO_WC > 0 ) ? SDRAM_REA
 assign OutBurstSize = USER_64BIT ? BurstSize_max >> 1 : BurstSize_max;
 assign LOAD_LSB = USER_64BIT ? (SDRAM_DATA_VALID & ~odd_data) : SDRAM_DATA_VALID;
 assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
-
-	always @(posedge CLK)
-		FSM_IDLE <= req_fsm_idle & rd_fsm_idle;	// tried to remove sync DFF: no changes, so keep it
+assign FSM_IDLE = req_fsm_idle;
 
 	always @(posedge CLK)
 		OUTPUT_FIFO_WR <=  USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
@@ -338,14 +336,14 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 					SDRAM_READ_REQ_x <= 0;
 					LoadSdramBurstCount <= 0;
 					Flushing <= 0;
-					if( ENABLE == 1 && SDRAM_READY == 1  && rd_fsm_idle == 1 &&
+					if( ENABLE == 1 && SDRAM_READY == 1  &&
 						(SDRAM_FIFO_WC > (BurstSize<<1)) && ((OutFifoSize - OUTPUT_FIFO_WC) > OutBurstSize) )
 						begin
 							fsm_req_status <= 1;
 							req_fsm_idle <= 0;
 						end
 					else
-						if( ENABLE == 1 && SDRAM_READY == 1  && rd_fsm_idle == 1 &&
+						if( ENABLE == 1 && SDRAM_READY == 1  &&
 							EMPTY_EVB == 1 && SDRAM_FIFO_WC > 0 && DataInside == 1 )	// New version
 							begin
 								fsm_req_status <= 5;
@@ -397,7 +395,12 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 						SDRAM_READ_REQ_x <= 1;
 					end
 					else
-						fsm_req_status <= 9;
+					begin
+//						if( SdramBurstCount == 0 && SDRAM_FIFO_WC == 0)
+//							fsm_req_status <= 0;
+//						else
+							fsm_req_status <= 9;
+					end
 				end
 			9:	begin
 					SDRAM_READ_REQ_x <= 0;
@@ -417,7 +420,6 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 	begin
 		if( RSTb == 0 )
 		begin
-			rd_fsm_idle <= 1;
 			odd_data <= 0;
 			fsm_rd_status <= 0;
 		end
@@ -425,13 +427,11 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 		begin
 			case( fsm_rd_status )
 			0:	begin
-					rd_fsm_idle <= 1;
 					odd_data <= 0;
 					if( ENABLE == 1 )
 						fsm_rd_status <= 1;
 				end
 			1:	begin
-//					rd_fsm_idle <= 0;
 					if( ENABLE == 0 || CLEAR_ADDR == 1 || (OUTPUT_FIFO_WR & OUTPUT_FIFO_EOB) )
 						fsm_rd_status <= 0;
 					if( SDRAM_DATA_VALID == 1 )
@@ -583,12 +583,12 @@ begin
 			4'b0100: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
 			4'b0101: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
 			4'b0110: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
-			4'b0111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
 			
 			4'b1000: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
 			4'b1001: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
 			4'b1010: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
-			4'b1011: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1011: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
 			
 			4'b1100: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
 			4'b1101: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end

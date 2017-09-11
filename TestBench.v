@@ -331,7 +331,7 @@ begin
 	$display("***   Software Trigger");
 	Software_Trigger_Test;
 */
-	
+/*	
 	if( use_sdram == 1 )
 	begin
 // Simple SDRAM access
@@ -350,7 +350,7 @@ begin
 		Sleep(10);
 		VME_A32D32_BlockRead(Sdram_base, 4, rd_data);
 	end
-	
+*/	
 	Sleep(10);
 
 //	$display("***   DAQ test on channel 8");
@@ -358,7 +358,7 @@ begin
 
 	$display("***   Event Building test on channel 0,1,2,3");
 //	SingleChannel_EventBuilding_Test(1, use_sdram, 0);	// check use_sdram
-	MultiChannel_EventBuilding_Test(16'h000F, use_sdram, 1, 20, 1);	// fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
+	MultiChannel_EventBuilding_Test_Block(16'h000F, 20, 1);	// use_sdram = fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
 
 //	SingleChannelSample_Test(8);
 //	SingleChannelSample_Test(8);
@@ -1372,6 +1372,76 @@ begin
 					$display("@%0d     Filler Word", i);
 			end
 		end
+		Sleep(trig_delay_us*100);	// wait delay us
+	end
+	echo = 1;
+end
+endtask
+
+task MultiChannel_EventBuilding_Test_Block;
+input [15:0] ch_mask;
+input [31:0] num_trig;
+input [31:0] trig_delay_us;
+integer j, xx, nw;
+begin
+	ch_count = 0;
+	for(i = 0; i<16; i=i+1)
+	begin
+		if( ch_mask[i] == 1 )
+		begin
+//			ClearPedestalRam(i);
+//			ClearThresholdRam(i);
+			ch_count = ch_count + 1;
+		end
+	end
+// ZERO & ONE Thresholds
+	VME_A24D32_Write('h00134, 32'h0000_0A80);	// ONE = 0xA80
+	VME_A24D32_Write('h00130, 32'h0000_0201);	// ZERO = 0x201
+// SYNC & ENABLE
+	VME_A24D32_Write('h00124, 32'h0000_0022);	// SyncPeriod = 34
+	VME_A24D32_Write('h0012C, ch_mask);			// EnableMask
+	VME_A24D32_Write('h00128, 32'h0000_00FF);	// Marker_channel
+	VME_A24D32_Write('h00108, SamplePerEvent);	// SamplePerEvent: must be the same of MaxTrigOut if APV takes out 1 frame per trigger
+	VME_A24D32_Write('h0010C, 32'h0000_0001);	// Event_Per_Block
+
+//	SetDaqMode(1, 0, 0, 0, 0);	// APV_mode_Simple, no pedestal subtraction, no event building, no sdram fifo
+//	SetDaqMode(3, 1, 1, 1, 1);	// APV_mode_Processed, pedestal subtraction, event building, use_sdram_fifo, fast_readout
+	SetDaqMode(3, 0, 1, 1, 1);	// APV_mode_Processed, no pedestal subtraction, event building, use_sdram_fifo, fast_readout
+	SetTrigMode((MaxTrigOut>1) ? 2 : 1);		// trig_apv_multiple or trig_apv_normal
+
+	adc_pattern = adc_ApvSync_pattern;	// One sync period is 35 x 25 ns = 875 ns
+	Sleep(100);				// Sleep(1) lasts 10 ns
+	echo = 0;
+
+	for(j=0; j<num_trig; j=j+1)
+	begin
+		SendTrigger(1, 0);
+		$display("@%0t Waiting to read trg n: %d", $stime, j);
+
+		rd_data = 0;
+		while( rd_data[23:16] < 1 )
+		begin
+			VME_A24D32_Read('h208, rd_data);	// Read Output Buffer Block Count
+			Sleep(100);	
+		end
+
+		Sleep(10);	
+		VME_A24D32_Read('h224, rd_data);	// Read Word Count (64 bit)
+		nw = rd_data[12:0];
+		xx =  nw / 64;
+		$display("@%0t Start reading trg n: %d, nwords: %d, ntimes: %d", $stime, j, nw, xx);
+		for(i=0; i<xx; i=i+1)
+		begin
+			VME_A32D64_2eSstRead(DataReadout_base, 64, rd_data);
+			Sleep(10);	
+		end
+		xx = nw % 64;
+		$display("@%0t Remaining words: %d", $stime, xx);
+		if( xx > 0 )
+			VME_A32D64_2eSstRead(DataReadout_base, xx, rd_data);
+
+		Sleep(10);	
+		VME_A24D32_Read('h224, rd_data);	// Read Word Count (64 bit)
 		Sleep(trig_delay_us*100);	// wait delay us
 	end
 	echo = 1;

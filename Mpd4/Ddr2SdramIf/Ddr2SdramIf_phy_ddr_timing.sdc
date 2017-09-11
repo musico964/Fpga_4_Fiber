@@ -22,7 +22,7 @@
 # speed_grade : 6
 # local_if_drate : Half
 # pll_ref_clk_mhz : 40.0
-# mem_if_clk_mhz : 200.0
+# mem_if_clk_mhz : 190.0
 # mem_if_preset : Custom (Micron MT47H128M8CF-3)
 # chip_or_dimm : Discrete Device
 # mem_if_dq_per_dqs : 8
@@ -30,7 +30,7 @@
 # ac_clk_select : 90
 
 # The clock period of your memory interface. Don't modify this
-set t(period) 5.000
+set t(period) 5.263
 
 # The worst case skew between any pair of traces which are nominally matched
 set t(board_skew) 0.020
@@ -62,7 +62,7 @@ set t(QHS) 0.340
 # DQS to CK timing on reads
 set t(DQSCK) 0.400
 set t(capture_shift) 2.2
-set t(HP) 2.250
+set t(HP) 2.368
 
 # The maximum allowed length of the mimic path depends on the device family
 if {$::TimeQuestInfo(family) == "Arria GX"} {
@@ -424,15 +424,15 @@ set delay_max -100
 # default launch/latch edge calculation) and a set_input_delay assignment. The
 # terms from both are added together by TimeQuest.
 ################################################################################
-# tDQS_CLK_SKEW_ADDER 0,055
-# tDQS_PSERR 0,052
-# tDQS_PHASE_JITTER 0,045
+# tDQS_CLK_SKEW_ADDER 0.055
+# tDQS_PSERR 0.052
+# tDQS_PHASE_JITTER 0.045
 set uncertainty_su 0.152
-# tDQS_CLK_SKEW_ADDER 0,055
-# tDQS_PSERR 0,052
-# tDQS_PHASE_JITTER 0,045
-# tDCD 0,08
-# tOUTHALFJITTER 0,1
+# tDQS_CLK_SKEW_ADDER 0.055
+# tDQS_PSERR 0.052
+# tDQS_PHASE_JITTER 0.045
+# tDCD 0.08
+# tOUTHALFJITTER 0.1
 set uncertainty_hold 0.332
 			set_max_delay -from [lindex $dqsgroup 2] -to * [expr {-$uncertainty_su + $t(min_additional_dqs_variation) - $fpga_tREAD_CAPTURE_SETUP_ERROR}]
 			set_min_delay -from [lindex $dqsgroup 2] -to * [round_3dp [expr {-0.5 * $t(period) + $t(QHS) + $t(max_additional_dqs_variation) + $uncertainty_hold + $fpga_tREAD_CAPTURE_HOLD_ERROR}]]

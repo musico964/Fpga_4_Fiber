@@ -115,8 +115,8 @@ module Ddr2SdramIf_alt_mem_ddrx_controller_top(
    localparam MEM_TCL                          = 5;
    localparam MEM_TRRD                         = 2;
    localparam MEM_TFAW                         = 8;
-   localparam MEM_TRFC                         = 26;
-   localparam MEM_TREFI                        = 1560;
+   localparam MEM_TRFC                         = 25;
+   localparam MEM_TREFI                        = 1483;
    localparam MEM_TRCD                         = 3;
    localparam MEM_TRP                          = 3;
    localparam MEM_TWR                          = 3;
