@@ -106,7 +106,7 @@ reg ClrCtrlRegister, RUPD_RD_x, RUPD_TRESET_x, RUPD_WR_x, RUPD_RECONFIG_x;
 						RUPD_TRESET_x <= 0;
 						RUPD_WR_x <= 0;
 						RUPD_RECONFIG_x <= 0;
-						case( CtrlRegister )
+						case( RupdCtrlRegister )
 							8'h01: fsm_status <= 1;
 							8'h02: fsm_status <= 2;
 							8'h04: fsm_status <= 3;

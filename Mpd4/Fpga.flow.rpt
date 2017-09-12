@@ -1,5 +1,5 @@
 Flow report for Fpga
-Mon Sep 11 14:47:49 2017
+Tue Sep 12 15:23:30 2017
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
 
 
@@ -40,7 +40,7 @@ applicable agreement for further details.
 +-----------------------------------------------------------------------------------+
 ; Flow Summary                                                                      ;
 +--------------------------------+--------------------------------------------------+
-; Flow Status                    ; Successful - Mon Sep 11 14:47:13 2017            ;
+; Flow Status                    ; Successful - Tue Sep 12 15:22:54 2017            ;
 ; Quartus II 64-Bit Version      ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version ;
 ; Revision Name                  ; Fpga                                             ;
 ; Top-level Entity Name          ; Fpga                                             ;
@@ -48,9 +48,9 @@ applicable agreement for further details.
 ; Device                         ; EP1AGX60DF780C6                                  ;
 ; Timing Models                  ; Final                                            ;
 ; Logic utilization              ; 73 %                                             ;
-;     Combinational ALUTs        ; 25,958 / 48,080 ( 54 % )                         ;
-;     Dedicated logic registers  ; 20,246 / 48,080 ( 42 % )                         ;
-; Total registers                ; 20523                                            ;
+;     Combinational ALUTs        ; 25,627 / 48,080 ( 53 % )                         ;
+;     Dedicated logic registers  ; 20,231 / 48,080 ( 42 % )                         ;
+; Total registers                ; 20508                                            ;
 ; Total pins                     ; 312 / 395 ( 79 % )                               ;
 ; Total virtual pins             ; 0                                                ;
 ; Total block memory bits        ; 1,814,700 / 2,528,640 ( 72 % )                   ;
@@ -311,7 +311,12 @@ applicable agreement for further details.
 ; Fitter                    ; 00:25:30     ; 1.6                     ; 2519 MB             ; 00:36:13                           ;
 ; Assembler                 ; 00:00:12     ; 1.0                     ; 648 MB              ; 00:00:11                           ;
 ; TimeQuest Timing Analyzer ; 00:00:34     ; 1.0                     ; 1192 MB             ; 00:00:34                           ;
-; Total                     ; 05:57:15     ; --                      ; --                  ; 08:11:59                           ;
+; Analysis & Synthesis      ; 00:03:02     ; 1.0                     ; 996 MB              ; 00:02:58                           ;
+; Partition Merge           ; 00:00:09     ; 1.0                     ; 650 MB              ; 00:00:09                           ;
+; Fitter                    ; 00:20:45     ; 1.7                     ; 2291 MB             ; 00:30:30                           ;
+; Assembler                 ; 00:00:11     ; 1.0                     ; 648 MB              ; 00:00:11                           ;
+; TimeQuest Timing Analyzer ; 00:00:34     ; 1.0                     ; 1177 MB             ; 00:00:33                           ;
+; Total                     ; 06:21:56     ; --                      ; --                  ; 08:46:20                           ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -387,6 +392,11 @@ applicable agreement for further details.
 ; Fitter                    ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
 ; Assembler                 ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
 ; TimeQuest Timing Analyzer ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
+; Analysis & Synthesis      ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
+; Partition Merge           ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
+; Fitter                    ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
+; Assembler                 ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
+; TimeQuest Timing Analyzer ; nbmusico         ; Windows 7 ; 6.1        ; x86_64         ;
 +---------------------------+------------------+-----------+------------+----------------+
 
 
@@ -415,6 +425,11 @@ quartus_asm --read_settings_files=off --write_settings_files=off Fpga -c Fpga
 quartus_sta Fpga -c Fpga
 quartus_map --read_settings_files=on --write_settings_files=off Fpga -c Fpga
 quartus_cdb --read_settings_files=off --write_settings_files=off Fpga -c Fpga --merge=on
+quartus_map --read_settings_files=on --write_settings_files=off Fpga -c Fpga
+quartus_cdb --read_settings_files=off --write_settings_files=off Fpga -c Fpga --merge=on
+quartus_fit --read_settings_files=off --write_settings_files=off Fpga -c Fpga
+quartus_asm --read_settings_files=off --write_settings_files=off Fpga -c Fpga
+quartus_sta Fpga -c Fpga
 quartus_map --read_settings_files=on --write_settings_files=off Fpga -c Fpga
 quartus_cdb --read_settings_files=off --write_settings_files=off Fpga -c Fpga --merge=on
 quartus_fit --read_settings_files=off --write_settings_files=off Fpga -c Fpga

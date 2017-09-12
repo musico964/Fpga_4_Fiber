@@ -1,5 +1,5 @@
 Assembler report for Fpga
-Mon Sep 11 14:47:13 2017
+Tue Sep 12 15:22:54 2017
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
 
 
@@ -39,7 +39,7 @@ applicable agreement for further details.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Mon Sep 11 14:47:13 2017 ;
+; Assembler Status      ; Successful - Tue Sep 12 15:22:54 2017 ;
 ; Revision Name         ; Fpga                                  ;
 ; Top-level Entity Name ; Fpga                                  ;
 ; Family                ; Arria GX                              ;
@@ -96,7 +96,7 @@ applicable agreement for further details.
 +----------------+------------------------------------------------------------------------------------------+
 ; Device         ; EP1AGX60DF780C6                                                                          ;
 ; JTAG usercode  ; 0xFFFFFFFF                                                                               ;
-; Checksum       ; 0x02E132D4                                                                               ;
+; Checksum       ; 0x02D4F2EA                                                                               ;
 +----------------+------------------------------------------------------------------------------------------+
 
 
@@ -107,7 +107,7 @@ applicable agreement for further details.
 +--------------------+--------------------------------------------------------------------------------------+
 ; Device             ; EPCS128                                                                              ;
 ; JTAG usercode      ; 0x00000000                                                                           ;
-; Checksum           ; 0xF2F101AA                                                                           ;
+; Checksum           ; 0xF308B683                                                                           ;
 ; Compression Ratio  ; 1                                                                                    ;
 +--------------------+--------------------------------------------------------------------------------------+
 
@@ -127,14 +127,14 @@ applicable agreement for further details.
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Assembler
     Info: Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
-    Info: Processing started: Mon Sep 11 14:47:01 2017
+    Info: Processing started: Tue Sep 12 15:22:43 2017
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off Fpga -c Fpga
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus II 64-Bit Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 660 megabytes
-    Info: Processing ended: Mon Sep 11 14:47:14 2017
-    Info: Elapsed time: 00:00:13
+    Info: Peak virtual memory: 648 megabytes
+    Info: Processing ended: Tue Sep 12 15:22:55 2017
+    Info: Elapsed time: 00:00:12
     Info: Total CPU time (on all processors): 00:00:12
 
 
