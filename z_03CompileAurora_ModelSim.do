@@ -15,9 +15,10 @@ if {[file exists altera_mf]} {
 
 vlib altera_mf
 
+
 vcom  -work altera_mf  {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/altera_mf_components.vhd}
 vcom  -work altera_mf  {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/220pack.vhd}
-vcom  -work altera_mf  {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/sgate_pack.vhd}
+vcom  -work altera_lib  {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/sgate_pack.vhd}
 
 #vcom  -work arriagx_hssi  {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/sgate.vhd}
 vcom  -work arriagx_hssi  {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/arriagx_hssi_components.vhd}

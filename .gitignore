@@ -11,6 +11,8 @@ Mpd4/Jlab_1607/
 Mpd4/*.map
 Mpd4/*.pof
 Mpd4/Ddr2SdramIf_orig/
+Mpd4/Ddr2SdramIf/greybox_tmp/
+Mpd4/Mpd_Common/
 2eSST_SSP_Investigation/
 altera_ip/
 altera_lib/

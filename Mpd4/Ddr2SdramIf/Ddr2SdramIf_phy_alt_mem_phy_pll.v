@@ -141,7 +141,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_pll (
 				.vcooverrange (),
 				.vcounderrange ());
 	defparam
-		altpll_component.charge_pump_current = 127,
+		altpll_component.charge_pump_current = 148,
 		altpll_component.gate_lock_counter = 1048575,
 		altpll_component.gate_lock_signal = "YES",
 		altpll_component.inclk0_input_frequency = 25000,
@@ -150,9 +150,9 @@ module Ddr2SdramIf_phy_alt_mem_phy_pll (
 		altpll_component.loop_filter_c = 16,
 		altpll_component.loop_filter_r = " 1.000000",
 		altpll_component.lpm_type = "altpll",
-		altpll_component.m = 15,
-		altpll_component.m_initial = 1,
-		altpll_component.m_ph = 6,
+		altpll_component.m = 19,
+		altpll_component.m_initial = 2,
+		altpll_component.m_ph = 0,
 		altpll_component.n = 1,
 		altpll_component.operation_mode = "NO_COMPENSATION",
 		altpll_component.pll_type = "Enhanced",
@@ -203,36 +203,36 @@ module Ddr2SdramIf_phy_alt_mem_phy_pll (
 		altpll_component.port_sclkout1 = "PORT_UNUSED",
 		altpll_component.valid_lock_multiplier = 1,
 		altpll_component.vco_post_scale = 1,
-		altpll_component.c0_high = 3,
-		altpll_component.c0_initial = 1,
-		altpll_component.c0_low = 3,
+		altpll_component.c0_high = 4,
+		altpll_component.c0_initial = 2,
+		altpll_component.c0_low = 4,
 		altpll_component.c0_mode = "even",
-		altpll_component.c0_ph = 6,
+		altpll_component.c0_ph = 0,
 		altpll_component.c1_high = 2,
-		altpll_component.c1_initial = 1,
-		altpll_component.c1_low = 1,
-		altpll_component.c1_mode = "odd",
-		altpll_component.c1_ph = 6,
+		altpll_component.c1_initial = 2,
+		altpll_component.c1_low = 2,
+		altpll_component.c1_mode = "even",
+		altpll_component.c1_ph = 0,
 		altpll_component.c2_high = 2,
 		altpll_component.c2_initial = 1,
-		altpll_component.c2_low = 1,
-		altpll_component.c2_mode = "odd",
+		altpll_component.c2_low = 2,
+		altpll_component.c2_mode = "even",
 		altpll_component.c2_ph = 0,
 		altpll_component.c3_high = 2,
-		altpll_component.c3_initial = 1,
-		altpll_component.c3_low = 1,
-		altpll_component.c3_mode = "odd",
-		altpll_component.c3_ph = 6,
+		altpll_component.c3_initial = 2,
+		altpll_component.c3_low = 2,
+		altpll_component.c3_mode = "even",
+		altpll_component.c3_ph = 0,
 		altpll_component.c4_high = 2,
-		altpll_component.c4_initial = 1,
-		altpll_component.c4_low = 1,
-		altpll_component.c4_mode = "odd",
-		altpll_component.c4_ph = 6,
+		altpll_component.c4_initial = 2,
+		altpll_component.c4_low = 2,
+		altpll_component.c4_mode = "even",
+		altpll_component.c4_ph = 0,
 		altpll_component.c5_high = 2,
-		altpll_component.c5_initial = 1,
-		altpll_component.c5_low = 1,
-		altpll_component.c5_mode = "odd",
-		altpll_component.c5_ph = 6,
+		altpll_component.c5_initial = 2,
+		altpll_component.c5_low = 2,
+		altpll_component.c5_mode = "even",
+		altpll_component.c5_ph = 0,
 		altpll_component.clk0_counter = "c0",
 		altpll_component.clk1_counter = "c1",
 		altpll_component.clk2_counter = "c2",
@@ -276,12 +276,12 @@ endmodule
 // Retrieval info: PRIVATE: DUTY_CYCLE3 STRING "50.00000000"
 // Retrieval info: PRIVATE: DUTY_CYCLE4 STRING "50.00000000"
 // Retrieval info: PRIVATE: DUTY_CYCLE5 STRING "50.00000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE0 STRING "100.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE1 STRING "200.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE2 STRING "200.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE3 STRING "200.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE4 STRING "200.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE5 STRING "200.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE0 STRING "95.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE1 STRING "190.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE2 STRING "190.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE3 STRING "190.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE4 STRING "190.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE5 STRING "190.000000"
 // Retrieval info: PRIVATE: EXPLICIT_SWITCHOVER_COUNTER STRING "0"
 // Retrieval info: PRIVATE: EXT_FEEDBACK_RADIO STRING "0"
 // Retrieval info: PRIVATE: GLOCKED_COUNTER_EDIT_CHANGED STRING "1"
@@ -315,12 +315,12 @@ endmodule
 // Retrieval info: PRIVATE: MULT_FACTOR4 NUMERIC "1"
 // Retrieval info: PRIVATE: MULT_FACTOR5 NUMERIC "1"
 // Retrieval info: PRIVATE: NORMAL_MODE_RADIO STRING "0"
-// Retrieval info: PRIVATE: OUTPUT_FREQ0 STRING "100.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ1 STRING "200.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ2 STRING "200.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ3 STRING "200.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ4 STRING "200.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ5 STRING "200.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ0 STRING "95.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ1 STRING "190.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ2 STRING "190.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ3 STRING "190.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ4 STRING "190.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ5 STRING "190.00000000"
 // Retrieval info: PRIVATE: OUTPUT_FREQ_MODE0 STRING "1"
 // Retrieval info: PRIVATE: OUTPUT_FREQ_MODE1 STRING "1"
 // Retrieval info: PRIVATE: OUTPUT_FREQ_MODE2 STRING "1"
@@ -388,7 +388,7 @@ endmodule
 // Retrieval info: PRIVATE: USE_MIL_SPEED_GRADE NUMERIC "0"
 // Retrieval info: PRIVATE: ZERO_DELAY_RADIO STRING "0"
 // Retrieval info: LIBRARY: altera_mf altera_mf.altera_mf_components.all
-// Retrieval info: CONSTANT: CHARGE_PUMP_CURRENT NUMERIC "127"
+// Retrieval info: CONSTANT: CHARGE_PUMP_CURRENT NUMERIC "148"
 // Retrieval info: CONSTANT: GATE_LOCK_COUNTER NUMERIC "1048575"
 // Retrieval info: CONSTANT: GATE_LOCK_SIGNAL STRING "YES"
 // Retrieval info: CONSTANT: INCLK0_INPUT_FREQUENCY NUMERIC "25000"
@@ -397,9 +397,9 @@ endmodule
 // Retrieval info: CONSTANT: LOOP_FILTER_C NUMERIC "16"
 // Retrieval info: CONSTANT: LOOP_FILTER_R STRING " 1.000000"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "altpll"
-// Retrieval info: CONSTANT: M NUMERIC "15"
-// Retrieval info: CONSTANT: M_INITIAL NUMERIC "1"
-// Retrieval info: CONSTANT: M_PH NUMERIC "6"
+// Retrieval info: CONSTANT: M NUMERIC "19"
+// Retrieval info: CONSTANT: M_INITIAL NUMERIC "2"
+// Retrieval info: CONSTANT: M_PH NUMERIC "0"
 // Retrieval info: CONSTANT: N NUMERIC "1"
 // Retrieval info: CONSTANT: OPERATION_MODE STRING "NO_COMPENSATION"
 // Retrieval info: CONSTANT: PLL_TYPE STRING "Enhanced"
@@ -450,36 +450,36 @@ endmodule
 // Retrieval info: CONSTANT: PORT_sclkout1 STRING "PORT_UNUSED"
 // Retrieval info: CONSTANT: VALID_LOCK_MULTIPLIER NUMERIC "1"
 // Retrieval info: CONSTANT: VCO_POST_SCALE NUMERIC "1"
-// Retrieval info: CONSTANT: c0_high NUMERIC "3"
-// Retrieval info: CONSTANT: c0_initial NUMERIC "1"
-// Retrieval info: CONSTANT: c0_low NUMERIC "3"
+// Retrieval info: CONSTANT: c0_high NUMERIC "4"
+// Retrieval info: CONSTANT: c0_initial NUMERIC "2"
+// Retrieval info: CONSTANT: c0_low NUMERIC "4"
 // Retrieval info: CONSTANT: c0_mode STRING "even"
-// Retrieval info: CONSTANT: c0_ph NUMERIC "6"
+// Retrieval info: CONSTANT: c0_ph NUMERIC "0"
 // Retrieval info: CONSTANT: c1_high NUMERIC "2"
-// Retrieval info: CONSTANT: c1_initial NUMERIC "1"
-// Retrieval info: CONSTANT: c1_low NUMERIC "1"
-// Retrieval info: CONSTANT: c1_mode STRING "odd"
-// Retrieval info: CONSTANT: c1_ph NUMERIC "6"
+// Retrieval info: CONSTANT: c1_initial NUMERIC "2"
+// Retrieval info: CONSTANT: c1_low NUMERIC "2"
+// Retrieval info: CONSTANT: c1_mode STRING "even"
+// Retrieval info: CONSTANT: c1_ph NUMERIC "0"
 // Retrieval info: CONSTANT: c2_high NUMERIC "2"
 // Retrieval info: CONSTANT: c2_initial NUMERIC "1"
-// Retrieval info: CONSTANT: c2_low NUMERIC "1"
-// Retrieval info: CONSTANT: c2_mode STRING "odd"
+// Retrieval info: CONSTANT: c2_low NUMERIC "2"
+// Retrieval info: CONSTANT: c2_mode STRING "even"
 // Retrieval info: CONSTANT: c2_ph NUMERIC "0"
 // Retrieval info: CONSTANT: c3_high NUMERIC "2"
-// Retrieval info: CONSTANT: c3_initial NUMERIC "1"
-// Retrieval info: CONSTANT: c3_low NUMERIC "1"
-// Retrieval info: CONSTANT: c3_mode STRING "odd"
-// Retrieval info: CONSTANT: c3_ph NUMERIC "6"
+// Retrieval info: CONSTANT: c3_initial NUMERIC "2"
+// Retrieval info: CONSTANT: c3_low NUMERIC "2"
+// Retrieval info: CONSTANT: c3_mode STRING "even"
+// Retrieval info: CONSTANT: c3_ph NUMERIC "0"
 // Retrieval info: CONSTANT: c4_high NUMERIC "2"
-// Retrieval info: CONSTANT: c4_initial NUMERIC "1"
-// Retrieval info: CONSTANT: c4_low NUMERIC "1"
-// Retrieval info: CONSTANT: c4_mode STRING "odd"
-// Retrieval info: CONSTANT: c4_ph NUMERIC "6"
+// Retrieval info: CONSTANT: c4_initial NUMERIC "2"
+// Retrieval info: CONSTANT: c4_low NUMERIC "2"
+// Retrieval info: CONSTANT: c4_mode STRING "even"
+// Retrieval info: CONSTANT: c4_ph NUMERIC "0"
 // Retrieval info: CONSTANT: c5_high NUMERIC "2"
-// Retrieval info: CONSTANT: c5_initial NUMERIC "1"
-// Retrieval info: CONSTANT: c5_low NUMERIC "1"
-// Retrieval info: CONSTANT: c5_mode STRING "odd"
-// Retrieval info: CONSTANT: c5_ph NUMERIC "6"
+// Retrieval info: CONSTANT: c5_initial NUMERIC "2"
+// Retrieval info: CONSTANT: c5_low NUMERIC "2"
+// Retrieval info: CONSTANT: c5_mode STRING "even"
+// Retrieval info: CONSTANT: c5_ph NUMERIC "0"
 // Retrieval info: CONSTANT: clk0_counter STRING "c0"
 // Retrieval info: CONSTANT: clk1_counter STRING "c1"
 // Retrieval info: CONSTANT: clk2_counter STRING "c2"

@@ -9,15 +9,15 @@
 <PRIVATE name = "export_debug_port" value="false"  type="STRING"  enable="1" />
 <PRIVATE name = "use_generated_memory_model" value="true"  type="STRING"  enable="1" />
 <PRIVATE name = "dedicated_memory_clk_phase_label" value="Dedicated memory clock phase:"  type="STRING"  enable="1" />
-<PRIVATE name = "mem_if_clk_mhz" value="205.0"  type="STRING"  enable="1" />
+<PRIVATE name = "mem_if_clk_mhz" value="200.0"  type="STRING"  enable="1" />
 <PRIVATE name = "quartus_project_exists" value="true"  type="STRING"  enable="1" />
 <PRIVATE name = "local_if_drate" value="Half"  type="STRING"  enable="1" />
 <PRIVATE name = "enable_v72_rsu" value="false"  type="STRING"  enable="1" />
-<PRIVATE name = "local_if_clk_mhz_label" value="102,5"  type="STRING"  enable="1" />
+<PRIVATE name = "local_if_clk_mhz_label" value="100.0"  type="STRING"  enable="1" />
 <PRIVATE name = "new_variant" value="false"  type="STRING"  enable="1" />
 <PRIVATE name = "mem_if_memtype" value="DDR2 SDRAM"  type="STRING"  enable="1" />
 <PRIVATE name = "pll_ref_clk_mhz" value="40.0"  type="STRING"  enable="1" />
-<PRIVATE name = "mem_if_clk_ps_label" value="(4878 ps)"  type="STRING"  enable="1" />
+<PRIVATE name = "mem_if_clk_ps_label" value="(5000 ps)"  type="STRING"  enable="1" />
 <PRIVATE name = "family" value="Arria GX"  type="STRING"  enable="1" />
 <PRIVATE name = "project_family" value="Arria GX"  type="STRING"  enable="1" />
 <PRIVATE name = "speed_grade" value="6"  type="STRING"  enable="1" />
@@ -176,7 +176,7 @@
 <PRIVATE name = "addr_cmd_slew_rate" value="1.0"  type="STRING"  enable="1" />
 <PRIVATE name = "board_tpd_inter_DIMM" value="0.05"  type="STRING"  enable="1" />
 <PRIVATE name = "board_addresscmd_CK_skew" value="0.0"  type="STRING"  enable="1" />
-<PRIVATE name = "t_DS_calculated" value="0,300"  type="STRING"  enable="1" />
+<PRIVATE name = "t_DS_calculated" value="0.300"  type="STRING"  enable="1" />
 <PRIVATE name = "isi_addresscmd_hold" value="0.0"  type="STRING"  enable="1" />
 <PRIVATE name = "t_IS" value="0.4"  type="STRING"  enable="1" />
 <PRIVATE name = "restore_default_toggle" value="false"  type="STRING"  enable="1" />
@@ -185,15 +185,15 @@
 <PRIVATE name = "board_inter_DQS_group_skew" value="0.02"  type="STRING"  enable="1" />
 <PRIVATE name = "isi_addresscmd_setup" value="0.0"  type="STRING"  enable="1" />
 <PRIVATE name = "board_minCK_DQS_skew" value="-0.01"  type="STRING"  enable="1" />
-<PRIVATE name = "t_IS_calculated" value="0,400"  type="STRING"  enable="1" />
+<PRIVATE name = "t_IS_calculated" value="0.400"  type="STRING"  enable="1" />
 <PRIVATE name = "num_slots_or_devices" value="1"  type="STRING"  enable="1" />
 <PRIVATE name = "board_maxCK_DQS_skew" value="0.01"  type="STRING"  enable="1" />
 <PRIVATE name = "board_skew_ps" value="20"  type="STRING"  enable="1" />
 <PRIVATE name = "t_DH" value="0.3"  type="STRING"  enable="1" />
 <PRIVATE name = "ck_ckn_slew_rate" value="2.0"  type="STRING"  enable="1" />
 <PRIVATE name = "isi_DQ" value="0.0"  type="STRING"  enable="1" />
-<PRIVATE name = "t_IH_calculated" value="0,400"  type="STRING"  enable="1" />
-<PRIVATE name = "t_DH_calculated" value="0,300"  type="STRING"  enable="1" />
+<PRIVATE name = "t_IH_calculated" value="0.400"  type="STRING"  enable="1" />
+<PRIVATE name = "t_DH_calculated" value="0.300"  type="STRING"  enable="1" />
 <PRIVATE name = "t_DS" value="0.3"  type="STRING"  enable="1" />
 </NAMESPACE>
 <NAMESPACE name = "simgen">
@@ -206,7 +206,7 @@
 <NAMESPACE name = "simgen2">
 <PRIVATE name = "family" value="Arria GX"  type="STRING"  enable="1" />
 <PRIVATE name = "command" value="--simgen_arbitrary_blackbox=+Ddr2SdramIf_alt_mem_phy_seq_wrapper;+Ddr2SdramIf_alt_mem_phy_reconfig;+Ddr2SdramIf_alt_mem_phy_pll;+Ddr2SdramIf_phy_alt_mem_phy_delay --ini=simgen_tri_bus_opt=on"  type="STRING"  enable="1" />
-<PRIVATE name = "parameter" value="SIMGEN_INITIALIZATION_FILE=C:\Users\musico\Documents\INFN\Jlab12\Fpga_Mpd3_Mpd4\Fpga_4_Fiber\Mpd4\Ddr2SdramIf/Ddr2SdramIf_simgen_init.txt"  type="STRING"  enable="1" />
+<PRIVATE name = "parameter" value="SIMGEN_INITIALIZATION_FILE=/Data/home/musico/Jlab12/Fpga_Mpd3_Mpd4/Fpga_4_Fiber/Mpd4/Ddr2SdramIf/Ddr2SdramIf_simgen_init.txt"  type="STRING"  enable="1" />
 </NAMESPACE>
 <NAMESPACE name = "simgen_enable">
 <PRIVATE name = "language" value="Verilog HDL"  type="STRING"  enable="1" />
@@ -219,6 +219,10 @@
 <PRIVATE name = "filename" value="Ddr2SdramIf_syn.v"  type="STRING"  enable="1" />
 </NAMESPACE>
 <NAMESPACE name = "serializer"/>
+<NAMESPACE name = "quartus_settings">
+<PRIVATE name = "DEVICE" value="EP1AGX60DF780C6"  type="STRING"  enable="1" />
+<PRIVATE name = "FAMILY" value="Arria GX"  type="STRING"  enable="1" />
+</NAMESPACE>
 </PRIVATES>
 <FILES/>
 <PORTS/>

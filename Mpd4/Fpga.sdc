@@ -4,7 +4,7 @@ set_time_format -unit ns -decimal_places 3
 #set master_ck_period 10
 #  40 MHz on MPD 4.0
 set master_ck_period 24.3
-#set master_ck_period 25.0
+#set master_ck_period 24.3
 
 set tSU_static 100
 set tH_static 100
@@ -83,7 +83,7 @@ Ddr2SdramIf:Ddr2SdramIf_inst|Ddr2SdramIf_controller_phy:Ddr2SdramIf_controller_p
 	}
 
 # new 08 Jul 2016
-#set_false_path -from [get_clocks #{Ddr2SdramIf_inst|Ddr2SdramIf_controller_phy_inst|Ddr2SdramIf_phy_inst|Ddr2SdramIf_phy_alt_mem_phy_inst|clk|pll|altpll_component|pll|clk[0]}] -to #[get_clocks {ADC_LCLK*}]
+set_false_path -from [get_clocks {Ddr2SdramIf_inst|Ddr2SdramIf_controller_phy_inst|Ddr2SdramIf_phy_inst|Ddr2SdramIf_phy_alt_mem_phy_inst|clk|pll|altpll_component|pll|clk[0]}] -to [get_clocks {ADC_LCLK*}]
 
 	
 # ADC DDR constraints START
@@ -259,6 +259,10 @@ set_false_path -from {SWITCH[*]} -to {*}
 set_false_path -from GXB_PRESENT -to {*}
 set_false_path -from GXB_RX_LOS -to {*}
 set_false_path -from {TOKEN_IN*} -to {*}
+set_false_path -from {AsmiRemote:*} -to {mpd_fiber_interface:*}
+set_false_path -from {VmeSlaveIf:VmeIf|AdCnt:AddressCounter|addr_counter[*]} -to {TrigMeas:*}
+set_false_path -from {mpd_fiber_interface:AuroraInterface|mpd_fiber_slave:mpd_fiber_slave_inst|mpd_fiber_reg_slave:mpd_fiber_reg_slave_inst|REG_ADDR[*]} -to {TrigMeas:*}
+set_false_path -from {mpd_fiber_interface:AuroraInterface|aurora_8b10b_arria_gxb:aurora_8b10b_arria_gxb_inst|aurora_8b10b_v5_3:*CHANNEL_UP*} -to {*}
 
 # config register outputs are static
 set_false_path -from {RegisterBank:ConfigRegisters_and_Rom|RESET_REG[*]}  -to {*}
@@ -356,8 +360,18 @@ set_multicycle_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|FIF
   set_multicycle_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|DcFifo_32x12:MeanFifo|dcfifo:dcfifo_component|*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|BaselineSubtractorAndThresholdCut:ThrSub|fifo_out_wr} -hold -end 1
   
   set_multicycle_path -from {Histogrammer:AdcHisto*|SpRam_4096x32:HistoRam|altsyncram:altsyncram_component|altsyncram_o2a1:auto_generated|q_a[*]} -to {Histogrammer:AdcHisto*|RamDataIn[*]} -setup -end 2
-  
-  
+
+set_multicycle_path -from {mpd_fiber_interface:AuroraInterface|mpd_fiber_slave:mpd_fiber_slave_inst|mpd_fiber_reg_slave:mpd_fiber_reg_slave_inst|REG_ADDR[*]} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|ApvDataFifo_1024x13:*} -setup -end 2  
+set_multicycle_path -from {mpd_fiber_interface:AuroraInterface|mpd_fiber_slave:mpd_fiber_slave_inst|mpd_fiber_reg_slave:mpd_fiber_reg_slave_inst|REG_ADDR[*]} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|ApvDataFifo_1024x13:*} -hold -end 2  
+
+set_multicycle_path -from {VmeSlaveIf:VmeIf|AdCnt:AddressCounter|addr_counter[*]} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|ApvDataFifo_1024x13:*} -setup -end 2
+set_multicycle_path -from {VmeSlaveIf:VmeIf|AdCnt:AddressCounter|addr_counter[*]} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|ApvDataFifo_1024x13:*} -hold -end 2
+
+set_multicycle_path -from {FiberInterface:FiberInterface_Instance|FiberAddressDecoder:AddressDecoder|CHANNELS_CEb} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|ApvDataFifo_1024x13:*} -setup -end 2
+set_multicycle_path -from {FiberInterface:FiberInterface_Instance|FiberAddressDecoder:AddressDecoder|CHANNELS_CEb} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|ApvDataFifo_1024x13:*} -hold -end 2
+
+
+
   ## TO TEST
   ## set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|altsyncram_sso1:auto_generated|ram*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|fifo_data_in[*]}
   ## set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|altsyncram_sso1:auto_generated|ram*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|accumulator[*]}

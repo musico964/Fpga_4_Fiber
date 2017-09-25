@@ -229,7 +229,7 @@ module SdramBlockReadMachine(RSTb, CLK, ENABLE, CLEAR_ADDR,
 	FSM_IDLE,	// To SdramWriteMachine
 	LOAD_LSB, LOAD_MSB, USER_64BIT,
 	OUTPUT_FIFO_WR, OUTPUT_FIFO_WC,
-	OUTPUT_FIFO_EMPTY, OUTPUT_FIFO_FULL
+	OUTPUT_FIFO_EMPTY, OUTPUT_FIFO_FULL, EMPTY_EVB, OUTPUT_FIFO_EOB
 	);
 input RSTb, CLK, ENABLE, CLEAR_ADDR;
 output SDRAM_READ_REQ;
@@ -242,25 +242,27 @@ input USER_64BIT;
 output OUTPUT_FIFO_WR;
 input [12:0] OUTPUT_FIFO_WC;
 input OUTPUT_FIFO_EMPTY, OUTPUT_FIFO_FULL;
+input EMPTY_EVB;
+input OUTPUT_FIFO_EOB;
 
-reg SDRAM_READ_REQ_x, FSM_IDLE, OUTPUT_FIFO_WR;
+reg SDRAM_READ_REQ_x, OUTPUT_FIFO_WR;
 reg [24:0] SDRAM_READ_ADDRESS;
-reg req_fsm_idle, rd_fsm_idle, odd_data;
-reg LoadSdramBurstCount, LoadOutBurstCount;
-reg [7:0] SdramBurstCount, OutBurstCount;
+reg req_fsm_idle, odd_data;
+reg LoadSdramBurstCount, Flushing, DataInside;
+reg [7:0] SdramBurstCount;
 reg [7:0] fsm_req_status, fsm_rd_status;
 wire [7:0] OutBurstSize;
+wire [7:0] BurstSize;
 
-parameter BurstSize = 64;
+parameter BurstSize_max = 8'd64;
 parameter OutFifoSize = 8192;
 
-assign SDRAM_READ_REQ = ( SdramBurstCount > 0 ) ? SDRAM_READ_REQ_x : 0; 
-assign OutBurstSize = USER_64BIT ? BurstSize >> 1 : BurstSize;
+assign BurstSize = Flushing ? 8'h2 : BurstSize_max;
+assign SDRAM_READ_REQ = ( SdramBurstCount > 0 && SDRAM_FIFO_WC > 0 ) ? SDRAM_READ_REQ_x : 0; 
+assign OutBurstSize = USER_64BIT ? BurstSize_max >> 1 : BurstSize_max;
 assign LOAD_LSB = USER_64BIT ? (SDRAM_DATA_VALID & ~odd_data) : SDRAM_DATA_VALID;
 assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
-
-	always @(posedge CLK)
-		FSM_IDLE <= req_fsm_idle & rd_fsm_idle;	// tried to remove sync DFF: no changes, so keep it
+assign FSM_IDLE = req_fsm_idle;
 
 	always @(posedge CLK)
 		OUTPUT_FIFO_WR <=  USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
@@ -300,23 +302,19 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 		end
 	end
 
-// Output Burst counter
 	always @(posedge CLK or negedge RSTb)
 	begin
 		if( RSTb == 0 )
-			OutBurstCount <= 0;
+		begin
+			DataInside <= 0;
+		end
 		else
 		begin
-			if( CLEAR_ADDR == 1 )
-				OutBurstCount <= 0;
+			if( SDRAM_FIFO_WC > 16 )	// Always > 4
+				DataInside <= 1;
 			else
-			begin
-				if( LoadOutBurstCount == 1 )
-					OutBurstCount <= BurstSize;
-				else
-					if( SDRAM_DATA_VALID == 1 && OutBurstCount > 0 )
-						OutBurstCount <= OutBurstCount - 1;
-			end
+				DataInside <= 0;
+				
 		end
 	end
 
@@ -328,6 +326,7 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 			req_fsm_idle <= 1;
 			SDRAM_READ_REQ_x <= 0;
 			LoadSdramBurstCount <= 0;
+			Flushing <= 0;
 			fsm_req_status <= 0;
 		end
 		else
@@ -336,14 +335,22 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 			0:	begin
 					SDRAM_READ_REQ_x <= 0;
 					LoadSdramBurstCount <= 0;
-					if( ENABLE == 1 && SDRAM_READY == 1  && rd_fsm_idle == 1 &&
+					Flushing <= 0;
+					if( ENABLE == 1 && SDRAM_READY == 1  &&
 						(SDRAM_FIFO_WC > (BurstSize<<1)) && ((OutFifoSize - OUTPUT_FIFO_WC) > OutBurstSize) )
 						begin
 							fsm_req_status <= 1;
 							req_fsm_idle <= 0;
 						end
 					else
-						req_fsm_idle <= 1;
+						if( ENABLE == 1 && SDRAM_READY == 1  &&
+							EMPTY_EVB == 1 && SDRAM_FIFO_WC > 0 && DataInside == 1 )	// New version
+							begin
+								fsm_req_status <= 5;
+								req_fsm_idle <= 0;
+							end
+							else	
+								req_fsm_idle <= 1;
 				end
 			1:	begin
 					LoadSdramBurstCount <= 1;
@@ -364,25 +371,55 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 			4:	begin
 					SDRAM_READ_REQ_x <= 0;
 					if( SdramBurstCount == 0 )
-						fsm_req_status <= 5;
+						fsm_req_status <= 0;
 					else
 						fsm_req_status <= 3;
 				end
-			5:	begin
-					fsm_req_status <= 0;
+
+				5:	begin // Handle SDRAM FIFO flushing if EVB FIFO is empty
+					Flushing <= 1;
+					if( SDRAM_READY == 1 && ((OutFifoSize - OUTPUT_FIFO_WC) > 1) )
+						fsm_req_status <= 6;
 				end
+			6:	begin
+					LoadSdramBurstCount <= 1;
+					fsm_req_status <= 7;
+				end
+			7:	begin
+					LoadSdramBurstCount <= 0;
+					fsm_req_status <= 8;
+				end
+			8:	begin
+					if( SDRAM_READY == 1 && SdramBurstCount > 0 && CAN_READ == 1 )
+					begin
+						SDRAM_READ_REQ_x <= 1;
+					end
+					else
+					begin
+//						if( SdramBurstCount == 0 && SDRAM_FIFO_WC == 0)
+//							fsm_req_status <= 0;
+//						else
+							fsm_req_status <= 9;
+					end
+				end
+			9:	begin
+					SDRAM_READ_REQ_x <= 0;
+					if( SdramBurstCount == 0 && SDRAM_FIFO_WC == 0)
+						fsm_req_status <= 0;
+					else
+						fsm_req_status <= 5;
+				end
+				
 			default: fsm_req_status <= 0;
 			endcase
 		end
 	end
 
-// Block Read state machine: generate odd_data and LoadOutBurstCount
+// Block Read state machine: generate odd_data
 	always @(posedge CLK or negedge RSTb)
 	begin
 		if( RSTb == 0 )
 		begin
-			rd_fsm_idle <= 1;
-			LoadOutBurstCount <= 0;
 			odd_data <= 0;
 			fsm_rd_status <= 0;
 		end
@@ -391,36 +428,14 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 			case( fsm_rd_status )
 			0:	begin
 					odd_data <= 0;
-					LoadOutBurstCount <= 1;
-					if( req_fsm_idle == 0 )
-					begin
+					if( ENABLE == 1 )
 						fsm_rd_status <= 1;
-						rd_fsm_idle <= 0;
-					end
-					else
-						rd_fsm_idle <= 1;
 				end
 			1:	begin
-					LoadOutBurstCount <= 0;
-					if( SDRAM_DATA_VALID == 1 && OutBurstCount > 0 )
-					begin
-						odd_data <= ~odd_data;
-					end
-					else
-						fsm_rd_status <= 2;
-				end
-			2:	begin
+					if( ENABLE == 0 || CLEAR_ADDR == 1 || (OUTPUT_FIFO_WR & OUTPUT_FIFO_EOB) )
+						fsm_rd_status <= 0;
 					if( SDRAM_DATA_VALID == 1 )
-					begin
 						odd_data <= ~odd_data;
-					end
-					if( OutBurstCount == 0 )
-						fsm_rd_status <= 3;
-					else
-						fsm_rd_status <= 1;
-				end
-			3:	begin
-					fsm_rd_status <= 0;
 				end
 			default: fsm_rd_status <= 0;
 			endcase
@@ -438,7 +453,7 @@ module FastSdramFifoIf(RSTb, CLK, ENABLE, CLEAR_ADDR,
 	USER_RE, USER_DATA, USER_64BIT, PACK_DATA,
 	RD_EVB, WC_EVB, DATA_EVB, EMPTY_EVB, FULL_EVB,
 	OUTPUT_FIFO_EMPTY, OUTPUT_FIFO_FULL, OUTPUT_FIFO_WC,
-	LEVEL1_THRESHOLD, LEVEL2_THRESHOLD, FIFO_LEVEL1, FIFO_LEVEL2, OUTPUT_FIFO_FULL_L, DATA_TO_FIBER
+	LEVEL1_THRESHOLD, LEVEL2_THRESHOLD, FIFO_LEVEL1, FIFO_LEVEL2, OUTPUT_FIFO_FULL_L, DATA_TO_FIBER, FIFO_BLOCK_CNT
 	);
 input RSTb, CLK, ENABLE, CLEAR_ADDR;
 output SDRAM_WRITE_REQ, SDRAM_READ_REQ;
@@ -458,13 +473,16 @@ output [12:0] OUTPUT_FIFO_WC;
 input [31:0] LEVEL1_THRESHOLD, LEVEL2_THRESHOLD;
 output FIFO_LEVEL1, FIFO_LEVEL2, OUTPUT_FIFO_FULL_L;
 output [31:0] DATA_TO_FIBER;
+output [7:0] FIFO_BLOCK_CNT;
 
 reg [63:0] USER_DATA;
-reg FIFO_LEVEL1, FIFO_LEVEL2;
+reg FIFO_LEVEL1, FIFO_LEVEL2, IncrBlockCounter, DecrBlockCounter, OutputFifoRdDly;
+reg [7:0] FIFO_BLOCK_CNT;
 
 wire WriteFsmIdle, ReadFsmIdle;
 //wire GetFormattedData, FormattedDataNotAvailable, FormattedDataAvailable;
 wire LoadMsb, LoadLsb, OutputFifoWr;
+wire OutputFifoEndOfBlockIn, OutputFifoEndOfBlockOut;
 
 wire [63:0] Data64Bit, DataOut64bit;
 wire [31:0] SdramWordCount32;
@@ -478,6 +496,10 @@ assign SdramWordCount32 = {7'h0, SDRAM_WORD_COUNT};
 
 
 assign SDRAM_ADDR = WriteFsmIdle ? SDRAM_READ_ADDRESS : SDRAM_WRITE_ADDRESS;
+//assign OutputFifoEndOfBlockIn = (Data64Bit[55:52] == 4'b0010 || Data64Bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+//assign OutputFifoEndOfBlockOut = (DataOut64bit[55:52] == 4'b0010 || DataOut64bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+assign OutputFifoEndOfBlockIn = (Data64Bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+assign OutputFifoEndOfBlockOut = (DataOut64bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
 
 /*
 Sdram2432Formatter EvbFormatter(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE),
@@ -506,10 +528,11 @@ SdramBlockReadMachine ReadHandler(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE), .CLEA
 	.FSM_IDLE(ReadFsmIdle),	// To SdramWriteMachine
 	.LOAD_LSB(LoadLsb), .LOAD_MSB(LoadMsb), .USER_64BIT(USER_64BIT),
 	.OUTPUT_FIFO_WR(OutputFifoWr), .OUTPUT_FIFO_WC(OUTPUT_FIFO_WC),
-	.OUTPUT_FIFO_EMPTY(OUTPUT_FIFO_EMPTY), .OUTPUT_FIFO_FULL(OUTPUT_FIFO_FULL)
+	.OUTPUT_FIFO_EMPTY(OUTPUT_FIFO_EMPTY), .OUTPUT_FIFO_FULL(OUTPUT_FIFO_FULL),
+	.EMPTY_EVB(EMPTY_EVB), .OUTPUT_FIFO_EOB(OutputFifoEndOfBlockIn)
 	);
 	
-Reg32 LsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadLsb), .D(SDRAM_RDATA), .Q(Data64Bit[63:32]));	// inverted for VME ordering
+Reg32 LsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadLsb), .D(SDRAM_RDATA), .Q(Data64Bit[63:32]));
 Reg32 MsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadMsb), .D(SDRAM_RDATA), .Q(Data64Bit[31:0]));
 
 ComputeWordCount WordCountCalculator(.RSTb(RSTb), .CLK(CLK), .CLEAR(CLEAR_ADDR),
@@ -538,5 +561,60 @@ always @(posedge CLK)
 		FIFO_LEVEL2 <= 1;
 	else
 		FIFO_LEVEL2 <= 0;
+
+
+always @(posedge CLK or negedge RSTb)
+begin
+	if( RSTb == 0 )
+	begin
+		IncrBlockCounter <= 0;
+		DecrBlockCounter <= 0;
+		OutputFifoRdDly <= 0;
+	end
+	else
+	begin
+		OutputFifoRdDly <= USER_RE;
+		case( {OutputFifoEndOfBlockIn, OutputFifoEndOfBlockOut, OutputFifoRdDly, OutputFifoWr} )
+			4'b0000: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0001: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0010: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0011: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			
+			4'b0100: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0101: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b0110: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
+			4'b0111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
+			
+			4'b1000: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1001: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
+			4'b1010: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1011: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
+			
+			4'b1100: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+			4'b1101: begin IncrBlockCounter <= 1; DecrBlockCounter <= 0; end
+			4'b1110: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
+			4'b1111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
+		endcase
+	end
+end
+
+// BLOCK Counter
+always @(posedge CLK or negedge RSTb)
+begin
+	if( RSTb == 0 )
+		FIFO_BLOCK_CNT <= 8'h0;
+	else
+	begin
+		if( CLEAR_ADDR == 1 )
+			FIFO_BLOCK_CNT <= 8'h0;
+		else
+		begin
+			if( IncrBlockCounter == 1 && FIFO_BLOCK_CNT < 8'hFF )
+				FIFO_BLOCK_CNT <= FIFO_BLOCK_CNT + 1;
+			if( DecrBlockCounter == 1 && FIFO_BLOCK_CNT > 0 )
+				FIFO_BLOCK_CNT <= FIFO_BLOCK_CNT - 1;
+		end
+	end
+end
 
 endmodule

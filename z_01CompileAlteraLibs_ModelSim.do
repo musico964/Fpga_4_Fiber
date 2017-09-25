@@ -5,6 +5,7 @@ if {[file exists altera_lib]} {
 }
 
 vlib altera_lib
+vmap sgate altera_lib
 
 vlog -vlog01compat -work altera_lib {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/altera_mf.v}
 vlog -vlog01compat -work altera_lib {c:/programs/altera/13.0sp1/quartus/eda/sim_lib/220model.v}

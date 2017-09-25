@@ -103,8 +103,8 @@ module Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper (
   localparam DBG_A_WIDTH                   = 13;
   localparam DQS_PHASE_SETTING             = 3;
   localparam SCAN_CLK_DIVIDE_BY            = 2;
-  localparam PLL_STEPS_PER_CYCLE           = 24;
-  localparam MEM_IF_CLK_PS                 = 5000;
+  localparam PLL_STEPS_PER_CYCLE           = 32;
+  localparam MEM_IF_CLK_PS                 = 5263;
   localparam DQS_DELAY_CTL_WIDTH           = 6;
   localparam MEM_IF_MEMTYPE                = "DDR2";
   localparam RANK_HAS_ADDR_SWAP            = 0;
@@ -134,7 +134,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper (
   localparam FORCE_HC                      = 0;
   localparam MEM_IF_DQS_CAPTURE_EN         = 1;
   localparam REDUCE_SIM_TIME               = 0;
-  localparam TINIT_TCK                     = 20000;
+  localparam TINIT_TCK                     = 19001;
   localparam TINIT_RST                     = 0;
   localparam GENERATE_ADDITIONAL_DBG_RTL   = 0;
   localparam MEM_IF_CS_PER_RANK            = 1;

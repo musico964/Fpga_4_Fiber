@@ -50,6 +50,7 @@ set_global_assignment -name OUTPUT_PIN_LOAD 10 -section_id "3.3-V LVTTL"
 set_global_assignment -name OUTPUT_PIN_LOAD 10 -section_id "2.5 V"
 set_global_assignment -name OUTPUT_PIN_LOAD 10 -section_id LVDS
 set_global_assignment -name OUTPUT_PIN_LOAD 10 -section_id "SSTL-18 CLASS I"
+set_global_assignment -name OUTPUT_PIN_LOAD 10 -section_id "SSTL-18 CLASS II"
 
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 set_instance_assignment -name IO_STANDARD LVDS -to ADC_DATA[15]

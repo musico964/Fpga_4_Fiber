@@ -225,7 +225,7 @@ output SPARE_CLK_TTL;	// 2.5 V clock
 	wire [12:0] Output_Fifo_Wc;
 
 	wire trigger_time_fifo_rd, trigger_time_fifo_rd_evb, trigger_time_fifo_full, trigger_time_fifo_empty, tdc_select;
-	wire [7:0] trigger_time_fifo_data, EventBuilder_BlockCnt;
+	wire [7:0] trigger_time_fifo_data, EventBuilder_BlockCnt, Obuf_BlockCnt;
 
 	wire ck_40MHz_from_Bkplane, P0CkPll_Locked, ck_40MHz_Main;
 	wire pll_clock_switch0, pll_clock_switch1;
@@ -237,13 +237,13 @@ output SPARE_CLK_TTL;	// 2.5 V clock
 	wire ck_125MHz_out, Fiber_reset, Fiber_up, Fiber_hard_err, Fiber_frame_err;
 	wire Vme_Fiber_disable, Vme_Fiber_reset;
 	wire [7:0] Fiber_err_count;
-	wire AuroraFifoFull, AuroraFifoWrite, AuroraEndOfFrame, AuroraFifoWriteTest, AuroraEndOfFrameTest, AuroraTestEnable;
+	wire AuroraFifoFull, AuroraFifoWrite, AuroraEndOfFrame;
 	wire Fiber_enabled;
 	wire Fiber_user_reB, Fiber_user_weB, Fiber_user_oeB, Fiber_Sdram_ceB, Fiber_ConfigReg_ceB, Fiber_DataReadout_ceB;
-	wire [7:0] Fiber_user_ceB, AuroraTestPeriod;
+	wire [7:0] Fiber_user_ceB;
 	wire [15:0] Fiber_user_addr;
 	wire [31:0] Fiber_addr_bus;	//	??? [15:0] ???
-	wire [31:0] Fiber_dout_bus, Fiber_din_bus, AuroraEventData, AuroraEventDataTest;
+	wire [31:0] Fiber_dout_bus, Fiber_din_bus, AuroraEventData;
 	wire Fiber_wr_bus, Fiber_rd_bus, Fiber_ack_bus, Fiber_data_re, Fiber_activity; // Fiber_nack_bus;
 	reg APV_RESET, AllClear;
 	wire [15:0] fir_coeff0, fir_coeff1, fir_coeff2, fir_coeff3, fir_coeff4, fir_coeff5, fir_coeff6, fir_coeff7;
@@ -296,9 +296,6 @@ assign SEL_OUT[0] = IoConfig[2];	// LVTTL default
 assign SEL_OUT[1] = IoConfig[3];	// LVTTL default
 assign USER_OUT[0] = SEL_OUT[0] ? ~BUSY_OUT : BUSY_OUT;	// BUSY signal
 assign USER_OUT[1] = SEL_OUT[1] ? ~ck_40MHz : ck_40MHz;
-
-assign AuroraTestEnable = IoConfig[8];
-assign AuroraTestPeriod = IoConfig[23:16];
 
 // Control signals selector switches from VME to Fiber interface
 assign user_reB  = Fiber_enabled ? Fiber_user_reB : Vme_user_reB;
@@ -459,10 +456,9 @@ assign EventBuilder_Read = ~UseSdramFifo ? (Fiber_enabled ? Fiber_data_re : ApvF
 	Sdram_Fifo_Evb_rd;
 
 assign Fiber_enabled = ~Vme_Fiber_disable;
-assign Fiber_activity = Fiber_enabled & (Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame | AuroraEndOfFrameTest);
+assign Fiber_activity = Fiber_enabled & (Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame);
 
 // For SDRAM Vme accesses: TEST ONLY
-
 	always @(posedge Vme_clock or negedge RSTb_sync)
 	begin
 		if( RSTb_sync == 0 )
@@ -523,7 +519,7 @@ FastSdramFifoIf SdramFifoHandler(.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.OUTPUT_FIFO_WC(Output_Fifo_Wc),
 	.LEVEL1_THRESHOLD(BusyThreshold), .LEVEL2_THRESHOLD(BusyThresholdLocal),
 	.FIFO_LEVEL1(FifoLevel1), .FIFO_LEVEL2(FifoLevel2), .OUTPUT_FIFO_FULL_L(OutputFifoFullLatched),
-	.DATA_TO_FIBER(data_to_fiber)
+	.DATA_TO_FIBER(data_to_fiber),  .FIFO_BLOCK_CNT(Obuf_BlockCnt)
 	);
 
 Ddr2SdramIf Ddr2SdramIf_inst(
@@ -604,9 +600,9 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 
 			.EVT_FIFO_CLK(Vme_clock),		// input
 			.EVT_FIFO_FULL(AuroraFifoFull),	// output
-			.EVT_FIFO_WR(AuroraFifoWrite | AuroraFifoWriteTest),	// input
-			.EVT_FIFO_DATA(AuroraTestEnable ? AuroraEventDataTest : AuroraEventData),		// input [31:0]
-			.EVT_FIFO_END(AuroraEndOfFrame | AuroraEndOfFrameTest),		// input
+			.EVT_FIFO_WR(AuroraFifoWrite),	// input
+			.EVT_FIFO_DATA(AuroraEventData),		// input [31:0]
+			.EVT_FIFO_END(AuroraEndOfFrame),		// input
 
 //			-- Serial(2.5Gbps)/Refclk(62.5MHz) I/O
 			.RXP(GXB_RX), .TXP(GXB_TX), .REFCLK(GXB_CK));
@@ -615,7 +611,6 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 		.CLK(Vme_clock),		// input, system
 		.RSTb(RSTb_sync),		// input, system
 		.ENABLE(Fiber_enabled),
-		.USE_SDRAM_FIFO(UseSdramFifo),
 		
 		.FIBER_RESET(Fiber_reset),			// output, to AuroraInterface
 		.FIBER_CHANNEL_UP(Fiber_up),		// input, from AuroraInterface
@@ -634,10 +629,10 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 		.EVT_FIFO_DATA(AuroraEventData),	// output, to AuroraInterface
 		.EVT_FIFO_END(AuroraEndOfFrame),	// output, to AuroraInterface
 		.EVT_FIFO_RD(Fiber_data_re),		// output, to Output FIFO Buffer
-		.EVT_FIFO_EMPTY(UseSdramFifo ? Output_Fifo_Empty : EventBuilder_Empty),	// input, form Output FIFO Buffer
+		.EVT_FIFO_EMPTY(EventBuilder_Empty),	// input, form Output FIFO Buffer
 
 // Local Interface syncronous with CLK
-		.EVB_DATA(UseSdramFifo ? data_to_fiber : {8'h0,EvBuilderDataOut}),	// input
+		.EVB_DATA({8'h0,EvBuilderDataOut}),	// input
 		.FIBER_USER_REb(Fiber_user_reB),	// output
 		.FIBER_USER_WEb(Fiber_user_weB),	// output
 		.FIBER_USER_OEb(Fiber_user_oeB),	// output
@@ -648,15 +643,6 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 		.FIBER_USER_DATA_IN(data_to_master[31:0]),	// input
 		.FIBER_USER_DATA_OUT(data_from_fiber)		// output
 	);
-/*
-frame_generator TestFiber(
-		.CK(Vme_clock),
-		.RSTb(RSTb_sync), .PERIOD(AuroraTestPeriod),
-		.FULL(AuroraFifoFull), .ENABLE(AuroraTestEnable & Fiber_enabled & Fiber_up),
-		.WR(AuroraFifoWriteTest), .DATA(AuroraEventDataTest), .EOF(AuroraEndOfFrameTest));
-*/
-assign AuroraEventDataTest = 32'b0;
-assign AuroraEndOfFrameTest = 1'b0;
 
 VmeSlaveIf VmeIf(
 	.VME_A(VME_A[31:1]), .VME_AM(VME_AM), .VME_D(VME_D),
@@ -970,7 +956,7 @@ FifoIf DebugFifoIf(.FIFO_RD(ApvFifo_read),
 	.EV_BUILDER_DATA_OUT(EvBuilderDataOut), .EV_BUILDER_ENABLE(Enable_EventBuilder),
 	.EV_BUILDER_FIFO_EMPTY(EventBuilder_Empty), .EV_BUILDER_FIFO_FULL(EventBuilder_Full),
 	.EV_BUILDER_FIFO_WC({4'h0,EventBuilder_Wc}),
-	.EV_BUILDER_EV_CNT(EventBuilder_EvCnt), .EV_BUILDER_BLOCK_CNT(EventBuilder_BlockCnt),
+	.EV_BUILDER_EV_CNT(EventBuilder_EvCnt), .EV_BUILDER_BLOCK_CNT(EventBuilder_BlockCnt), .OBUF_BLOCK_CNT(Obuf_BlockCnt),
 	.TRIGGER_COUNTER(apv_trigger_count), .SDRAM_INITIALIZED(SdramInitialized),
 	.TRIGGER_TIME_FIFO_RD(trigger_time_fifo_rd), .TRIGGER_TIME_FIFO(trigger_time_fifo_data),
 	.TRIGGER_TIME_FIFO_FULL(trigger_time_fifo_full), .TRIGGER_TIME_FIFO_EMPTY(trigger_time_fifo_empty),
@@ -1009,156 +995,3 @@ EventBuilder TheBuilder(.RSTb(RSTb_sync), .TIME_CLK(time_clock), .CLK(Vme_clock)
 
 endmodule
 
-/*
-//
-// Test modules to exercise fiber event data interface
-//
-module time_base(input CK, input RSTb, input [7:0] PERIOD, input ENABLE, output reg SYNC);
-//parameter period = 110 / 2;	// 500 ns
-//parameter period = 110 * 1;	// 1 us
-//parameter period = 110 * 5;	// 5 us
-
-	wire [9:0] period_int;
-	reg [9:0] count;
-	
-	assign period_int = {1'b0, PERIOD, 1'b0};
-	
-	always @(posedge CK or negedge RSTb)
-	begin
-		if( RSTb == 0 )
-		begin
-			count <= 0;
-			SYNC <= 0;
-		end
-		else
-		begin
-			if( ENABLE == 1 )
-			begin
-				count <= count + 1;
-				if( count == period_int )
-				begin
-					count <= 0;
-					SYNC <= 1;
-				end
-				else
-					SYNC <= 0;
-			end
-			else
-			begin
-				count <= 0;
-				SYNC <= 0;
-			end
-		end
-	end
-	
-endmodule
-
-module frame_generator(input CK, input RSTb, input [7:0] PERIOD, input FULL, input ENABLE,
-	output reg WR, output reg [31:0] DATA, output reg EOF);
-
-	reg [4:0] addr;
-	reg [31:0] frame_count;
-	reg frame_gen_enable;
-	wire start_frame_gen;
-		
-	time_base TimeBase(.CK(CK), .RSTb(RSTb), .PERIOD(PERIOD), .ENABLE(ENABLE), .SYNC(start_frame_gen));
-
-	always @(posedge CK)
-	begin
-		case( addr[3:0] )
-			 0: DATA <= 32'h12345678;
-			 1: DATA <= 32'h23456789;
-			 2: DATA <= 32'h3456789a;
-			 3: DATA <= 32'h456789ab;
-			 4: DATA <= 32'h56789abc;
-			 5: DATA <= 32'h6789abcd;
-			 6: DATA <= 32'h789abcde;
-			 7: DATA <= 32'h89abcdef;
-			 8: DATA <= 32'h9abcdef0;
-			 9: DATA <= 32'habcdef01;
-			10: DATA <= 32'hbcdef012;
-			11: DATA <= 32'hcdef0123;
-			12: DATA <= 32'hdef01234;
-			13: DATA <= 32'hef012345;
-			14: DATA <= 32'hf0123456;
-			15: DATA <= frame_count;
-		endcase
-	end
-	
-	always @(posedge CK or negedge RSTb)
-	begin
-		if( RSTb == 0 )
-		begin
-			frame_count <= 0;
-		end
-		else
-		begin
-			if( EOF )
-				frame_count <= frame_count + 1;
-		end
-	end
-	
-	always @(posedge CK or negedge RSTb)
-	begin
-		if( RSTb == 0 )
-		begin
-			frame_gen_enable <= 0;
-		end
-		else
-		begin
-			if( ENABLE == 0 )
-				frame_gen_enable <= 0;
-			else
-			begin
-				if( start_frame_gen == 1 )
-					frame_gen_enable <= 1;
-				if( addr == 17 )
-					frame_gen_enable <= 0;
-			end
-		end
-	end
-
-	always @(posedge CK or negedge RSTb)
-	begin
-		if( RSTb == 0 )
-		begin
-			addr <= 0;
-			EOF <= 0;
-		end
-		else
-		begin
-			if( frame_gen_enable == 1 )
-			begin
-				if( FULL == 0 && EOF == 0 && addr < 17 )
-					addr <= addr + 1;
-				else
-					addr <= 0;
-				if( addr == 16 )
-				begin
-					EOF <= 1;
-				end
-				else
-					EOF <= 0;
-			end
-			else
-				addr <= 0;
-		end
-	end
-
-	always @(posedge CK or negedge RSTb)
-	begin
-		if( RSTb == 0 )
-		begin
-			WR <= 0;
-		end
-		else
-		begin
-			if( addr >= 0 && addr <= 16 && FULL == 0 && frame_gen_enable == 1 )
-				WR <= 1;
-			else
-				WR <= 0;
-		end
-	end
-	
-endmodule
-*/

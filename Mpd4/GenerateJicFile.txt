@@ -1,0 +1,18 @@
+In Quartus:
+File -> Convert Programming Files...
+
+	Programming file type: JTAG Indirect Configuration File (.jic)
+	Configuration Device: EPCS128
+	Mode: Active serial
+	File name: Fpga_4_Fiber_<date>.jic
+	Deselect Create memory Map File
+
+	In "Input files to convert" window:
+		Select Flash Loader
+			Add device...
+				Arria GX - EP1AGX60
+		Select SOF Data
+			Add File...
+				Fpga.sof
+
+	Generate!

@@ -173,10 +173,12 @@ Ddr2SdramIf_full_mem_model Sdram0(
                                      .mem_dqs_n(Sdram_dqsN)
                                   );
 	
-ads5281 ADC1(.PATTERN(adc_pattern), .CLK(adc_conv_ck),
+ads5281_apv ADC1(.APV_TRIGGER(apv_trigger), .APV_MODE(apv_SampleMode), .CLK(adc_conv_ck),
 	.LCLK(adc_lclk1), .ADCLK(adc_ck1), .OUT18(adc_data[7:0]));
-ads5281 ADC2(.PATTERN(adc_pattern), .CLK(adc_conv_ck),
+ads5281_apv ADC2(.APV_TRIGGER(apv_trigger), .APV_MODE(apv_SampleMode), .CLK(adc_conv_ck),
 	.LCLK(adc_lclk2), .ADCLK(adc_ck2), .OUT18(adc_data[15:8]));
+defparam ADC1.data_file_prefix = "apv_data0_";
+defparam ADC2.data_file_prefix = "apv_data1_";
 
 // Time 0 values
 initial
@@ -208,10 +210,10 @@ end
 initial
 begin
 	Sleep(2);
-	use_sdram = 0;
-	dump_fout = 0;
+	use_sdram = 1;
+	dump_fout = 1;
 	MaxTrigOut = 1;
-	apv_SampleMode = 1;	// 0 = 3 samples, 1 = 1 sample
+	apv_SampleMode = 0;	// 0 = 3 samples, 1 = 1 sample
 	if( dump_fout == 1 )
 		fout = $fopen("Dump.txt", "w");
 	issue_RESET;
@@ -310,7 +312,6 @@ begin
 	Sleep(25);
 	$display("***   ADC configurator Test");
 	ADC_Config_Test;
-*/
 
 	Sleep(25);
 	$display("***   I2C Write Test");
@@ -319,7 +320,7 @@ begin
 	$display("***   I2C Read Test");
 	I2C_Byte_Read_Test;
 	Sleep(200);
-/*
+
 	Sleep(25);
 	HiSpeed_Test;
 
@@ -330,7 +331,7 @@ begin
 	$display("***   Software Trigger");
 	Software_Trigger_Test;
 */
-	
+/*	
 	if( use_sdram == 1 )
 	begin
 // Simple SDRAM access
@@ -349,7 +350,7 @@ begin
 		Sleep(10);
 		VME_A32D32_BlockRead(Sdram_base, 4, rd_data);
 	end
-	
+*/	
 	Sleep(10);
 
 //	$display("***   DAQ test on channel 8");
@@ -357,7 +358,7 @@ begin
 
 	$display("***   Event Building test on channel 0,1,2,3");
 //	SingleChannel_EventBuilding_Test(1, use_sdram, 0);	// check use_sdram
-//	MultiChannel_EventBuilding_Test(16'hFFFF, use_sdram, 1, 20, 1);	// fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
+	MultiChannel_EventBuilding_Test_Block(16'h000F, 20, 1);	// use_sdram = fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
 
 //	SingleChannelSample_Test(8);
 //	SingleChannelSample_Test(8);
@@ -900,6 +901,7 @@ input [7:0] n_words;
 output [63:0] rd_data;
 integer j, dtack_val;
 begin
+	$display("@%0t Start 2eSST for %d words", $stime, n_words);
 	#vme_period;
 	sst_addr_cycle = 1;
 	vme_am = 6'h20;	// 6U A32 2eVME
@@ -948,20 +950,20 @@ begin
 		end
 		#vme_period;
 		if( echo == 1 )
-			$display("# VME_A32D32_2eSstRead@%0t: addr=0x%0x, data=0x%0x",
+			$display("# VME_A32D64_2eSstRead@%0t: addr=0x%0x, data=0x%0x",
 				$stime, address+j, rd_data);
 	end
 */
-	for(j=0; j<=n_words; j=j+1)
+	for(j=0; j<n_words; j=j+1)
 	begin
 		if( vme_retryB == 0 )
 		begin
-			$display("#### VME_A32D32_2eSstRead@%0t: got RETRY = 0", $stime);
+			$display("#### VME_A32D64_2eSstRead@%0t: got RETRY = 0", $stime);
 			while( vme_berrB == 1 )
 				#vme_period;
-			$display("#### VME_A32D32_2eSstRead@%0t: got BERR = 0", $stime);
+			$display("#### VME_A32D64_2eSstRead@%0t: got BERR = 0", $stime);
 			if( j != n_words && echo == 1 )
-				$display("# VME_A32D32_2eSstRead@%0t: Slave terminated before reaching nwords (%d != %d",
+				$display("# VME_A32D64_2eSstRead@%0t: Slave terminated before reaching nwords (%d != %d",
 					$stime, j, n_words);
 			j = n_words+1;
 		end
@@ -969,18 +971,19 @@ begin
 		begin
 			while( vme_dtackB == dtack_val && vme_retryB == 1 )
 				#vme_period;
-			$display("#### VME_A32D32_2eSstRead@%0t: got word %d", $stime, j);
+			$display("#### VME_A32D64_2eSstRead@%0t: got word %d", $stime, j);
+			rd_data = {vme_addr, vme_data};
 			if( dtack_val == 0 )
 				dtack_val = 1;
 			else
 				dtack_val = 0;
-			if( dump_fout == 1 && vme_retryB == 1 )
+			if( dump_fout == 1 && vme_retryB == 1 )	// why check on vme_retryB?
 			begin
 				$fwrite(fout, "%0x\n", rd_data[63:32]);
 				$fwrite(fout, "%0x\n", rd_data[31:0]);
 			end
 			if( echo == 1 )
-				$display("# VME_A32D32_2eSstRead@%0t: addr=0x%0x, data=0x%0x",
+				$display("# VME_A32D64_2eSstRead@%0t: addr=0x%0x, data=0x%0x",
 					$stime, address+j, rd_data);
 		end
 	end
@@ -996,6 +999,11 @@ begin
 	vme_am = 6'h3F;
 	vme_writeB = 1;
 	d64_vme_cycle = 0;
+	#vme_period;
+	#vme_period;
+	#vme_period;
+	#vme_period;
+	#vme_period;
 	#vme_period;
 end
 endtask
@@ -1243,20 +1251,22 @@ begin
 	VME_A24D32_Read(ApvFifo_base+(ch<<13), rd_data);
 end
 endtask
+
 task MultiChannel_EventBuilding_Test;
 input [15:0] ch_mask;
 input UseSdramFifo;
 input FastReadout;	// Uses 64 bit 2eSST
 input [31:0] num_trig;
 input [31:0] trig_delay_us;
+integer j, xx;
 begin
 	ch_count = 0;
 	for(i = 0; i<16; i=i+1)
 	begin
 		if( ch_mask[i] == 1 )
 		begin
-			ClearPedestalRam(i);
-			ClearThresholdRam(i);
+//			ClearPedestalRam(i);
+//			ClearThresholdRam(i);
 			ch_count = ch_count + 1;
 		end
 	end
@@ -1277,84 +1287,163 @@ begin
 	adc_pattern = adc_ApvSync_pattern;	// One sync period is 35 x 25 ns = 875 ns
 	Sleep(100);				// Sleep(1) lasts 10 ns
 
-	SendTrigger(num_trig, trig_delay_us);
+	for(j=0; j<num_trig; j=j+1)
+	begin
+		SendTrigger(1, 0);
+		$display("@%0t Start reading trg n: %d", $stime, j);
+		
+		echo = 0;
+		if( FastReadout )
+		begin
+			for(i=0; i<(30 * ch_count); i=i+1)
+			begin
+//				VME_A24D32_Read('h228, rd_data);	// Read LatchedFull
+				rd_data = 0;
+				xx = 0;
+				while( rd_data[7:0] < 32 && xx < 20 )
+				begin
+					VME_A24D32_Read('h224, rd_data);	// Read Word Count
+					xx = xx + 1;
+				end
+				if( rd_data[7:0] > 0 )
+					VME_A32D64_2eSstRead(DataReadout_base, rd_data[7:0], rd_data);
+	//			VME_A32D64_2eVmeRead(DataReadout_base, 64, rd_data);
+			end
+		end
+		else
+		begin
+			for(i=0; i<(2000 * ch_count); i=i+1)	// (131 * SamplePerEvent * ch_count) + 6 + n_filler
+			begin
+				if( UseSdramFifo == 0 )
+				begin
+					rd_data[0] = 1;
+					while( rd_data[0] == 1 )	// while( FIFO data is empty )
+						VME_A24D32_Read(ApvFifo_base+'h20040, rd_data);
+					VME_A24D32_Read(ApvFifo_base, rd_data);
+				end
+				else
+				begin
+					rd_data[30] = 1;
+					while( rd_data[30] == 1 )	// while( Output FIFO is empty )
+						VME_A24D32_Read('h224, rd_data);
+					VME_A32D32_Read(DataReadout_base, rd_data);
+				end
 
+				if( dump_fout == 1 )
+					$fwrite(fout, "%0x\n", rd_data);
+
+				if( rd_data[23:21] == 3'h0 )	// Block Header
+					$display("@%0d     Block Header: Module ID = %d EventPerBlock = %d Block_cnt = %d", i,rd_data[20:16], rd_data[15:8],rd_data[7:0]);
+				if( rd_data[23:20] == 4'h2 )	// End of Block
+					$display("@%0d     Block Trailer: BlockWordCounter = %d", i, rd_data[19:0]);
+				if( rd_data[23:20] == 4'h6 )	// Start of Event
+					$display("@%0d     Event Header: EventCounter %d", i, rd_data[19:0]);
+				if( rd_data[23:20] == 4'hA )	// End of Event
+					$display("@%0d     Event Trailer: loop count = %x, Time_fifo = %x", i, rd_data[19:8], rd_data[7:0]);
+				if( rd_data[23:20] == 4'h6 )	// Trig Time 0
+					$display("@%0d     Trigger Time 0 = 0x%x", i, rd_data[19:0]);
+				if( rd_data[23:20] == 4'h7 )	// Trig Time 1
+					$display("@%0d     Trigger Time 1 = 0x%x", i, rd_data[19:0]);
+				if( rd_data[23:21] == 3'h4 )	// Apv Data
+				begin
+					if( rd_data[20:19] == 0 )	// Apv Header
+					begin
+						$display("@%0d    ApvProcessor Header: MeanMSB = %d, ApvHdr = 0x%x, AdcCh = %d", i,
+							rd_data[17], rd_data[16:4], rd_data[3:0]);
+						mean = rd_data[17] << 11;
+					end
+		//			if( rd_data[20:19] == 1 )	// Apv Data
+					if( rd_data[20:19] == 1 &&  (rd_data[18:12] == 0 || rd_data[18:12] == 127) )	// Apv Data
+						$display("@%0d    ApvDataRaw: APV Ch = %d, Data = 0x%x", i,
+							rd_data[18:12], rd_data[11:0]);
+					if( rd_data[20:19] == 2 )	// Apv Decoder Trailer
+						$display("@%0d    ApvDecoder Trailer: ModuleID = %d, Sample Count = %d, Frame Count = %d", i,
+							rd_data[16:12], rd_data[11:8], rd_data[7:0]);
+					if( rd_data[20:19] == 3 )	// Baseline Subtractor Trailer
+					begin
+						mean = mean + rd_data[19:8];
+						$display("@%0d    ApvProcessor Trailer: MeanLSB = 0x%x, Word Count = %d, Mean = 0x%x", i,
+							rd_data[19:8], rd_data[7:0], mean);
+					end
+				end
+				if( rd_data[23:21] == 3'h6 )	// Data Non Valid
+					$display("@%0d     Non Valid Data", i);
+				if( rd_data[23:21] == 3'h7 )	// Filler
+					$display("@%0d     Filler Word", i);
+			end
+		end
+		Sleep(trig_delay_us*100);	// wait delay us
+	end
+	echo = 1;
+end
+endtask
+
+task MultiChannel_EventBuilding_Test_Block;
+input [15:0] ch_mask;
+input [31:0] num_trig;
+input [31:0] trig_delay_us;
+integer j, xx, nw;
+begin
+	ch_count = 0;
+	for(i = 0; i<16; i=i+1)
+	begin
+		if( ch_mask[i] == 1 )
+		begin
+//			ClearPedestalRam(i);
+//			ClearThresholdRam(i);
+			ch_count = ch_count + 1;
+		end
+	end
+// ZERO & ONE Thresholds
+	VME_A24D32_Write('h00134, 32'h0000_0A80);	// ONE = 0xA80
+	VME_A24D32_Write('h00130, 32'h0000_0201);	// ZERO = 0x201
+// SYNC & ENABLE
+	VME_A24D32_Write('h00124, 32'h0000_0022);	// SyncPeriod = 34
+	VME_A24D32_Write('h0012C, ch_mask);			// EnableMask
+	VME_A24D32_Write('h00128, 32'h0000_00FF);	// Marker_channel
+	VME_A24D32_Write('h00108, SamplePerEvent);	// SamplePerEvent: must be the same of MaxTrigOut if APV takes out 1 frame per trigger
+	VME_A24D32_Write('h0010C, 32'h0000_0001);	// Event_Per_Block
+
+//	SetDaqMode(1, 0, 0, 0, 0);	// APV_mode_Simple, no pedestal subtraction, no event building, no sdram fifo
+//	SetDaqMode(3, 1, 1, 1, 1);	// APV_mode_Processed, pedestal subtraction, event building, use_sdram_fifo, fast_readout
+	SetDaqMode(3, 0, 1, 1, 1);	// APV_mode_Processed, no pedestal subtraction, event building, use_sdram_fifo, fast_readout
+	SetTrigMode((MaxTrigOut>1) ? 2 : 1);		// trig_apv_multiple or trig_apv_normal
+
+	adc_pattern = adc_ApvSync_pattern;	// One sync period is 35 x 25 ns = 875 ns
+	Sleep(100);				// Sleep(1) lasts 10 ns
 	echo = 0;
-	if( FastReadout )
+
+	for(j=0; j<num_trig; j=j+1)
 	begin
-		for(i=0; i<(30 * ch_count); i=i+1)
+		SendTrigger(1, 0);
+		$display("@%0t Waiting to read trg n: %d", $stime, j);
+
+		rd_data = 0;
+		while( rd_data[23:16] < 1 )
 		begin
-			VME_A24D32_Read('h228, rd_data);	// Read LatchedFull
-			rd_data = 0;
-			while( rd_data[12:0] < 64 )
-				VME_A24D32_Read('h224, rd_data);	// Read Word Count
+			VME_A24D32_Read('h208, rd_data);	// Read Output Buffer Block Count
+			Sleep(100);	
+		end
+
+		Sleep(10);	
+		VME_A24D32_Read('h224, rd_data);	// Read Word Count (64 bit)
+		nw = rd_data[12:0];
+		xx =  nw / 64;
+		$display("@%0t Start reading trg n: %d, nwords: %d, ntimes: %d", $stime, j, nw, xx);
+		for(i=0; i<xx; i=i+1)
+		begin
 			VME_A32D64_2eSstRead(DataReadout_base, 64, rd_data);
-//			VME_A32D64_2eVmeRead(DataReadout_base, 64, rd_data);
+			Sleep(10);	
 		end
+		xx = nw % 64;
+		$display("@%0t Remaining words: %d", $stime, xx);
+		if( xx > 0 )
+			VME_A32D64_2eSstRead(DataReadout_base, xx, rd_data);
+
+		Sleep(10);	
+		VME_A24D32_Read('h224, rd_data);	// Read Word Count (64 bit)
+		Sleep(trig_delay_us*100);	// wait delay us
 	end
-	else
-	begin
-		for(i=0; i<(2000 * ch_count); i=i+1)
-		begin
-			if( UseSdramFifo == 0 )
-			begin
-				rd_data[0] = 1;
-				while( rd_data[0] == 1 )	// while( FIFO data is empty )
-					VME_A24D32_Read(ApvFifo_base+'h20040, rd_data);
-				VME_A24D32_Read(ApvFifo_base, rd_data);
-			end
-			else
-			begin
-				rd_data[30] = 1;
-				while( rd_data[30] == 1 )	// while( Output FIFO is empty )
-					VME_A24D32_Read('h200, rd_data);
-				VME_A32D32_Read(DataReadout_base, rd_data);
-			end
-
-			if( dump_fout == 1 )
-				$fwrite(fout, "%0x\n", rd_data);
-
-			if( rd_data[23:21] == 3'h0 )	// Block Header
-				$display("@%0d     Block Header: Module ID = %d EventPerBlock = %d Block_cnt = %d", i,rd_data[20:16], rd_data[15:8],rd_data[7:0]);
-			if( rd_data[23:20] == 4'h2 )	// End of Block
-				$display("@%0d     Block Trailer: BlockWordCounter = %d", i, rd_data[19:0]);
-			if( rd_data[23:20] == 4'h6 )	// Start of Event
-				$display("@%0d     Event Header: EventCounter %d", i, rd_data[19:0]);
-			if( rd_data[23:20] == 4'hA )	// End of Event
-				$display("@%0d     Event Trailer: loop count = %x, Time_fifo = %x", i, rd_data[19:8], rd_data[7:0]);
-			if( rd_data[23:20] == 4'h6 )	// Trig Time 0
-				$display("@%0d     Trigger Time 0 = 0x%x", i, rd_data[19:0]);
-			if( rd_data[23:20] == 4'h7 )	// Trig Time 1
-				$display("@%0d     Trigger Time 1 = 0x%x", i, rd_data[19:0]);
-			if( rd_data[23:21] == 3'h4 )	// Apv Data
-			begin
-				if( rd_data[20:19] == 0 )	// Apv Header
-				begin
-					$display("@%0d    ApvProcessor Header: MeanMSB = %d, ApvHdr = 0x%x, AdcCh = %d", i,
-						rd_data[17], rd_data[16:4], rd_data[3:0]);
-					mean = rd_data[17] << 11;
-				end
-	//			if( rd_data[20:19] == 1 )	// Apv Data
-				if( rd_data[20:19] == 1 &&  (rd_data[18:12] == 0 || rd_data[18:12] == 127) )	// Apv Data
-					$display("@%0d    ApvDataRaw: APV Ch = %d, Data = 0x%x", i,
-						rd_data[18:12], rd_data[11:0]);
-				if( rd_data[20:19] == 2 )	// Apv Decoder Trailer
-					$display("@%0d    ApvDecoder Trailer: ModuleID = %d, Sample Count = %d, Frame Count = %d", i,
-						rd_data[16:12], rd_data[11:8], rd_data[7:0]);
-				if( rd_data[20:19] == 3 )	// Baseline Subtractor Trailer
-				begin
-					mean = mean + rd_data[19:8];
-					$display("@%0d    ApvProcessor Trailer: MeanLSB = 0x%x, Word Count = %d, Mean = 0x%x", i,
-						rd_data[19:8], rd_data[7:0], mean);
-				end
-			end
-			if( rd_data[23:21] == 3'h6 )	// Data Non Valid
-				$display("@%0d     Non Valid Data", i);
-			if( rd_data[23:21] == 3'h7 )	// Filler
-				$display("@%0d     Filler Word", i);
-		end
-	end
-
 	echo = 1;
 end
 endtask
@@ -1370,7 +1459,7 @@ begin
 		Sleep(SamplePerEvent*320);	// Time for SamplePerEvent complete frames
 		adc_pattern = adc_ApvSync_pattern;
 		Sleep(400);
-		Sleep(us_delay*100);	// wait delay us
+//		Sleep(us_delay*100);	// wait delay us
 	end
 end
 endtask

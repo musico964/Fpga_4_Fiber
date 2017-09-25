@@ -1,9 +1,9 @@
 
   ## TO TEST
-set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|altsyncram_sso1:auto_generated|ram*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|fifo_data_in[*]}
-set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|altsyncram_sso1:auto_generated|ram*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|accumulator[*]}
-set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|altsyncram_sso1:auto_generated|ram_*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|n_channel[*]}
-set_false_path -from {Histogrammer:AdcHisto*|CtrlRegister[*]} -to {Histogrammer:AdcHisto*|RamAddr[*]}
+set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|fifo_data_in[*]}
+set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|accumulator[*]}
+set_false_path -from {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|DpRam128x12:*Ram|altsyncram:altsyncram_component|*} -to {EightChannels:ApvProcessor_*|ChannelProcessor:Ch*|ApvReadout:ApvFrameDecoder|n_channel[*]}
+set_false_path -from {Histogrammer:AdcHisto*|CtrlRegister[*]} -to *
 set_false_path -from {Histogrammer:AdcHisto*|HistoEnable} -to {Histogrammer:AdcHisto*|HistoEnableSlow}
 set_false_path -from {OneShot:TurnOnLed*|*} -to {*}
 set_false_path -from {EventBuilder:TheBuilder|AsyncTimeCounter[*]} -to {EventBuilder:TheBuilder|AsyncTimeCounter[*]}
@@ -22,4 +22,7 @@ set_multicycle_path -from * -to {VME_*} -setup -end 3
 set_false_path -from [get_clocks {ADC_FRAME_CK1}] -to [get_clocks {ClockGenerator|altpll_component|pll|clk[0]}]
 set_false_path -from [get_clocks {ADC_FRAME_CK2}] -to [get_clocks {ClockGenerator|altpll_component|pll|clk[0]}]
 
-set_false_path -from {TrigMeas:TriggerMeasurements|TdcFifo_1024x8:*} -to {TrigMeas:TriggerMeasurements|TdcFifo_1024x8:*}
+set_false_path -from {TrigMeas:TriggerMeasurements|*} -to {*}
+
+set_false_path -from {AdcConfigMachine:AdcConfigurator|StartAdc*} -to {AdcConfigMachine:AdcConfigurator|Shreg*}
+set_false_path -from {AdcConfigMachine:AdcConfigurator|BitCnt*} -to {AdcConfigMachine:AdcConfigurator|Shreg*}
