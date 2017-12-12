@@ -259,6 +259,9 @@ wire [7:0] dout_i2c;
 wire Dtack_Rd, Berr_Rd, Retry_Rd;
 wire asmi_ceB, rupd_ceB;
 
+wire OutputFifoBlockWordCount_Rd, OutputFifoBlockWordCount_Empty, OutputFifoBlockWordCount_Full;
+wire [19:0] OutputFifoBlockWordCount_Q;
+
 assign SPARE33 = 0;
 assign SPARE25 = 0;
 assign SPARE_CLK_TTL = 0;
@@ -518,7 +521,9 @@ FastSdramFifoIf SdramFifoHandler(.RSTb(RSTb_sync), .CLK(Vme_clock),
 	.OUTPUT_FIFO_WC(Output_Fifo_Wc),
 	.LEVEL1_THRESHOLD(BusyThreshold), .LEVEL2_THRESHOLD(BusyThresholdLocal),
 	.FIFO_LEVEL1(FifoLevel1), .FIFO_LEVEL2(FifoLevel2), .OUTPUT_FIFO_FULL_L(OutputFifoFullLatched),
-	.DATA_TO_FIBER(data_to_fiber),  .FIFO_BLOCK_CNT(Obuf_BlockCnt)
+	.DATA_TO_FIBER(data_to_fiber),  .FIFO_BLOCK_CNT(Obuf_BlockCnt),
+	.OFIFO_BLOCKWORDCOUNT_RD(OutputFifoBlockWordCount_Rd), .OFIFO_BLOCKWORDCOUNT_EMPTY(OutputFifoBlockWordCount_Empty),
+	.OFIFO_BLOCKWORDCOUNT_FULL(OutputFifoBlockWordCount_Full), .OFIFO_BLOCKWORDCOUNT_Q(OutputFifoBlockWordCount_Q)
 	);
 
 Ddr2SdramIf Ddr2SdramIf_inst(
@@ -963,7 +968,9 @@ FifoIf DebugFifoIf(.FIFO_RD(ApvFifo_read),
 	.SDRAM_FIFO_OVERRUN(Sdram_Fifo_Overrun), .SDRAM_FIFO_WORDCOUNT(Sdram_Fifo_WordCount),
 	.OUTPUT_FIFO_FULL(Output_Fifo_Full), .OUTPUT_FIFO_EMPTY(Output_Fifo_Empty), .OUTPUT_FIFO_WC(Output_Fifo_Wc),
 	.APV_FIFO_FULL_L(ApvFifoFullLatched), .PROC_FIFO_FULL_L(ProcFifoFullLatched), .OUTPUT_FIFO_FULL_L(OutputFifoFullLatched),
-	.EVB_FIFO_FULL_L(EvbFifoFullLatched), .EVENT_FIFO_FULL_L(EventFifoFullLatched), .TIME_FIFO_FULL_L(TimeFifoFullLatched)
+	.EVB_FIFO_FULL_L(EvbFifoFullLatched), .EVENT_FIFO_FULL_L(EventFifoFullLatched), .TIME_FIFO_FULL_L(TimeFifoFullLatched),
+	.OFIFO_BLOCKWORDCOUNT_RD(OutputFifoBlockWordCount_Rd), .OFIFO_BLOCKWORDCOUNT_EMPTY(OutputFifoBlockWordCount_Empty),
+	.OFIFO_BLOCKWORDCOUNT_FULL(OutputFifoBlockWordCount_Full), .OFIFO_BLOCKWORDCOUNT_Q(OutputFifoBlockWordCount_Q)
 	);
 
 	

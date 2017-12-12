@@ -453,7 +453,8 @@ module FastSdramFifoIf(RSTb, CLK, ENABLE, CLEAR_ADDR,
 	USER_RE, USER_DATA, USER_64BIT, PACK_DATA,
 	RD_EVB, WC_EVB, DATA_EVB, EMPTY_EVB, FULL_EVB,
 	OUTPUT_FIFO_EMPTY, OUTPUT_FIFO_FULL, OUTPUT_FIFO_WC,
-	LEVEL1_THRESHOLD, LEVEL2_THRESHOLD, FIFO_LEVEL1, FIFO_LEVEL2, OUTPUT_FIFO_FULL_L, DATA_TO_FIBER, FIFO_BLOCK_CNT
+	LEVEL1_THRESHOLD, LEVEL2_THRESHOLD, FIFO_LEVEL1, FIFO_LEVEL2, OUTPUT_FIFO_FULL_L, DATA_TO_FIBER, FIFO_BLOCK_CNT,
+	OFIFO_BLOCKWORDCOUNT_RD, OFIFO_BLOCKWORDCOUNT_EMPTY, OFIFO_BLOCKWORDCOUNT_FULL, OFIFO_BLOCKWORDCOUNT_Q
 	);
 input RSTb, CLK, ENABLE, CLEAR_ADDR;
 output SDRAM_WRITE_REQ, SDRAM_READ_REQ;
@@ -474,10 +475,15 @@ input [31:0] LEVEL1_THRESHOLD, LEVEL2_THRESHOLD;
 output FIFO_LEVEL1, FIFO_LEVEL2, OUTPUT_FIFO_FULL_L;
 output [31:0] DATA_TO_FIBER;
 output [7:0] FIFO_BLOCK_CNT;
+input OFIFO_BLOCKWORDCOUNT_RD;
+output OFIFO_BLOCKWORDCOUNT_EMPTY;
+output OFIFO_BLOCKWORDCOUNT_FULL;
+output [19:0] OFIFO_BLOCKWORDCOUNT_Q;
 
 reg [63:0] USER_DATA;
 reg FIFO_LEVEL1, FIFO_LEVEL2, IncrBlockCounter, DecrBlockCounter, OutputFifoRdDly;
 reg [7:0] FIFO_BLOCK_CNT;
+reg BlockWordCountWrite;
 
 wire WriteFsmIdle, ReadFsmIdle;
 //wire GetFormattedData, FormattedDataNotAvailable, FormattedDataAvailable;
@@ -543,6 +549,11 @@ Fifo_8192x64 OutputFifo(.aclr(~RSTb|CLEAR_ADDR), .clock(CLK),
 	.data(Data64Bit), .wrreq(OutputFifoWr),
 	.q(DataOut64bit), .rdreq(USER_RE),
 	.empty(OUTPUT_FIFO_EMPTY), .full(OUTPUT_FIFO_FULL), .usedw(OUTPUT_FIFO_WC));
+
+Fifo_16x20 OutputFifo_BlockWordCount(.aclr(~RSTb|CLEAR_ADDR), .clock(CLK),
+	.data(Data64Bit[19:0]), .wrreq(BlockWordCountWrite),
+	.empty(OFIFO_BLOCKWORDCOUNT_EMPTY), .full(OFIFO_BLOCKWORDCOUNT_FULL),
+	.q(OFIFO_BLOCKWORDCOUNT_Q), .rdreq(OFIFO_BLOCKWORDCOUNT_RD));
 	
 SReg OutputFifoFullReg(.CK(CLK), .RSTb(RSTb), .CLR(CLEAR_ADDR), .SET(OUTPUT_FIFO_FULL), .OUT(OUTPUT_FIFO_FULL_L));
 
@@ -595,6 +606,19 @@ begin
 			4'b1110: begin IncrBlockCounter <= 0; DecrBlockCounter <= 1; end
 			4'b1111: begin IncrBlockCounter <= 0; DecrBlockCounter <= 0; end
 		endcase
+	end
+end
+
+always @(posedge CLK or negedge RSTb)
+begin
+	if( RSTb == 0 )
+		BlockWordCountWrite <= 0;
+	else
+	begin
+		if( OutputFifoEndOfBlockIn & OutputFifoWr )
+			BlockWordCountWrite <= 1;
+		else
+			BlockWordCountWrite <= 0;
 	end
 end
 
