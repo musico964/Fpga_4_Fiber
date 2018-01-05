@@ -1,4 +1,5 @@
 /*
+ * Revised version: avoid blocking while waiting events from faulty channels
 forever
 {
 	<write Block Header>
@@ -15,11 +16,11 @@ forever
 		EventWordCount = 3
 		for(j=0; j<SamplePerEvent; j++)
 		{
-			while( !<all enabled channels have Event Present> )
-				;
+			<wait at least 1 channel has Event Present>
+			<wait N (10-16) clock cycles, so all channels should have Event Present>
 			for(i=0; i<16; i++)
 			{
-				if( ChannelEnabled[i] )
+				if( ChannelEnabled[i] && EventPresent[i] )	// skip enabled channels that does not have event
 				{
 					while( ProcessedData[i] != <TRAILER> )	// TRAILER form ChannelProcessor
 					{
@@ -178,6 +179,8 @@ reg IncrementBlockCounter, ClearBlockWordCounter;
 wire [2:0] NumberFillerWords;
 reg [2:0] FillerWordsCounter;
 reg OutputFifoAlmostFull;
+reg [3:0] ChannelWaitCounter;
+wire AtLeastOneChannelHasEvent;
 
 
 assign NumberFillerWords = BlockWordCounter[2:0];
@@ -185,6 +188,7 @@ assign AllEnabledChannelsHaveEvent = ((ENABLE_MASK & EVENT_PRESENT) == ENABLE_MA
 assign EV_CNT = {4'h0,EventCounter};
 assign TRIGGER_TIME_FIFO_RD = DECREMENT_EVENT_COUNT;
 assign ALMOST_FULL = OutputFifoAlmostFull;
+assign AtLeastOneChannelHasEvent = |(ENABLE_MASK & EVENT_PRESENT);
 
 always @(posedge CLK)
 	OutputFifoAlmostFull <= (DATA_OUT_CNT[10:0] > (2048-384) ) ? 1 : 0;
@@ -361,6 +365,7 @@ Fifo_2048x24 OutputFifo(.aclr(FifoReset), .clock(CLK),
 			LoopEventCounter <= 0;
 			LoopSampleCounter <= 0;
 			FillerWordsCounter <= 0;
+			ChannelWaitCounter <= 0;
 			fsm_status <= 0;
 		end
 		else
@@ -386,6 +391,7 @@ end
 						ClearBlockWordCounter <= 1;
 						LoopEventCounter <= 0;
 						LoopSampleCounter <= 0;
+						ChannelWaitCounter <= 0;
 						if( ENABLE_EVBUILD == 1 && ALL_CLEAR == 0 )
 							fsm_status <= 1;
 					end
@@ -426,14 +432,15 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						fsm_status <= 5;
 					end
 				5:	begin
+						ChannelWaitCounter <= 0;
 						TimeCounterFifo_Read <= 0;
 						ClearLoopDataCounter <= 0;
 						OutputFifo_Write <= 0;
 						DECREMENT_EVENT_COUNT <= 0;
-//						if( ENABLE_MASK == 0 )	// just for test event framing without any APV connected
-//							fsm_status <= 11;
-						if( AllEnabledChannelsHaveEvent )
-							fsm_status <= 6;
+						if( AtLeastOneChannelHasEvent )		// Revised
+							fsm_status <= 20;
+//						if( AllEnabledChannelsHaveEvent )	// Original
+//							fsm_status <= 6;
 						else
 						begin
 							if( ENABLE_EVBUILD == 0 || ALL_CLEAR == 1 )
@@ -441,10 +448,17 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						end
 						data_bus <= `APV_CH_DATA;
 					end
+				20: begin	// additional state for revised version
+						ChannelWaitCounter <= ChannelWaitCounter + 1;
+						if( ChannelWaitCounter == 15 )
+							fsm_status <= 6;
+					end
 				6:	begin
 						data_bus <= `APV_CH_DATA;
 						DECREMENT_EVENT_COUNT <= 0;
-						if( ChCounter != 5'h10 && ENABLE_MASK[ChCounter[3:0]] == 0 )
+//						if( ChCounter != 5'h10 && ENABLE_MASK[ChCounter[3:0]] == 0 )	// Original
+// Revised: skip enabled channels without event (faulty cahnnels)
+						if( ChCounter != 5'h10 && (ENABLE_MASK[ChCounter[3:0]] & EVENT_PRESENT[ChCounter[3:0]]) == 0 )
 							ChCounter <= ChCounter + 1;
 						else
 						begin
@@ -455,9 +469,6 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 							end
 							else
 							begin
-//								DATA_RD[ChCounter[3:0]] <= 1;
-//								OutputFifo_Write <= 1;
-//								fsm_status <= 7;
 								fsm_status <= 17;
 							end
 						end
@@ -479,13 +490,11 @@ $display("@%0t EventBuilder LoopSampleCounter = %d, ChCounter = %d", $stime, Loo
 						if( ChannelData_a[20:19] == 2'b11 || LoopDataCounter > `MAX_LOOP_DATA ) // Channel Trailer ID
 						begin
 $display("@%0t EventBuilder Channel Trailer[%d]: 0x%0x", $stime, ChCounter, `APV_CH_DATA);
-//							OutputFifo_Write <= 0;
 							DATA_RD[ChCounter[3:0]] <= 0;
 							fsm_status <= 8;
 						end
 						else
 						begin
-//							OutputFifo_Write <= 1;
 							if( ENABLE_EVBUILD == 0 || ALL_CLEAR == 1 )
 								fsm_status <= 0;
 						end
@@ -516,7 +525,6 @@ $display("@%0t EventBuilder Channel Trailer[%d]: 0x%0x", $stime, ChCounter, `APV
 						if( LoopSampleCounter >= SAMPLE_PER_EVENT )
 							fsm_status <= 11;
 						else
-//							fsm_status <= 6;
 							fsm_status <= 15;
 					end
 				11:	begin
