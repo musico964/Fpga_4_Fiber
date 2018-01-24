@@ -16,8 +16,8 @@ forever
 		EventWordCount = 3
 		for(j=0; j<SamplePerEvent; j++)
 		{
-			<wait at least 1 channel has Event Present>
-			<wait N (10-16) clock cycles, so all channels should have Event Present>
+			<wait at least 1 channel has Event Present for a maximum time>
+			<wait up to 32 clock cycles, so all channels should have Event Present>
 			for(i=0; i<16; i++)
 			{
 				if( ChannelEnabled[i] && EventPresent[i] )	// skip enabled channels that does not have event
@@ -179,16 +179,18 @@ reg IncrementBlockCounter, ClearBlockWordCounter;
 wire [2:0] NumberFillerWords;
 reg [2:0] FillerWordsCounter;
 reg OutputFifoAlmostFull;
-reg [3:0] ChannelWaitCounter;
+reg [4:0] ChannelWaitCounter;
+reg [9:0] FrameWaitCounter;
 wire AtLeastOneChannelHasEvent;
-
+wire [3:0] ChCounterLsb;
 
 assign NumberFillerWords = BlockWordCounter[2:0];
 assign AllEnabledChannelsHaveEvent = ((ENABLE_MASK & EVENT_PRESENT) == ENABLE_MASK) ? 1 : 0;
 assign EV_CNT = {4'h0,EventCounter};
 assign TRIGGER_TIME_FIFO_RD = DECREMENT_EVENT_COUNT;
 assign ALMOST_FULL = OutputFifoAlmostFull;
-assign AtLeastOneChannelHasEvent = |(ENABLE_MASK & EVENT_PRESENT);
+assign AtLeastOneChannelHasEvent = |EVENT_PRESENT;
+assign ChCounterLsb = ChCounter[3:0];
 
 always @(posedge CLK)
 	OutputFifoAlmostFull <= (DATA_OUT_CNT[10:0] > (2048-384) ) ? 1 : 0;
@@ -326,7 +328,7 @@ Fifo_2048x24 OutputFifo(.aclr(FifoReset), .clock(CLK),
 // Channel Data Selector
 	always @(*)
 	begin
-		case(ChCounter[3:0])
+		case(ChCounterLsb)
 			4'd0:  ChannelData_a <= CH_DATA0;
 			4'd1:  ChannelData_a <= CH_DATA1;
 			4'd2:  ChannelData_a <= CH_DATA2;
@@ -366,6 +368,7 @@ Fifo_2048x24 OutputFifo(.aclr(FifoReset), .clock(CLK),
 			LoopSampleCounter <= 0;
 			FillerWordsCounter <= 0;
 			ChannelWaitCounter <= 0;
+			FrameWaitCounter <= 0;
 			fsm_status <= 0;
 		end
 		else
@@ -392,6 +395,7 @@ end
 						LoopEventCounter <= 0;
 						LoopSampleCounter <= 0;
 						ChannelWaitCounter <= 0;
+						FrameWaitCounter <= 0;
 						if( ENABLE_EVBUILD == 1 && ALL_CLEAR == 0 )
 							fsm_status <= 1;
 					end
@@ -429,15 +433,17 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						TimeCounterFifo_Read <= 1;
 						ClearLoopDataCounter <= 1;
 						LoopSampleCounter <= 0;
+						FrameWaitCounter <= 0;
 						fsm_status <= 5;
 					end
 				5:	begin
 						ChannelWaitCounter <= 0;
+						FrameWaitCounter <= FrameWaitCounter + 1;
 						TimeCounterFifo_Read <= 0;
 						ClearLoopDataCounter <= 0;
 						OutputFifo_Write <= 0;
 						DECREMENT_EVENT_COUNT <= 0;
-						if( AtLeastOneChannelHasEvent )		// Revised
+						if( AtLeastOneChannelHasEvent && FrameWaitCounter < 10'h3FF )		// Revised
 							fsm_status <= 20;
 //						if( AllEnabledChannelsHaveEvent )	// Original
 //							fsm_status <= 6;
@@ -445,20 +451,23 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						begin
 							if( ENABLE_EVBUILD == 0 || ALL_CLEAR == 1 )
 								fsm_status <= 0;
+							if( FrameWaitCounter == 10'h3FF )
+								fsm_status <= 14;
 						end
 						data_bus <= `APV_CH_DATA;
 					end
 				20: begin	// additional state for revised version
+						data_bus <= `APV_CH_DATA;
 						ChannelWaitCounter <= ChannelWaitCounter + 1;
-						if( ChannelWaitCounter == 15 )
+						if( ChannelWaitCounter == 31 || AllEnabledChannelsHaveEvent == 1 )
 							fsm_status <= 6;
 					end
 				6:	begin
 						data_bus <= `APV_CH_DATA;
 						DECREMENT_EVENT_COUNT <= 0;
-//						if( ChCounter != 5'h10 && ENABLE_MASK[ChCounter[3:0]] == 0 )	// Original
+//						if( ChCounter != 5'h10 && ENABLE_MASK[ChCounterLsb == 0 )	// Original
 // Revised: skip enabled channels without event (faulty cahnnels)
-						if( ChCounter != 5'h10 && (ENABLE_MASK[ChCounter[3:0]] & EVENT_PRESENT[ChCounter[3:0]]) == 0 )
+						if( ChCounter != 5'h10 && (ENABLE_MASK[ChCounterLsb] & EVENT_PRESENT[ChCounterLsb]) == 0 )
 							ChCounter <= ChCounter + 1;
 						else
 						begin
@@ -478,7 +487,7 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						if( OutputFifoAlmostFull == 0 )	// proceed only if there is room to store at least one complete frame
 						begin
 $display("@%0t EventBuilder LoopSampleCounter = %d, ChCounter = %d", $stime, LoopSampleCounter, ChCounter);
-							DATA_RD[ChCounter[3:0]] <= 1;
+							DATA_RD[ChCounterLsb] <= 1;
 							fsm_status <= 7;
 						end
 					end
@@ -490,7 +499,7 @@ $display("@%0t EventBuilder LoopSampleCounter = %d, ChCounter = %d", $stime, Loo
 						if( ChannelData_a[20:19] == 2'b11 || LoopDataCounter > `MAX_LOOP_DATA ) // Channel Trailer ID
 						begin
 $display("@%0t EventBuilder Channel Trailer[%d]: 0x%0x", $stime, ChCounter, `APV_CH_DATA);
-							DATA_RD[ChCounter[3:0]] <= 0;
+							DATA_RD[ChCounterLsb] <= 0;
 							fsm_status <= 8;
 						end
 						else
@@ -574,6 +583,7 @@ $display("@%0t EventBuilder Block Trailer: 0x%0x", $stime, `BLOCK_TRAILER);
 						fsm_status <= 16;
 					end
 				16:	begin
+						FrameWaitCounter <= 0;
 						fsm_status <= 5;
 					end
 				default: fsm_status <= 0;

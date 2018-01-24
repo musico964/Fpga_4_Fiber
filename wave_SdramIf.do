@@ -58,6 +58,7 @@ add wave -noupdate -label OutputFifoEmpty /_a_TestBench/Dut/SdramFifoHandler/OUT
 add wave -noupdate -label OutputFifoFull /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_FULL
 add wave -noupdate -label OutputFifoWc -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_WC
 add wave -noupdate -label UserRe /_a_TestBench/Dut/SdramFifoHandler/USER_RE
+add wave -noupdate -label BlockWordCountWrite /_a_TestBench/Dut/SdramFifoHandler/BlockWordCountWrite
 add wave -noupdate -divider TheBuilder
 add wave -noupdate -label ENABLE_BASE_SUB /_a_TestBench/Dut/ApvProcessor_0_7/Ch0/ThrSub/ENABLE_BASE_SUB
 add wave -noupdate -label APV_TRIGGER /_a_TestBench/Dut/APV_TRIGGER
@@ -81,6 +82,7 @@ add wave -noupdate -label LoopDataCounter -radix hexadecimal /_a_TestBench/Dut/T
 add wave -noupdate -label LoopEventCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/LoopEventCounter
 add wave -noupdate -label LoopSampleCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/LoopSampleCounter
 add wave -noupdate -color Magenta -height 30 -itemcolor Magenta -label fsm_status -radix unsigned /_a_TestBench/Dut/TheBuilder/fsm_status
+add wave -noupdate -label FrameWaitCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/FrameWaitCounter
 add wave -noupdate -label data_bus -radix hexadecimal /_a_TestBench/Dut/TheBuilder/data_bus
 add wave -noupdate -label DataWordCount -radix hexadecimal /_a_TestBench/Dut/TheBuilder/DataWordCount
 add wave -noupdate -label ChannelData -radix hexadecimal /_a_TestBench/Dut/TheBuilder/ChannelData_a
@@ -89,6 +91,7 @@ add wave -noupdate -label TimeCounterFifo_Data -radix hexadecimal /_a_TestBench/
 add wave -noupdate -label NumberFillerWords -radix hexadecimal /_a_TestBench/Dut/TheBuilder/NumberFillerWords
 add wave -noupdate -label FillerWordsCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/FillerWordsCounter
 add wave -noupdate -label AllEnabledChannelsHaveEvent /_a_TestBench/Dut/TheBuilder/AllEnabledChannelsHaveEvent
+add wave -noupdate -label AtLeastOneChHasEvent /_a_TestBench/Dut/TheBuilder/AtLeastOneChannelHasEvent
 add wave -noupdate -label DECREMENT_EVENT_COUNT /_a_TestBench/Dut/TheBuilder/DECREMENT_EVENT_COUNT
 add wave -noupdate -label EventCounterFifo_Read /_a_TestBench/Dut/TheBuilder/EventCounterFifo_Read
 add wave -noupdate -label TimeCounterFifo_Read /_a_TestBench/Dut/TheBuilder/TimeCounterFifo_Read
@@ -101,7 +104,7 @@ add wave -noupdate -label ClearLoopDataCounter /_a_TestBench/Dut/TheBuilder/Clea
 add wave -noupdate -label IncrementBlockCounter /_a_TestBench/Dut/TheBuilder/IncrementBlockCounter
 add wave -noupdate -label ClearBlockWordCounter /_a_TestBench/Dut/TheBuilder/ClearBlockWordCounter
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {234797287 ps} 0}
+WaveRestoreCursors {{Cursor 1} {250101474 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 138
 configure wave -valuecolwidth 89
@@ -117,4 +120,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {429899506 ps} {430005290 ps}
+WaveRestoreZoom {270359405 ps} {270798813 ps}

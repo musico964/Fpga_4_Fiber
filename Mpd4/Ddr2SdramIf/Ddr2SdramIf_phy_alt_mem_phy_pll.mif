@@ -17,8 +17,8 @@
 --    Device Part: -
 --    Device Speed Grade: 6
 --    PLL Scan Chain: Enhanced PLL (174 bits)
---    File Name: /Data/home/musico/Jlab12/Fpga_Mpd3_Mpd4/Fpga_4_Fiber/Mpd4/Ddr2SdramIf/Ddr2SdramIf_phy_alt_mem_phy_pll.mif
---    Generated: Mon Sep 11 10:07:34 2017
+--    File Name: D:/Users/musico/Documents/INFN/Jlab12/Fpga_Mpd3_Mpd4/Fpga_4_Fiber/Mpd4/Ddr2SdramIf//Ddr2SdramIf_phy_alt_mem_phy_pll.mif
+--    Generated: Wed Jan 24 14:52:06 2018
 
 WIDTH=1;
 DEPTH=174;

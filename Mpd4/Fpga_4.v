@@ -553,7 +553,7 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 	.mem_ba (SDRAM_BA),
 	.mem_cas_n (SDRAM_CASb),
 	.mem_cke (SDRAM_CKE),
-	.mem_clk (SDRAM_CK),
+	.mem_clk (SDRAM_CK),	// output 200 MHz nominal, can run from 125 MHz up to 333 MHz
 	.mem_clk_n (SDRAM_CKb),
 	.mem_cs_n (SDRAM_CSb),
 	.mem_dm (SDRAM_DM),
@@ -563,7 +563,7 @@ Ddr2SdramIf Ddr2SdramIf_inst(
 	.mem_we_n (SDRAM_WEb),
 	.mem_odt (SDRAM_ODT),
 
-	.phy_clk (Vme_clock),		// output 100 MHz
+	.phy_clk (Vme_clock),		// output 100 MHz nominal, half of SDRAM_CK
 
 	.pll_ref_clk (MASTER_CLOCK),// input 40 MHz
 	.reset_phy_clk_n (),		// output

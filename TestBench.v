@@ -1426,8 +1426,11 @@ begin
 		end
 
 		Sleep(10);	
-		VME_A24D32_Read('h224, rd_data);	// Read Word Count (64 bit)
+		VME_A24D32_Read('h224, rd_data);	// Read Output FIFO Word Count (64 bit)
 		nw = rd_data[12:0];
+		VME_A24D32_Read('h22C, rd_data);	// Read Block Word Count in output FIFO (32 bit)
+		nw = rd_data[19:0];
+		nw = (nw+1) / 2;	// in 64 bit words; +1 to keep count of a missing evb count
 		xx =  nw / 64;
 		$display("@%0t Start reading trg n: %d, nwords: %d, ntimes: %d", $stime, j, nw, xx);
 		for(i=0; i<xx; i=i+1)

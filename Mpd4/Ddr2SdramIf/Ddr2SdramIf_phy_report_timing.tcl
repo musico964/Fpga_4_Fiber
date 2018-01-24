@@ -273,15 +273,15 @@ lappend summary [list $opcname 0 "Read Capture ($opcname)" [lindex $res_0 1] [li
 # apply an offset to the default static timing analysis to account for the
 # sequencer's behavior.
 ################################################################################
-# sequencer 0.492
-# tDQSCK 0.8
-# tDQS_CLK_SKEW_ADDER 0.11
-# tDQS_PHASE_JITTER 0.09
+# sequencer 0,492
+# tDQSCK 0,8
+# tDQS_CLK_SKEW_ADDER 0,11
+# tDQS_PHASE_JITTER 0,09
 set resync_uncertainty 1.492
-# sequencer 0.246
-# tDQSCK 0.4
-# tDQS_CLK_SKEW_ADDER 0.055
-# tDQS_PHASE_JITTER 0.045
+# sequencer 0,246
+# tDQSCK 0,4
+# tDQS_CLK_SKEW_ADDER 0,055
+# tDQS_PHASE_JITTER 0,045
 set postamble_uncertainty 0.746
 set offset 100.000
 set raw_resync_setup_slack -1000

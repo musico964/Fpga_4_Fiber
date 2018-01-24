@@ -34,7 +34,7 @@
 
 
 //altpll_reconfig CBX_AUTO_BLACKBOX="ALL" device_family="Arria GX" init_from_rom="YES" pll_type="ENHANCED" scan_init_file="Ddr2SdramIf_phy_alt_mem_phy_pll.mif" busy clock counter_param counter_type data_in data_out pll_areset pll_areset_in pll_scanclk pll_scandata pll_scandataout pll_scandone pll_scanread pll_scanwrite read_param reconfig reset write_param
-//VERSION_BEGIN 13.0 cbx_altpll_reconfig 2013:06:12:18:04:00:SJ cbx_altsyncram 2013:06:12:18:04:00:SJ cbx_cycloneii 2013:06:12:18:04:00:SJ cbx_lpm_add_sub 2013:06:12:18:04:00:SJ cbx_lpm_compare 2013:06:12:18:04:00:SJ cbx_lpm_counter 2013:06:12:18:04:00:SJ cbx_lpm_decode 2013:06:12:18:04:00:SJ cbx_lpm_mux 2013:06:12:18:04:00:SJ cbx_mgl 2013:06:12:18:04:42:SJ cbx_stratix 2013:06:12:18:04:00:SJ cbx_stratixii 2013:06:12:18:04:00:SJ cbx_stratixiii 2013:06:12:18:04:00:SJ cbx_stratixv 2013:06:12:18:04:00:SJ cbx_util_mgl 2013:06:12:18:04:00:SJ  VERSION_END
+//VERSION_BEGIN 13.0 cbx_altpll_reconfig 2013:06:12:18:03:40:SJ cbx_altsyncram 2013:06:12:18:03:40:SJ cbx_cycloneii 2013:06:12:18:03:40:SJ cbx_lpm_add_sub 2013:06:12:18:03:40:SJ cbx_lpm_compare 2013:06:12:18:03:40:SJ cbx_lpm_counter 2013:06:12:18:03:40:SJ cbx_lpm_decode 2013:06:12:18:03:40:SJ cbx_lpm_mux 2013:06:12:18:03:40:SJ cbx_mgl 2013:06:12:18:04:42:SJ cbx_stratix 2013:06:12:18:03:40:SJ cbx_stratixii 2013:06:12:18:03:40:SJ cbx_stratixiii 2013:06:12:18:03:40:SJ cbx_stratixv 2013:06:12:18:03:40:SJ cbx_util_mgl 2013:06:12:18:03:40:SJ  VERSION_END
 // synthesis VERILOG_INPUT_VERSION VERILOG_2001
 // altera message_off 10463
 
