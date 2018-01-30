@@ -4,6 +4,33 @@ SDRAM Setup for faster simulation
 Look at: Ddr2SdramIf_phy_alt_mem_phy_seq.vhd
 and follow instruction at line 887 and more
 
+    function defaults return t_preset_cal is
+
+        variable output : t_preset_cal;
+    
+    begin
+
+        output.codvw_phase  := 40;
+
+        output.codvw_size   := 32;
+
+        output.wlat         := 3;
+
+        output.rlat         := 14;
+
+        output.rdv_lat      := 25;
+
+        output.ac_1t        := '1'; -- default on for FR
+
+        output.poa_lat      := 21;
+
+        return output;
+
+    end function;
+
+
+
+
 set REDUCE_SIM_TIME = 1 in:
 
 Ddr2SdramIf_phy_alt_mem_phy.v line 153

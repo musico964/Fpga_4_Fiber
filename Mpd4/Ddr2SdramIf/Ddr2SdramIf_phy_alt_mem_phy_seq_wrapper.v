@@ -101,10 +101,10 @@ module Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper (
   localparam MEM_IF_CS_WIDTH               = 1;
   localparam RESYNCHRONISE_AVALON_DBG      = 0;
   localparam DBG_A_WIDTH                   = 13;
-  localparam DQS_PHASE_SETTING             = 3;
+  localparam DQS_PHASE_SETTING             = 2;
   localparam SCAN_CLK_DIVIDE_BY            = 2;
   localparam PLL_STEPS_PER_CYCLE           = 32;
-  localparam MEM_IF_CLK_PS                 = 5263;
+  localparam MEM_IF_CLK_PS                 = 6250;
   localparam DQS_DELAY_CTL_WIDTH           = 6;
   localparam MEM_IF_MEMTYPE                = "DDR2";
   localparam RANK_HAS_ADDR_SWAP            = 0;
@@ -125,7 +125,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper (
   localparam WRITE_DESKEW_T9I              = 0;
   localparam WRITE_DESKEW_HC_T9I           = 0;
   localparam WRITE_DESKEW_RANGE            = 0;
-  localparam IOE_PHASES_PER_TCK            = 16;
+  localparam IOE_PHASES_PER_TCK            = 12;
   localparam ADV_LAT_WIDTH                 = 5;
   localparam RDP_ADDR_WIDTH                = 4;
   localparam IOE_DELAYS_PER_PHS            = 5;
@@ -134,7 +134,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_seq_wrapper (
   localparam FORCE_HC                      = 0;
   localparam MEM_IF_DQS_CAPTURE_EN         = 1;
   localparam REDUCE_SIM_TIME               = 0;
-  localparam TINIT_TCK                     = 19001;
+  localparam TINIT_TCK                     = 16000;
   localparam TINIT_RST                     = 0;
   localparam GENERATE_ADDITIONAL_DBG_RTL   = 0;
   localparam MEM_IF_CS_PER_RANK            = 1;

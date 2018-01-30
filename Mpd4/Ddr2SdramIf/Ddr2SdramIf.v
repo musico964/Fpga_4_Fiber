@@ -231,15 +231,15 @@ endmodule
 // Retrieval info:      <PRIVATE name = "export_debug_port" value="false"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "use_generated_memory_model" value="true"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "dedicated_memory_clk_phase_label" value="Dedicated memory clock phase:"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "mem_if_clk_mhz" value="190.0"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "mem_if_clk_mhz" value="160.0"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "quartus_project_exists" value="true"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "local_if_drate" value="Half"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "enable_v72_rsu" value="false"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "local_if_clk_mhz_label" value="95,0"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "local_if_clk_mhz_label" value="80,0"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "new_variant" value="false"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "mem_if_memtype" value="DDR2 SDRAM"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "pll_ref_clk_mhz" value="40.0"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "mem_if_clk_ps_label" value="(5263 ps)"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "mem_if_clk_ps_label" value="(6250 ps)"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "family" value="Arria GX"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "project_family" value="Arria GX"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "speed_grade" value="6"  type="STRING"  enable="1" />
@@ -439,10 +439,6 @@ endmodule
 // Retrieval info:     </NAMESPACE>
 // Retrieval info:     <NAMESPACE name = "greybox">
 // Retrieval info:      <PRIVATE name = "filename" value="Ddr2SdramIf_syn.v"  type="STRING"  enable="1" />
-// Retrieval info:     </NAMESPACE>
-// Retrieval info:     <NAMESPACE name = "quartus_settings">
-// Retrieval info:      <PRIVATE name = "DEVICE" value="EP1AGX60DF780C6"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "FAMILY" value="Arria GX"  type="STRING"  enable="1" />
 // Retrieval info:     </NAMESPACE>
 // Retrieval info:     <NAMESPACE name = "serializer"/>
 // Retrieval info:    </PRIVATES>

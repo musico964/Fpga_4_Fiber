@@ -17,7 +17,7 @@ forever
 		for(j=0; j<SamplePerEvent; j++)
 		{
 			<wait at least 1 channel has Event Present for a maximum time>
-			<wait up to 32 clock cycles, so all channels should have Event Present>
+			<wait up to 16 clock cycles, so all channels should have Event Present>
 			for(i=0; i<16; i++)
 			{
 				if( ChannelEnabled[i] && EventPresent[i] )	// skip enabled channels that does not have event
@@ -176,15 +176,18 @@ reg trigger_pulse, old_trigger, old_trigger2;
 reg clear_time_counter;
 reg FifoReset, ClearLoopDataCounter;
 reg IncrementBlockCounter, ClearBlockWordCounter;
-wire [2:0] NumberFillerWords;
-reg [2:0] FillerWordsCounter;
+//wire [2:0] NumberFillerWords;
+wire [1:0] NumberFillerWords;
+//reg [2:0] FillerWordsCounter;
+reg [1:0] FillerWordsCounter;
 reg OutputFifoAlmostFull;
-reg [4:0] ChannelWaitCounter;
+reg [3:0] ChannelWaitCounter;
 reg [9:0] FrameWaitCounter;
 wire AtLeastOneChannelHasEvent;
 wire [3:0] ChCounterLsb;
 
-assign NumberFillerWords = BlockWordCounter[2:0];
+//assign NumberFillerWords = BlockWordCounter[2:0];
+assign NumberFillerWords = 2'h2 - BlockWordCounter[1:0];
 assign AllEnabledChannelsHaveEvent = ((ENABLE_MASK & EVENT_PRESENT) == ENABLE_MASK) ? 1 : 0;
 assign EV_CNT = {4'h0,EventCounter};
 assign TRIGGER_TIME_FIFO_RD = DECREMENT_EVENT_COUNT;
@@ -459,7 +462,7 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 				20: begin	// additional state for revised version
 						data_bus <= `APV_CH_DATA;
 						ChannelWaitCounter <= ChannelWaitCounter + 1;
-						if( ChannelWaitCounter == 31 || AllEnabledChannelsHaveEvent == 1 )
+						if( ChannelWaitCounter == 15 || AllEnabledChannelsHaveEvent == 1 )
 							fsm_status <= 6;
 					end
 				6:	begin

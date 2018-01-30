@@ -262,12 +262,12 @@ module Ddr2SdramIf_phy (
 	defparam
 		Ddr2SdramIf_phy_alt_mem_phy_inst.FAMILY = "Arria GX",
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_MEMTYPE = "DDR2",
-		Ddr2SdramIf_phy_alt_mem_phy_inst.DLL_DELAY_BUFFER_MODE = "HIGH",
-		Ddr2SdramIf_phy_alt_mem_phy_inst.DLL_DELAY_CHAIN_LENGTH = 16,
+		Ddr2SdramIf_phy_alt_mem_phy_inst.DLL_DELAY_BUFFER_MODE = "LOW",
+		Ddr2SdramIf_phy_alt_mem_phy_inst.DLL_DELAY_CHAIN_LENGTH = 12,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_DELAY_CTL_WIDTH = 6,
-		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_OUT_MODE = "DELAY_CHAIN3",
-		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_PHASE = 6750,
-		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_PHASE_SETTING = 3,
+		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_OUT_MODE = "DELAY_CHAIN2",
+		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_PHASE = 6000,
+		Ddr2SdramIf_phy_alt_mem_phy_inst.DQS_PHASE_SETTING = 2,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.DWIDTH_RATIO = 4,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_DWIDTH = 8,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_ADDR_WIDTH = 14,
@@ -280,8 +280,8 @@ module Ddr2SdramIf_phy (
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_DQS_WIDTH = 1,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_OCT_EN = 0,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_CLK_PAIR_COUNT = 1,
-		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_CLK_PS = 5263,
-		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_CLK_PS_STR = "5263 ps",
+		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_CLK_PS = 6250,
+		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_CLK_PS_STR = "6250 ps",
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_MR_0 = 1107,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_MR_1 = 1092,
 		Ddr2SdramIf_phy_alt_mem_phy_inst.MEM_IF_MR_2 = 0,
@@ -313,15 +313,15 @@ endmodule
 // Retrieval info:      <PRIVATE name = "export_debug_port" value="false"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "use_generated_memory_model" value="true"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "dedicated_memory_clk_phase_label" value="Dedicated memory clock phase:"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "mem_if_clk_mhz" value="190.0"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "mem_if_clk_mhz" value="160.0"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "quartus_project_exists" value="true"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "local_if_drate" value="Half"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "enable_v72_rsu" value="false"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "local_if_clk_mhz_label" value="95,0"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "local_if_clk_mhz_label" value="80,0"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "new_variant" value="false"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "mem_if_memtype" value="DDR2 SDRAM"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "pll_ref_clk_mhz" value="40.0"  type="STRING"  enable="1" />
-// Retrieval info:      <PRIVATE name = "mem_if_clk_ps_label" value="(5263 ps)"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "mem_if_clk_ps_label" value="(6250 ps)"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "family" value="Arria GX"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "project_family" value="Arria GX"  type="STRING"  enable="1" />
 // Retrieval info:      <PRIVATE name = "speed_grade" value="6"  type="STRING"  enable="1" />
@@ -520,6 +520,10 @@ endmodule
 // Retrieval info:     </NAMESPACE>
 // Retrieval info:     <NAMESPACE name = "greybox">
 // Retrieval info:      <PRIVATE name = "filename" value="Ddr2SdramIf_phy_syn.v"  type="STRING"  enable="1" />
+// Retrieval info:     </NAMESPACE>
+// Retrieval info:     <NAMESPACE name = "quartus_settings">
+// Retrieval info:      <PRIVATE name = "DEVICE" value="EP1AGX60DF780C6"  type="STRING"  enable="1" />
+// Retrieval info:      <PRIVATE name = "FAMILY" value="Arria GX"  type="STRING"  enable="1" />
 // Retrieval info:     </NAMESPACE>
 // Retrieval info:     <NAMESPACE name = "serializer"/>
 // Retrieval info:    </PRIVATES>

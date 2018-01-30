@@ -141,7 +141,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_pll (
 				.vcooverrange (),
 				.vcounderrange ());
 	defparam
-		altpll_component.charge_pump_current = 148,
+		altpll_component.charge_pump_current = 131,
 		altpll_component.gate_lock_counter = 1048575,
 		altpll_component.gate_lock_signal = "YES",
 		altpll_component.inclk0_input_frequency = 25000,
@@ -150,7 +150,7 @@ module Ddr2SdramIf_phy_alt_mem_phy_pll (
 		altpll_component.loop_filter_c = 16,
 		altpll_component.loop_filter_r = " 1.000000",
 		altpll_component.lpm_type = "altpll",
-		altpll_component.m = 19,
+		altpll_component.m = 16,
 		altpll_component.m_initial = 2,
 		altpll_component.m_ph = 0,
 		altpll_component.n = 1,
@@ -276,12 +276,12 @@ endmodule
 // Retrieval info: PRIVATE: DUTY_CYCLE3 STRING "50.00000000"
 // Retrieval info: PRIVATE: DUTY_CYCLE4 STRING "50.00000000"
 // Retrieval info: PRIVATE: DUTY_CYCLE5 STRING "50.00000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE0 STRING "95.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE1 STRING "190.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE2 STRING "190.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE3 STRING "190.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE4 STRING "190.000000"
-// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE5 STRING "190.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE0 STRING "80.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE1 STRING "160.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE2 STRING "160.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE3 STRING "160.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE4 STRING "160.000000"
+// Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE5 STRING "160.000000"
 // Retrieval info: PRIVATE: EXPLICIT_SWITCHOVER_COUNTER STRING "0"
 // Retrieval info: PRIVATE: EXT_FEEDBACK_RADIO STRING "0"
 // Retrieval info: PRIVATE: GLOCKED_COUNTER_EDIT_CHANGED STRING "1"
@@ -315,12 +315,12 @@ endmodule
 // Retrieval info: PRIVATE: MULT_FACTOR4 NUMERIC "1"
 // Retrieval info: PRIVATE: MULT_FACTOR5 NUMERIC "1"
 // Retrieval info: PRIVATE: NORMAL_MODE_RADIO STRING "0"
-// Retrieval info: PRIVATE: OUTPUT_FREQ0 STRING "95.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ1 STRING "190.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ2 STRING "190.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ3 STRING "190.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ4 STRING "190.00000000"
-// Retrieval info: PRIVATE: OUTPUT_FREQ5 STRING "190.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ0 STRING "80.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ1 STRING "160.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ2 STRING "160.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ3 STRING "160.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ4 STRING "160.00000000"
+// Retrieval info: PRIVATE: OUTPUT_FREQ5 STRING "160.00000000"
 // Retrieval info: PRIVATE: OUTPUT_FREQ_MODE0 STRING "1"
 // Retrieval info: PRIVATE: OUTPUT_FREQ_MODE1 STRING "1"
 // Retrieval info: PRIVATE: OUTPUT_FREQ_MODE2 STRING "1"
@@ -388,7 +388,7 @@ endmodule
 // Retrieval info: PRIVATE: USE_MIL_SPEED_GRADE NUMERIC "0"
 // Retrieval info: PRIVATE: ZERO_DELAY_RADIO STRING "0"
 // Retrieval info: LIBRARY: altera_mf altera_mf.altera_mf_components.all
-// Retrieval info: CONSTANT: CHARGE_PUMP_CURRENT NUMERIC "148"
+// Retrieval info: CONSTANT: CHARGE_PUMP_CURRENT NUMERIC "131"
 // Retrieval info: CONSTANT: GATE_LOCK_COUNTER NUMERIC "1048575"
 // Retrieval info: CONSTANT: GATE_LOCK_SIGNAL STRING "YES"
 // Retrieval info: CONSTANT: INCLK0_INPUT_FREQUENCY NUMERIC "25000"
@@ -397,7 +397,7 @@ endmodule
 // Retrieval info: CONSTANT: LOOP_FILTER_C NUMERIC "16"
 // Retrieval info: CONSTANT: LOOP_FILTER_R STRING " 1.000000"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "altpll"
-// Retrieval info: CONSTANT: M NUMERIC "19"
+// Retrieval info: CONSTANT: M NUMERIC "16"
 // Retrieval info: CONSTANT: M_INITIAL NUMERIC "2"
 // Retrieval info: CONSTANT: M_PH NUMERIC "0"
 // Retrieval info: CONSTANT: N NUMERIC "1"

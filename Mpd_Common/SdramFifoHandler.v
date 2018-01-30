@@ -265,7 +265,8 @@ assign LOAD_MSB = USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
 assign FSM_IDLE = req_fsm_idle;
 
 	always @(posedge CLK)
-		OUTPUT_FIFO_WR <=  USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
+//		OUTPUT_FIFO_WR <= USER_64BIT ? (SDRAM_DATA_VALID & odd_data) : SDRAM_DATA_VALID;
+		OUTPUT_FIFO_WR <= LOAD_MSB;
 			
 // Read Address counter
 	always @(posedge CLK or negedge RSTb)

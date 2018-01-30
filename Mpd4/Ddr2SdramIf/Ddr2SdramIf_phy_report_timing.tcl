@@ -94,7 +94,7 @@ set write_deskew_t9ni 0
 set write_deskew_hc_t9ni 0
 set write_deskew_range 0
 
-set period 5.263
+set period 6.250
 
 proc ddr_pin {n pin pin_array_name} {
 	upvar 1 $pin_array_name pins
@@ -273,16 +273,16 @@ lappend summary [list $opcname 0 "Read Capture ($opcname)" [lindex $res_0 1] [li
 # apply an offset to the default static timing analysis to account for the
 # sequencer's behavior.
 ################################################################################
-# sequencer 0,492
+# sequencer 0,585
 # tDQSCK 0,8
 # tDQS_CLK_SKEW_ADDER 0,11
-# tDQS_PHASE_JITTER 0,09
-set resync_uncertainty 1.492
-# sequencer 0,246
+# tDQS_PHASE_JITTER 0,06
+set resync_uncertainty 1.555
+# sequencer 0,292
 # tDQSCK 0,4
 # tDQS_CLK_SKEW_ADDER 0,055
-# tDQS_PHASE_JITTER 0,045
-set postamble_uncertainty 0.746
+# tDQS_PHASE_JITTER 0,03
+set postamble_uncertainty 0.778
 set offset 100.000
 set raw_resync_setup_slack -1000
 set raw_resync_hold_slack -1000

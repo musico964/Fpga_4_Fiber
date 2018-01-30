@@ -104,7 +104,7 @@ add wave -noupdate -label ClearLoopDataCounter /_a_TestBench/Dut/TheBuilder/Clea
 add wave -noupdate -label IncrementBlockCounter /_a_TestBench/Dut/TheBuilder/IncrementBlockCounter
 add wave -noupdate -label ClearBlockWordCounter /_a_TestBench/Dut/TheBuilder/ClearBlockWordCounter
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {250101474 ps} 0}
+WaveRestoreCursors {{Cursor 1} {253605294 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 138
 configure wave -valuecolwidth 89
@@ -120,4 +120,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {270359405 ps} {270798813 ps}
+WaveRestoreZoom {253303440 ps} {253742848 ps}

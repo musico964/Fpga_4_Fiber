@@ -1418,21 +1418,31 @@ begin
 		SendTrigger(1, 0);
 		$display("@%0t Waiting to read trg n: %d", $stime, j);
 
+/*
 		rd_data = 0;
 		while( rd_data[23:16] < 1 )
 		begin
 			VME_A24D32_Read('h208, rd_data);	// Read Output Buffer Block Count
 			Sleep(100);	
 		end
+*/
+		rd_data[30] = 1;
+		while( rd_data[30] == 1 )	// Output BlockWordCount FIFO is Empty 
+		begin
+			VME_A24D32_Read('h22C, rd_data);	// Read Output BlockWordCount FIFO & related status
+			Sleep(100);	
+		end
 
 		Sleep(10);	
-		VME_A24D32_Read('h224, rd_data);	// Read Output FIFO Word Count (64 bit)
-		nw = rd_data[12:0];
-		VME_A24D32_Read('h22C, rd_data);	// Read Block Word Count in output FIFO (32 bit)
-		nw = rd_data[19:0];
-		nw = (nw+1) / 2;	// in 64 bit words; +1 to keep count of a missing evb count
+//		VME_A24D32_Read('h224, rd_data);	// Read Output FIFO Word Count (64 bit)
+//		nw = rd_data[12:0];
+//		VME_A24D32_Read('h22C, rd_data);	// Read Block Word Count in output FIFO (32 bit)
+		nw = rd_data[19:0];	// in 32 bit words
+		nw = (nw+1)/2;		// in 64 bit words; +1 to keep count of a missing evb count
 		xx =  nw / 64;
-		$display("@%0t Start reading trg n: %d, nwords: %d, ntimes: %d", $stime, j, nw, xx);
+		$display("@%0t Start reading trg n: %d, 64-bit nwords: %d, ntimes: %d", $stime, j, nw, xx);
+		if( nw % 2 == 1 )
+			$display("!!! WARNING !!! 64-bit nwords is not even !!!");
 		for(i=0; i<xx; i=i+1)
 		begin
 			VME_A32D64_2eSstRead(DataReadout_base, 64, rd_data);

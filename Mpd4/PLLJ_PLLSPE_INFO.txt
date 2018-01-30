@@ -1,7 +1,7 @@
 PLL_Name	Ddr2SdramIf:Ddr2SdramIf_inst|Ddr2SdramIf_controller_phy:Ddr2SdramIf_controller_phy_inst|Ddr2SdramIf_phy:Ddr2SdramIf_phy_inst|Ddr2SdramIf_phy_alt_mem_phy:Ddr2SdramIf_phy_alt_mem_phy_inst|Ddr2SdramIf_phy_alt_mem_phy_clk_reset:clk|Ddr2SdramIf_phy_alt_mem_phy_pll:pll|altpll:altpll_component|pll
-PLLJITTER	80
-PLLSPEmax	102
-PLLSPEmin	-90
+PLLJITTER	75
+PLLSPEmax	113
+PLLSPEmin	-77
 
 PLL_Name	GlobalPll:ClockGenerator|altpll:altpll_component|pll
 PLLJITTER	72
