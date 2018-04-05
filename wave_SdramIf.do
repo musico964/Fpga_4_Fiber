@@ -53,12 +53,18 @@ add wave -noupdate -label OutBurstSize -radix hexadecimal /_a_TestBench/Dut/Sdra
 add wave -noupdate -label BurstSize -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/ReadHandler/BurstSize
 add wave -noupdate -label Data64Bit -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/Data64Bit
 add wave -noupdate -label DataOut64bit -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/DataOut64bit
+add wave -noupdate -label OutputFifoEOBIn /_a_TestBench/Dut/SdramFifoHandler/OutputFifoEndOfBlockIn
 add wave -noupdate -label OutputFifoWr /_a_TestBench/Dut/SdramFifoHandler/OutputFifoWr
 add wave -noupdate -label OutputFifoEmpty /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_EMPTY
 add wave -noupdate -label OutputFifoFull /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_FULL
 add wave -noupdate -label OutputFifoWc -radix hexadecimal /_a_TestBench/Dut/SdramFifoHandler/OUTPUT_FIFO_WC
 add wave -noupdate -label UserRe /_a_TestBench/Dut/SdramFifoHandler/USER_RE
 add wave -noupdate -label BlockWordCountWrite /_a_TestBench/Dut/SdramFifoHandler/BlockWordCountWrite
+add wave -noupdate -label OddData_transp /_a_TestBench/Dut/SdramFifoHandler/TransparentHandler/odd_data
+add wave -noupdate -label FsmTranspStatus -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/TransparentHandler/fsm_transp_status
+add wave -noupdate -label FsmTranspOdd -radix unsigned /_a_TestBench/Dut/SdramFifoHandler/TransparentHandler/fsm_transp_status_odd
+add wave -noupdate -label OutFifoWr_transp /_a_TestBench/Dut/SdramFifoHandler/TransparentHandler/OUTPUT_FIFO_WR
+add wave -noupdate -label GetNextData_transp /_a_TestBench/Dut/SdramFifoHandler/TransparentHandler/GET_NEXT_DATA
 add wave -noupdate -divider TheBuilder
 add wave -noupdate -label ENABLE_BASE_SUB /_a_TestBench/Dut/ApvProcessor_0_7/Ch0/ThrSub/ENABLE_BASE_SUB
 add wave -noupdate -label APV_TRIGGER /_a_TestBench/Dut/APV_TRIGGER
@@ -81,6 +87,7 @@ add wave -noupdate -label ChCounter -radix hexadecimal /_a_TestBench/Dut/TheBuil
 add wave -noupdate -label LoopDataCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/LoopDataCounter
 add wave -noupdate -label LoopEventCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/LoopEventCounter
 add wave -noupdate -label LoopSampleCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/LoopSampleCounter
+add wave -noupdate -label DisableDeadlock /_a_TestBench/Dut/TheBuilder/DISABLE_DEADLOCK
 add wave -noupdate -color Magenta -height 30 -itemcolor Magenta -label fsm_status -radix unsigned /_a_TestBench/Dut/TheBuilder/fsm_status
 add wave -noupdate -label FrameWaitCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/FrameWaitCounter
 add wave -noupdate -label data_bus -radix hexadecimal /_a_TestBench/Dut/TheBuilder/data_bus
@@ -92,7 +99,7 @@ add wave -noupdate -label NumberFillerWords -radix hexadecimal /_a_TestBench/Dut
 add wave -noupdate -label FillerWordsCounter -radix hexadecimal /_a_TestBench/Dut/TheBuilder/FillerWordsCounter
 add wave -noupdate -label AllEnabledChannelsHaveEvent /_a_TestBench/Dut/TheBuilder/AllEnabledChannelsHaveEvent
 add wave -noupdate -label AtLeastOneChHasEvent /_a_TestBench/Dut/TheBuilder/AtLeastOneChannelHasEvent
-add wave -noupdate -label DECREMENT_EVENT_COUNT /_a_TestBench/Dut/TheBuilder/DECREMENT_EVENT_COUNT
+add wave -noupdate -label DECREMENT_EVENT_COUNT -radix hexadecimal /_a_TestBench/Dut/TheBuilder/DECREMENT_EVENT_COUNT
 add wave -noupdate -label EventCounterFifo_Read /_a_TestBench/Dut/TheBuilder/EventCounterFifo_Read
 add wave -noupdate -label TimeCounterFifo_Read /_a_TestBench/Dut/TheBuilder/TimeCounterFifo_Read
 add wave -noupdate -label OutputFifo_Write /_a_TestBench/Dut/TheBuilder/OutputFifo_Write
@@ -104,7 +111,7 @@ add wave -noupdate -label ClearLoopDataCounter /_a_TestBench/Dut/TheBuilder/Clea
 add wave -noupdate -label IncrementBlockCounter /_a_TestBench/Dut/TheBuilder/IncrementBlockCounter
 add wave -noupdate -label ClearBlockWordCounter /_a_TestBench/Dut/TheBuilder/ClearBlockWordCounter
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {253605294 ps} 0}
+WaveRestoreCursors {{Cursor 1} {36279309 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 138
 configure wave -valuecolwidth 89
@@ -120,4 +127,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {253303440 ps} {253742848 ps}
+WaveRestoreZoom {49589141 ps} {50021625 ps}

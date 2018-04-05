@@ -2,10 +2,10 @@
 `define CERN_ID			32'h00_08_00_30	// CERN Manufacturer ID
 `define MPD_ID			32'h00_03_09_04	// Board ID = 394
 `ifdef MPD3
-`define MPD_REVISION	32'h03_00_00_04	// Board Revision ID = 3, FPGA Revision ID = 4
+`define MPD_REVISION	32'h03_00_00_05	// Board Revision ID = 3, FPGA Revision ID = 4
 `include "../Mpd3/CompileTime.v"
 `else
-`define MPD_REVISION	32'h04_00_00_04	// Board Revision ID = 4, FPGA Revision ID = 4
+`define MPD_REVISION	32'h04_00_00_05	// Board Revision ID = 4, FPGA Revision ID = 4
 `include "../Mpd4/CompileTime.v"
 `endif
 

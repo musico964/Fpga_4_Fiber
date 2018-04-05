@@ -184,7 +184,7 @@ output SPARE_CLK_TTL;	// 2.5 V clock
 
 	wire no_more_space07, no_more_space815, space_available07, space_available815;
 	wire fwd07, fwd815;
-	wire DecrEventCounter;
+	wire [15:0] DecrEventCounter;
 	wire [11:0] used_fifo_words0, used_fifo_words1, used_fifo_words2, used_fifo_words3,
 		used_fifo_words4, used_fifo_words5, used_fifo_words6, used_fifo_words7,
 		used_fifo_words8, used_fifo_words9, used_fifo_words10, used_fifo_words11,
@@ -258,6 +258,7 @@ wire [31:0] dout_reg, dout_adc, dout_histo0, dout_histo1, Channel_Direct_Data, a
 wire [7:0] dout_i2c;
 wire Dtack_Rd, Berr_Rd, Retry_Rd;
 wire asmi_ceB, rupd_ceB;
+wire disable_evb_deadlock;
 
 wire OutputFifoBlockWordCount_Rd, OutputFifoBlockWordCount_Empty, OutputFifoBlockWordCount_Full;
 wire [19:0] OutputFifoBlockWordCount_Q;
@@ -327,6 +328,7 @@ assign ReadoutMode = ReadoutConfig[2:0];
 //						ApvReadoutMode_Processed = (DAQ_MODE == 3'b011);
 assign FIR_enable = ReadoutConfig[4];
 assign sel_time_clk = ReadoutConfig[5];
+assign disable_evb_deadlock = ReadoutConfig[6];
 assign Enable_Slave_Terminate = ReadoutConfig[8];
 assign Pack24BitData = ReadoutConfig[13];
 assign Data64Bit = ReadoutConfig[14];	// Must be 0 (32 bit) if Fiber interface is enabled
@@ -453,9 +455,7 @@ assign mem_local_be = 4'b1111;
 assign mem_local_size = 3'b001;
 assign local_burstbegin = 1'b1;
 
-//assign EventBuilder_Read = ~UseSdramFifo ? (Enable_EventBuilder & (ApvFifo_read[0] | Fiber_data_re)) :
-assign EventBuilder_Read = ~UseSdramFifo ? (Fiber_enabled ? Fiber_data_re : ApvFifo_read[0]) :
-	Sdram_Fifo_Evb_rd;
+assign EventBuilder_Read = Fiber_data_re | ApvFifo_read[0] | Sdram_Fifo_Evb_rd;
 
 assign Fiber_enabled = ~Vme_Fiber_disable;
 assign Fiber_activity = Fiber_enabled & (Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame);
@@ -820,13 +820,14 @@ fir_16tap fir14(.CLK(ADC_FRAME_CK2), .ENABLE_FIR(FIR_enable), .DATA_IN(adc14), .
 	.COEFF_4(fir_coeff4), .COEFF_5(fir_coeff5), .COEFF_6(fir_coeff6), .COEFF_7(fir_coeff7),
 	.COEFF_8(fir_coeff8), .COEFF_9(fir_coeff9), .COEFF_10(fir_coeff10), .COEFF_11(fir_coeff11),
 	.COEFF_12(fir_coeff12), .COEFF_13(fir_coeff13), .COEFF_14(fir_coeff14), .COEFF_15(fir_coeff15));
-
+/*
 fir_16tap fir15(.CLK(ADC_FRAME_CK2), .ENABLE_FIR(FIR_enable), .DATA_IN(adc15), .DATA_OUT(adcx15),
 	.COEFF_0(fir_coeff0), .COEFF_1(fir_coeff1), .COEFF_2(fir_coeff2), .COEFF_3(fir_coeff3),
 	.COEFF_4(fir_coeff4), .COEFF_5(fir_coeff5), .COEFF_6(fir_coeff6), .COEFF_7(fir_coeff7),
 	.COEFF_8(fir_coeff8), .COEFF_9(fir_coeff9), .COEFF_10(fir_coeff10), .COEFF_11(fir_coeff11),
 	.COEFF_12(fir_coeff12), .COEFF_13(fir_coeff13), .COEFF_14(fir_coeff14), .COEFF_15(fir_coeff15));
-
+*/
+assign adcx15 = 12'b0;
 
 Histogrammer AdcHisto0(.LCLK(ADC_LCLK1), .ADCLK(ADC_FRAME_CK1),
 	.ADC_PDATA0(adcx0), .ADC_PDATA1(adcx1), .ADC_PDATA2(adcx2), .ADC_PDATA3(adcx3),
@@ -889,7 +890,7 @@ EightChannels ApvProcessor_0_7(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK1), .PROCE
 	.USED_FIFO_WORDS2(used_fifo_words2), .USED_FIFO_WORDS3(used_fifo_words3),
 	.USED_FIFO_WORDS4(used_fifo_words4), .USED_FIFO_WORDS5(used_fifo_words5),
 	.USED_FIFO_WORDS6(used_fifo_words6), .USED_FIFO_WORDS7(used_fifo_words7),
-	.ONE_MORE_EVENT(OneMoreEvent[7:0]), .DECR_EVENT_COUNTER(DecrEventCounter),
+	.ONE_MORE_EVENT(OneMoreEvent[7:0]), .DECR_EVENT_COUNTER(DecrEventCounter[7:0]),
 	.NO_MORE_SPACE(no_more_space07), .SPACE_AVAILABLE(space_available07),
 	.RAM_ADDR(user_addr[6:0]), .RAM_DIN(data_from_master),
 	.WE_PED_RAM(we_ped_ram[7:0]), .RE_PED_RAM(re_ped_ram[7:0]),
@@ -898,11 +899,11 @@ EightChannels ApvProcessor_0_7(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK1), .PROCE
 	.APV_FIFO_FULL_L(ApvFifoFullLatched[7:0]), .PROC_FIFO_FULL_L(ProcFifoFullLatched[7:0])
 	);
 
-EightChannels ApvProcessor_8_15(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROCESS_CLK(Vme_clock),
+SevenChannels ApvProcessor_8_14(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROCESS_CLK(Vme_clock),
 	.ENABLE(ApvEnable[15:8]),
 	.EN_BASELINE_SUBTRACTION(en_baseline_subtraction),
 	.ADC_PDATA0(adcx8), .ADC_PDATA1(adcx9), .ADC_PDATA2(adcx10), .ADC_PDATA3(adcx11),
-	.ADC_PDATA4(adcx12), .ADC_PDATA5(adcx13), .ADC_PDATA6(adcx14), .ADC_PDATA7(adcx15),
+	.ADC_PDATA4(adcx12), .ADC_PDATA5(adcx13), .ADC_PDATA6(adcx14), //.ADC_PDATA7(adcx15),
 	.SYNC_PERIOD(ApvSyncPeriod), .SYNCED(ApvSynced[15:8]),
 	.COMMON_OFFSET(common_offset), .BANK_ID(1'b1),
 	.FIFO_DATA_OUT0(ApvFifoData8), .FIFO_DATA_OUT1(ApvFifoData9),
@@ -921,7 +922,7 @@ EightChannels ApvProcessor_8_15(.RSTb(RSTb_sync), .APV_CLK(ADC_FRAME_CK2), .PROC
 	.USED_FIFO_WORDS2(used_fifo_words10), .USED_FIFO_WORDS3(used_fifo_words11),
 	.USED_FIFO_WORDS4(used_fifo_words12), .USED_FIFO_WORDS5(used_fifo_words13),
 	.USED_FIFO_WORDS6(used_fifo_words14), .USED_FIFO_WORDS7(used_fifo_words15),
-	.ONE_MORE_EVENT(OneMoreEvent[15:8]), .DECR_EVENT_COUNTER(DecrEventCounter),
+	.ONE_MORE_EVENT(OneMoreEvent[15:8]), .DECR_EVENT_COUNTER(DecrEventCounter[15:8]),
 	.NO_MORE_SPACE(no_more_space815), .SPACE_AVAILABLE(space_available815),
 	.RAM_ADDR(user_addr[6:0]), .RAM_DIN(data_from_master),
 	.WE_PED_RAM(we_ped_ram[15:8]), .RE_PED_RAM(re_ped_ram[15:8]),
@@ -981,6 +982,7 @@ EventBuilder TheBuilder(.RSTb(RSTb_sync), .TIME_CLK(time_clock), .CLK(Vme_clock)
 	.SAMPLE_PER_EVENT(SamplePerEvent), .EVENT_PER_BLOCK(EventPerBlock),
 	.ENABLE_MASK(ApvEnable), .ENABLE_EVBUILD(Enable_EventBuilder),
 	.TRIGGER_TIME_FIFO(trigger_time_fifo_data), .TRIGGER_TIME_FIFO_RD(trigger_time_fifo_rd_evb),
+	.DISABLE_DEADLOCK(disable_evb_deadlock),
 	.CH_DATA0(EvbData0), .CH_DATA1(EvbData1),
 	.CH_DATA2(EvbData2), .CH_DATA3(EvbData3),
 	.CH_DATA4(EvbData4), .CH_DATA5(EvbData5),

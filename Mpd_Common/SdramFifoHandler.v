@@ -202,12 +202,12 @@ endmodule
 
 // From here faster machinery...
 
-module Reg32(RSTb, CLK, LOAD, D, Q);
+module Reg24(RSTb, CLK, LOAD, D, Q);
 input RSTb, CLK, LOAD;
-input [31:0] D;
-output [31:0] Q;
+input [23:0] D;
+output [23:0] Q;
 
-reg [31:0] Q;
+reg [23:0] Q;
 
 	always @(posedge CLK or negedge RSTb)
 	begin
@@ -445,6 +445,83 @@ assign FSM_IDLE = req_fsm_idle;
 
 endmodule
 
+module TransparentMachine (RSTb, CLK, ENABLE, CLEAR_ADDR,
+	LOAD_LSB, LOAD_MSB, USER_64BIT,
+	DATA_AVAILABLE,
+	GET_NEXT_DATA, OUTPUT_FIFO_EOB,
+	OUTPUT_FIFO_FULL,
+	OUTPUT_FIFO_WR
+	);
+input RSTb, CLK, ENABLE, CLEAR_ADDR, USER_64BIT, DATA_AVAILABLE, OUTPUT_FIFO_EOB, OUTPUT_FIFO_FULL;
+output LOAD_LSB, LOAD_MSB, GET_NEXT_DATA, OUTPUT_FIFO_WR;
+
+reg GET_NEXT_DATA_x, OUTPUT_FIFO_WR;
+reg odd_data;
+reg [7:0] fsm_transp_status, fsm_transp_status_odd;
+
+assign GET_NEXT_DATA = GET_NEXT_DATA_x & DATA_AVAILABLE;
+assign LOAD_LSB = USER_64BIT ? (GET_NEXT_DATA & ~odd_data) : GET_NEXT_DATA;
+assign LOAD_MSB = USER_64BIT ? (GET_NEXT_DATA & odd_data) : GET_NEXT_DATA;
+
+	always @(posedge CLK)
+		OUTPUT_FIFO_WR <= LOAD_MSB;
+
+// Transparent state machine: generate GET_NEXT_DATA
+	always @(posedge CLK or negedge RSTb)
+	begin
+		if( RSTb == 0 )
+		begin
+			GET_NEXT_DATA_x <= 0;
+			fsm_transp_status <= 0;
+		end
+		else
+		begin
+			case( fsm_transp_status )
+			0:	begin
+					GET_NEXT_DATA_x <= 0;
+					if( ENABLE == 1 && DATA_AVAILABLE == 1 && OUTPUT_FIFO_FULL == 0 )
+						fsm_transp_status <= 1;
+				end
+			1:	begin
+					GET_NEXT_DATA_x <= 1;
+					if( ENABLE == 0 || DATA_AVAILABLE == 0 || OUTPUT_FIFO_FULL == 1 )
+						fsm_transp_status <= 0;
+				end
+			default: fsm_transp_status <= 0;
+			endcase
+		end
+	end
+
+// Transparent state machine: generate odd_data
+	always @(posedge CLK or negedge RSTb)
+	begin
+		if( RSTb == 0 )
+		begin
+			odd_data <= 0;
+			fsm_transp_status_odd <= 0;
+		end
+		else
+		begin
+			case( fsm_transp_status_odd )
+			0:	begin
+					odd_data <= 0;
+					if( ENABLE == 1 )
+						fsm_transp_status_odd <= 1;
+				end
+			1:	begin
+					if( ENABLE == 0 || CLEAR_ADDR == 1 || (OUTPUT_FIFO_WR & OUTPUT_FIFO_EOB) )
+						fsm_transp_status_odd <= 0;
+					if( GET_NEXT_DATA == 1 )
+						odd_data <= ~odd_data;
+				end
+			default: fsm_transp_status_odd <= 0;
+			endcase
+		end
+	end
+
+
+endmodule
+
 module FastSdramFifoIf(RSTb, CLK, ENABLE, CLEAR_ADDR,
 	SDRAM_WRITE_REQ, SDRAM_READY, SDRAM_READ_REQ, SDRAM_DATA_VALID,
 	SDRAM_INPUT_DATA,
@@ -488,11 +565,14 @@ reg BlockWordCountWrite;
 
 wire WriteFsmIdle, ReadFsmIdle;
 //wire GetFormattedData, FormattedDataNotAvailable, FormattedDataAvailable;
-wire LoadMsb, LoadLsb, OutputFifoWr;
+wire LoadMsb, LoadLsb, OutputFifoWr, OutputFifoWrSdram;
 wire OutputFifoEndOfBlockIn, OutputFifoEndOfBlockOut;
 
 wire [63:0] Data64Bit, DataOut64bit;
 wire [31:0] SdramWordCount32;
+wire RD_EVB_Sdram, RD_EVB_NoSdram, LoadMsbNoSdram, LoadLsbNoSdram, OutputFifoWrNoSdram;
+
+assign RD_EVB = RD_EVB_Sdram | RD_EVB_NoSdram;
 
 assign DATA_TO_FIBER = {DataOut64bit[15:0], DataOut64bit[31:16]};	// Fiber interface does not need output register; why word swapping ???
 //assign DATA_TO_FIBER = DataOut64bit[31:0];	// Fiber interface does not need output register
@@ -507,6 +587,7 @@ assign SDRAM_ADDR = WriteFsmIdle ? SDRAM_READ_ADDRESS : SDRAM_WRITE_ADDRESS;
 //assign OutputFifoEndOfBlockOut = (DataOut64bit[55:52] == 4'b0010 || DataOut64bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
 assign OutputFifoEndOfBlockIn = (Data64Bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
 assign OutputFifoEndOfBlockOut = (DataOut64bit[23:20] == 4'b0010) ? 1 : 0;	// 4'b0010 = {3'h1, 1'b0}
+assign OutputFifoWr = OutputFifoWrSdram | OutputFifoWrNoSdram;
 
 /*
 Sdram2432Formatter EvbFormatter(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE),
@@ -522,7 +603,7 @@ SdramWriteMachine WriteHandler(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE), .CLEAR_A
 	.CAN_WRITE(ReadFsmIdle),	// From SdramReadMachine
 	.FSM_IDLE(WriteFsmIdle),	// To SdramReadMachine
 	.DATA_AVAILABLE(~EMPTY_EVB),// From EventBuilder
-	.GET_NEXT_DATA(RD_EVB),		// To EventBuilder
+	.GET_NEXT_DATA(RD_EVB_Sdram),		// To EventBuilder
 //	.DATA_AVAILABLE(FormattedDataAvailable),	// From Sdram2432Formatter
 //	.GET_NEXT_DATA(GetFormattedData),	// To Sdram2432Formatter
 	.SDRAM_WRITE_ADDRESS(SDRAM_WRITE_ADDRESS)
@@ -534,13 +615,24 @@ SdramBlockReadMachine ReadHandler(.RSTb(RSTb), .CLK(CLK), .ENABLE(ENABLE), .CLEA
 	.CAN_READ(WriteFsmIdle),	// From SdramWriteMachine
 	.FSM_IDLE(ReadFsmIdle),	// To SdramWriteMachine
 	.LOAD_LSB(LoadLsb), .LOAD_MSB(LoadMsb), .USER_64BIT(USER_64BIT),
-	.OUTPUT_FIFO_WR(OutputFifoWr), .OUTPUT_FIFO_WC(OUTPUT_FIFO_WC),
+	.OUTPUT_FIFO_WR(OutputFifoWrSdram), .OUTPUT_FIFO_WC(OUTPUT_FIFO_WC),
 	.OUTPUT_FIFO_EMPTY(OUTPUT_FIFO_EMPTY), .OUTPUT_FIFO_FULL(OUTPUT_FIFO_FULL),
 	.EMPTY_EVB(EMPTY_EVB), .OUTPUT_FIFO_EOB(OutputFifoEndOfBlockIn)
 	);
+
+TransparentMachine TransparentHandler(.RSTb(RSTb), .CLK(CLK), .ENABLE(~ENABLE), .CLEAR_ADDR(CLEAR_ADDR),
+	.LOAD_LSB(LoadLsbNoSdram), .LOAD_MSB(LoadMsbNoSdram), .USER_64BIT(USER_64BIT),
+	.DATA_AVAILABLE(~EMPTY_EVB),
+	.GET_NEXT_DATA(RD_EVB_NoSdram), .OUTPUT_FIFO_EOB(OutputFifoEndOfBlockIn),
+	.OUTPUT_FIFO_FULL(OUTPUT_FIFO_FULL),
+	.OUTPUT_FIFO_WR(OutputFifoWrNoSdram)
+	);
+
+assign Data64Bit[63:56] = 8'b0;
+assign Data64Bit[31:24] = 8'b0;
 	
-Reg32 LsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadLsb), .D(SDRAM_RDATA), .Q(Data64Bit[63:32]));
-Reg32 MsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadMsb), .D(SDRAM_RDATA), .Q(Data64Bit[31:0]));
+Reg24 LsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadLsb|LoadLsbNoSdram), .D(ENABLE ? SDRAM_RDATA[23:0] : DATA_EVB), .Q(Data64Bit[55:32]));
+Reg24 MsbDataReg(.RSTb(RSTb), .CLK(CLK), .LOAD(LoadMsb|LoadMsbNoSdram), .D(ENABLE ? SDRAM_RDATA[23:0] : DATA_EVB), .Q(Data64Bit[23:0]));
 
 ComputeWordCount WordCountCalculator(.RSTb(RSTb), .CLK(CLK), .CLEAR(CLEAR_ADDR),
 	.SDRAM_WRITE_ADDRESS(SDRAM_WRITE_ADDRESS), .SDRAM_READ_ADDRESS(SDRAM_READ_ADDRESS),

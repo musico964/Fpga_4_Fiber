@@ -210,7 +210,7 @@ end
 initial
 begin
 	Sleep(2);
-	use_sdram = 1;
+	use_sdram = 0;
 	dump_fout = 1;
 	MaxTrigOut = 1;
 	apv_SampleMode = 0;	// 0 = 3 samples, 1 = 1 sample
@@ -1406,7 +1406,7 @@ begin
 
 //	SetDaqMode(1, 0, 0, 0, 0);	// APV_mode_Simple, no pedestal subtraction, no event building, no sdram fifo
 //	SetDaqMode(3, 1, 1, 1, 1);	// APV_mode_Processed, pedestal subtraction, event building, use_sdram_fifo, fast_readout
-	SetDaqMode(3, 0, 1, 1, 1);	// APV_mode_Processed, no pedestal subtraction, event building, use_sdram_fifo, fast_readout
+	SetDaqMode(3, 0, 1, use_sdram, 1);	// APV_mode_Processed, no pedestal subtraction, event building, use_sdram_fifo, fast_readout
 	SetTrigMode((MaxTrigOut>1) ? 2 : 1);		// trig_apv_multiple or trig_apv_normal
 
 	adc_pattern = adc_ApvSync_pattern;	// One sync period is 35 x 25 ns = 875 ns

@@ -14,17 +14,17 @@ forever
 		BlockWordCount++
 		BlockWordCount++
 		EventWordCount = 3
-		for(j=0; j<SamplePerEvent; j++)
+		for(j=0; j<16; j++)
 		{
-			<wait at least 1 channel has Event Present for a maximum time>
-			<wait up to 16 clock cycles, so all channels should have Event Present>
-			for(i=0; i<16; i++)
+			for(i=0; i<SamplePerEvent; i++)
 			{
-				if( ChannelEnabled[i] && EventPresent[i] )	// skip enabled channels that does not have event
+				<wait at least 1 channel has Event Present for a maximum time>
+				<wait up to 16 clock cycles, so all channels should have Event Present>
+				if( ChannelEnabled[j] && EventPresent[j] )	// skip enabled channels that does not have event
 				{
-					while( ProcessedData[i] != <TRAILER> )	// TRAILER form ChannelProcessor
+					while( ProcessedData[j] != <TRAILER> )	// TRAILER form ChannelProcessor
 					{
-						<write ProcessedData[i]>
+						<write ProcessedData[j]>
 						EventWordCount++
 						BlockWordCount++
 					}
@@ -117,6 +117,7 @@ BLOCK_TRAILER
 module EventBuilder(RSTb, TIME_CLK, CLK, TRIGGER, ALL_CLEAR, SAMPLE_PER_EVENT, EVENT_PER_BLOCK,
 	ENABLE_MASK, ENABLE_EVBUILD,
 	TRIGGER_TIME_FIFO, TRIGGER_TIME_FIFO_RD,
+	DISABLE_DEADLOCK,
 	CH_DATA0, CH_DATA1, CH_DATA2, CH_DATA3, CH_DATA4, CH_DATA5, CH_DATA6, CH_DATA7,
 	CH_DATA8, CH_DATA9, CH_DATA10, CH_DATA11, CH_DATA12, CH_DATA13, CH_DATA14, CH_DATA15,
 	DATA_RD, EVENT_PRESENT, DECREMENT_EVENT_COUNT, MODULE_ID,
@@ -131,11 +132,12 @@ input [15:0] ENABLE_MASK;
 input ENABLE_EVBUILD;
 input [7:0] TRIGGER_TIME_FIFO;
 output TRIGGER_TIME_FIFO_RD;
+input DISABLE_DEADLOCK;
 input [20:0] CH_DATA0, CH_DATA1, CH_DATA2, CH_DATA3, CH_DATA4, CH_DATA5, CH_DATA6, CH_DATA7;
 input [20:0] CH_DATA8, CH_DATA9, CH_DATA10, CH_DATA11, CH_DATA12, CH_DATA13, CH_DATA14, CH_DATA15;
 output [15:0] DATA_RD;
 input [15:0] EVENT_PRESENT;
-output DECREMENT_EVENT_COUNT;
+output [15:0] DECREMENT_EVENT_COUNT;
 input [4:0] MODULE_ID;
 `ifdef SIZE_32
 output [31:0] DATA_OUT;
@@ -150,8 +152,9 @@ output [7:0] BLOCK_CNT;
 output EVB_FIFO_FULL_L, EVENT_FIFO_FULL_L, TIME_FIFO_FULL_L;
 
 reg [15:0] DATA_RD;
-reg DECREMENT_EVENT_COUNT;
+reg [15:0] DECREMENT_EVENT_COUNT;
 reg [7:0] BLOCK_CNT;
+reg TRIGGER_TIME_FIFO_RD;
 
 reg [19:0] EventCounter;
 reg [19:0] BlockWordCounter;
@@ -185,12 +188,13 @@ reg [3:0] ChannelWaitCounter;
 reg [9:0] FrameWaitCounter;
 wire AtLeastOneChannelHasEvent;
 wire [3:0] ChCounterLsb;
+wire [15:0] ChannelHasEvent;
 
 //assign NumberFillerWords = BlockWordCounter[2:0];
 assign NumberFillerWords = 2'h2 - BlockWordCounter[1:0];
 assign AllEnabledChannelsHaveEvent = ((ENABLE_MASK & EVENT_PRESENT) == ENABLE_MASK) ? 1 : 0;
+assign ChannelHasEvent = ENABLE_MASK & EVENT_PRESENT;
 assign EV_CNT = {4'h0,EventCounter};
-assign TRIGGER_TIME_FIFO_RD = DECREMENT_EVENT_COUNT;
 assign ALMOST_FULL = OutputFifoAlmostFull;
 assign AtLeastOneChannelHasEvent = |EVENT_PRESENT;
 assign ChCounterLsb = ChCounter[3:0];
@@ -358,6 +362,7 @@ Fifo_2048x24 OutputFifo(.aclr(FifoReset), .clock(CLK),
 		begin
 			DATA_RD <= 0;
 			DECREMENT_EVENT_COUNT <= 0;
+			TRIGGER_TIME_FIFO_RD <= 0;
 			ChCounter <= 0;
 			EventCounterFifo_Read <= 0;
 			TimeCounterFifo_Read <= 0;
@@ -387,6 +392,7 @@ end
 */
 						DATA_RD <= 0;
 						DECREMENT_EVENT_COUNT <= 0;
+						TRIGGER_TIME_FIFO_RD <= 0;
 						ChCounter <= 0;
 						EventCounterFifo_Read <= 0;
 						TimeCounterFifo_Read <= 0;
@@ -435,55 +441,45 @@ $display("@%0t EventBuilder TRIGGER_TIME2: 0x%0x", $stime, `TRIGGER_TIME2);
 						data_bus <= `TRIGGER_TIME2;
 						TimeCounterFifo_Read <= 1;
 						ClearLoopDataCounter <= 1;
-						LoopSampleCounter <= 0;
-						FrameWaitCounter <= 0;
+						ChCounter <= 0;
 						fsm_status <= 5;
 					end
 				5:	begin
+						OutputFifo_Write <= 0;
+						LoopSampleCounter <= 0;
+						FrameWaitCounter <= 0;
+						if( ChCounter == 5'h10 )
+							fsm_status <= 11;
+						if( ChCounter != 5'h10 && ENABLE_MASK[ChCounterLsb] == 1 )
+							fsm_status <= 6;
+						else
+							ChCounter <= ChCounter + 1;
+					end
+				6:	begin
 						ChannelWaitCounter <= 0;
 						FrameWaitCounter <= FrameWaitCounter + 1;
 						TimeCounterFifo_Read <= 0;
 						ClearLoopDataCounter <= 0;
 						OutputFifo_Write <= 0;
 						DECREMENT_EVENT_COUNT <= 0;
-						if( AtLeastOneChannelHasEvent && FrameWaitCounter < 10'h3FF )		// Revised
+						if( DISABLE_DEADLOCK == 1 && AtLeastOneChannelHasEvent && FrameWaitCounter < 10'h3FF )		// Revised
 							fsm_status <= 20;
-//						if( AllEnabledChannelsHaveEvent )	// Original
-//							fsm_status <= 6;
-						else
+						if( DISABLE_DEADLOCK == 0 && ChannelHasEvent[ChCounterLsb] == 1 )
+							fsm_status <= 17;
+						if( ENABLE_EVBUILD == 0 || ALL_CLEAR == 1 )
+							fsm_status <= 0;
+						if( FrameWaitCounter == 10'h3FF )
 						begin
-							if( ENABLE_EVBUILD == 0 || ALL_CLEAR == 1 )
-								fsm_status <= 0;
-							if( FrameWaitCounter == 10'h3FF )
-								fsm_status <= 14;
+							data_bus <= `BLOCK_TRAILER;
+							fsm_status <= 14;
 						end
 						data_bus <= `APV_CH_DATA;
 					end
 				20: begin	// additional state for revised version
 						data_bus <= `APV_CH_DATA;
 						ChannelWaitCounter <= ChannelWaitCounter + 1;
-						if( ChannelWaitCounter == 15 || AllEnabledChannelsHaveEvent == 1 )
-							fsm_status <= 6;
-					end
-				6:	begin
-						data_bus <= `APV_CH_DATA;
-						DECREMENT_EVENT_COUNT <= 0;
-//						if( ChCounter != 5'h10 && ENABLE_MASK[ChCounterLsb == 0 )	// Original
-// Revised: skip enabled channels without event (faulty cahnnels)
-						if( ChCounter != 5'h10 && (ENABLE_MASK[ChCounterLsb] & EVENT_PRESENT[ChCounterLsb]) == 0 )
-							ChCounter <= ChCounter + 1;
-						else
-						begin
-							if( ChCounter == 5'h10 )
-							begin
-								LoopSampleCounter <= LoopSampleCounter + 1;
-								fsm_status <= 10;
-							end
-							else
-							begin
-								fsm_status <= 17;
-							end
-						end
+						if( ChannelWaitCounter == 15 || ChannelHasEvent[ChCounterLsb] == 1 )
+							fsm_status <= 17;
 					end
 				17:	begin	// Additional state to get better timing
 						data_bus <= `APV_CH_DATA;
@@ -502,6 +498,7 @@ $display("@%0t EventBuilder LoopSampleCounter = %d, ChCounter = %d", $stime, Loo
 						if( ChannelData_a[20:19] == 2'b11 || LoopDataCounter > `MAX_LOOP_DATA ) // Channel Trailer ID
 						begin
 $display("@%0t EventBuilder Channel Trailer[%d]: 0x%0x", $stime, ChCounter, `APV_CH_DATA);
+							DECREMENT_EVENT_COUNT[ChCounterLsb] <= 1;
 							DATA_RD[ChCounterLsb] <= 0;
 							fsm_status <= 8;
 						end
@@ -512,35 +509,38 @@ $display("@%0t EventBuilder Channel Trailer[%d]: 0x%0x", $stime, ChCounter, `APV
 						end
 					end
 				8:	begin
+						DECREMENT_EVENT_COUNT[ChCounterLsb] <= 0;
 						data_bus <= `APV_CH_DATA;
 						DataWordCount <= DataWordCount + 1;
 						OutputFifo_Write <= 0;
+						LoopSampleCounter <= LoopSampleCounter + 1;
+						FrameWaitCounter <= 0;
 						fsm_status <= 9;	// Write channel trailer
 					end
 				9:	begin
+						DECREMENT_EVENT_COUNT <= 0;
 						data_bus <= `APV_CH_DATA;
 						OutputFifo_Write <= 0;
-						if( ChCounter != 5'h10 )
+						if( LoopSampleCounter != SAMPLE_PER_EVENT )
 						begin
-							ChCounter <= ChCounter + 1;
 							fsm_status <= 6;
 						end
 						else
 						begin
-							LoopSampleCounter <= LoopSampleCounter + 1;
+							ChCounter <= ChCounter + 1;
 							fsm_status <= 10;
 						end
 					end
 				10:	begin
-						DECREMENT_EVENT_COUNT <= 1;
-						ChCounter <= 0;
-						if( LoopSampleCounter >= SAMPLE_PER_EVENT )
+						TRIGGER_TIME_FIFO_RD <= 1;
+						if( ChCounter == 5'h0F )
 							fsm_status <= 11;
 						else
 							fsm_status <= 15;
 					end
 				11:	begin
-						DECREMENT_EVENT_COUNT <= 0;
+						TRIGGER_TIME_FIFO_RD <= 0;
+//						DECREMENT_EVENT_COUNT <= 0;
 $display("@%0t EventBuilder Event Trailer: 0x%0x", $stime, `EVENT_TRAILER);
 						data_bus <= `EVENT_TRAILER;
 						OutputFifo_Write <= 1;
@@ -582,7 +582,7 @@ $display("@%0t EventBuilder Block Trailer: 0x%0x", $stime, `BLOCK_TRAILER);
 						fsm_status <= 0;
 					end					
 				15:	begin	// wait for AllEnabledChannelsHaveEvent update
-						DECREMENT_EVENT_COUNT <= 0;
+						TRIGGER_TIME_FIFO_RD <= 0;
 						fsm_status <= 16;
 					end
 				16:	begin

@@ -1,12 +1,12 @@
 #Path, Setup Margin, Hold Margin
-"Address Command (Fast Model)",3.560,1.310
-"DQS vs CK (Fast Model)",1.447,1.481
-"Half Rate Address/Command (Fast Model)",9.778,1.310
-"Mimic (Fast Model)",1.536,
-"Phy (Fast Model)",0.565,0.202
-"Phy Reset (Fast Model)",4.817,0.470
-"Read Capture (Fast Model)",0.565,1.377
-"Read Postamble (Fast Model)",4.028,0.310
-"Read Postamble Enable/Disable (Fast Model)",1.832,0.668
-"Read Resync (Fast Model)",2.128,2.128
-"Write (Fast Model)",0.862,1.182
+"Address Command (Fast Model)",2.810,1.063
+"DQS vs CK (Fast Model)",1.191,1.234
+"Half Rate Address/Command (Fast Model)",8.041,1.063
+"Mimic (Fast Model)",1.623,
+"Phy (Fast Model)",0.478,0.202
+"Phy Reset (Fast Model)",3.800,0.464
+"Read Capture (Fast Model)",0.478,0.907
+"Read Postamble (Fast Model)",3.091,0.325
+"Read Postamble Enable/Disable (Fast Model)",1.437,0.668
+"Read Resync (Fast Model)",1.682,1.682
+"Write (Fast Model)",0.605,0.935

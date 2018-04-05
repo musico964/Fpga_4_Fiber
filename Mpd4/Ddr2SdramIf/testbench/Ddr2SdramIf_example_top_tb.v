@@ -56,9 +56,9 @@
 // MEM_COL_BITS                       : 10
 // LOCAL_DATA_BITS                    : 32
 // NUM_CLOCK_PAIRS                    : 1
-// CLOCK_TICK_IN_PS                   : 6250
+// CLOCK_TICK_IN_PS                   : 5263
 // REGISTERED_DIMM                    : false
-// TINIT_CLOCKS                       : 16000
+// TINIT_CLOCKS                       : 19001
 // Data_Width_Ratio                   : 4
 // << END MEGAWIZARD INSERT PARAMETER_LIST
 //----------------------------------------------------------------------------------
@@ -87,12 +87,12 @@ module Ddr2SdramIf_example_top_tb ();
     parameter gLOCAL_IF_DWIDTH_AFTER_ECC  = 32;
     parameter gNUM_CLOCK_PAIRS  = 1;
     parameter RTL_ROUNDTRIP_CLOCKS  = 0.0;
-    parameter CLOCK_TICK_IN_PS  = 6250;
+    parameter CLOCK_TICK_IN_PS  = 5263;
     parameter REGISTERED_DIMM   = 1'b0;
     parameter BOARD_DQS_DELAY   = 0;
     parameter BOARD_CLK_DELAY   = 0;
     parameter DWIDTH_RATIO      = 4;
-    parameter TINIT_CLOCKS  = 16000;
+    parameter TINIT_CLOCKS  = 19001;
     parameter REF_CLOCK_TICK_IN_PS  = 25000; 
     
     // Parameters below are for generic memory model
