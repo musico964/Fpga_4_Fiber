@@ -258,6 +258,7 @@ wire [31:0] dout_reg, dout_adc, dout_histo0, dout_histo1, Channel_Direct_Data, a
 wire [7:0] dout_i2c;
 wire Dtack_Rd, Berr_Rd, Retry_Rd;
 wire asmi_ceB, rupd_ceB;
+wire Enable_I2C_Hdmi0, Enable_I2C_Hdmi1;
 
 wire OutputFifoBlockWordCount_Rd, OutputFifoBlockWordCount_Empty, OutputFifoBlockWordCount_Full;
 wire [19:0] OutputFifoBlockWordCount_Q;
@@ -328,6 +329,8 @@ assign ReadoutMode = ReadoutConfig[2:0];
 assign FIR_enable = ReadoutConfig[4];
 assign sel_time_clk = ReadoutConfig[5];
 assign Enable_Slave_Terminate = ReadoutConfig[8];
+assign Enable_I2C_Hdmi0 = ReadoutConfig[9];
+assign Enable_I2C_Hdmi1 = ReadoutConfig[10];
 assign Pack24BitData = ReadoutConfig[13];
 assign Data64Bit = ReadoutConfig[14];	// Must be 0 (32 bit) if Fiber interface is enabled
 assign UseSdramFifo = ReadoutConfig[15];
@@ -355,19 +358,19 @@ assign EnTrigFront = TrigGenConfig[23];
 assign CalibLatency = TrigGenConfig[31:24];	// effective latency = CalibLatency + 4
 
 /* J49 Test connector pinout
- *	1: READ_CLK1
- *	2: READ1
- *	3: READ_CLK2
- *	4: READ2
- *	5: SPARE1
- *	6: SPARE2
- *	7: SPARE3
+ *	1: READ_CLK1 (2.5 V)
+ *	2: READ1 (2.5 V)
+ *	3: READ_CLK2 (3.3-V LVTTL)
+ *	4: READ2 (3.3-V LVTTL)
+ *	5: SPARE1 (3.3-V LVTTL)
+ *	6: SPARE2 (3.3-V LVTTL)
+ *	7: SPARE3 (3.3-V LVTTL)
  *	8: GND
  */
 assign READ_CLK1 = 0;
 assign READ1 = 0;
-assign READ_CLK2 = 0;
-assign READ2 = 0;
+assign READ_CLK2 = Enable_I2C_Hdmi0;
+assign READ2 = Enable_I2C_Hdmi1;
 //assign SPARE1 = mem_local_write_req;
 //assign SPARE2 = mem_local_read_req;
 //assign SPARE3 = mem_local_rdata_valid;
