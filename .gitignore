@@ -4,12 +4,14 @@ Mpd3/greybox_tmp/
 Mpd3/incremental_db/
 Mpd3/*.map
 Mpd3/*.pof
+Mpd3/*.qws
 Mpd4/db/
 Mpd4/greybox_tmp/
 Mpd4/incremental_db/
 Mpd4/Jlab_1607/
 Mpd4/*.map
 Mpd4/*.pof
+Mpd4/*.qws
 Mpd4/Ddr2SdramIf_orig/
 Mpd4/Ddr2SdramIf/greybox_tmp/
 Mpd4/Mpd_Common/
