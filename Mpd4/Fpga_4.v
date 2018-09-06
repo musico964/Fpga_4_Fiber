@@ -259,6 +259,7 @@ wire [7:0] dout_i2c;
 wire Dtack_Rd, Berr_Rd, Retry_Rd;
 wire asmi_ceB, rupd_ceB;
 wire disable_evb_deadlock;
+wire Enable_I2C_Hdmi0, Enable_I2C_Hdmi1;
 
 wire OutputFifoBlockWordCount_Rd, OutputFifoBlockWordCount_Empty, OutputFifoBlockWordCount_Full;
 wire [19:0] OutputFifoBlockWordCount_Q;
@@ -330,6 +331,8 @@ assign FIR_enable = ReadoutConfig[4];
 assign sel_time_clk = ReadoutConfig[5];
 assign disable_evb_deadlock = ReadoutConfig[6];
 assign Enable_Slave_Terminate = ReadoutConfig[8];
+assign Enable_I2C_Hdmi0 = ReadoutConfig[9];
+assign Enable_I2C_Hdmi1 = ReadoutConfig[10];
 assign Pack24BitData = ReadoutConfig[13];
 assign Data64Bit = ReadoutConfig[14];	// Must be 0 (32 bit) if Fiber interface is enabled
 assign UseSdramFifo = ReadoutConfig[15];
@@ -368,8 +371,8 @@ assign CalibLatency = TrigGenConfig[31:24];	// effective latency = CalibLatency 
  */
 assign READ_CLK1 = 0;
 assign READ1 = 0;
-assign READ_CLK2 = 0;
-assign READ2 = 0;
+assign READ_CLK2 = Enable_I2C_Hdmi0;
+assign READ2 = Enable_I2C_Hdmi1;
 //assign SPARE1 = mem_local_write_req;
 //assign SPARE2 = mem_local_read_req;
 //assign SPARE3 = mem_local_rdata_valid;
