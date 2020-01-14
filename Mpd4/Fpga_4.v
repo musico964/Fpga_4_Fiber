@@ -458,8 +458,8 @@ assign mem_local_be = 4'b1111;
 assign mem_local_size = 3'b001;
 assign local_burstbegin = 1'b1;
 
-assign EventBuilder_Read = Fiber_data_re | ApvFifo_read[0] | Sdram_Fifo_Evb_rd;
-
+assign EventBuilder_Read = (Fiber_enabled & Fiber_data_re) | ApvFifo_read[0] | (~Fiber_enabled & Sdram_Fifo_Evb_rd);
+ 
 assign Fiber_enabled = ~Vme_Fiber_disable;
 assign Fiber_activity = Fiber_enabled & (Fiber_wr_bus | Fiber_rd_bus | AuroraEndOfFrame);
 

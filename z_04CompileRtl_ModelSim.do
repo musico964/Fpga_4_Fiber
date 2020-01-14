@@ -28,7 +28,7 @@ vlog -vlog01compat -work work {./Mpd_Common/AsmiRemote.v}
 vlog -vlog01compat -work work {./Mpd_Common/AsmiIf.v}
 vlog -vlog01compat -work work {./Mpd_Common/RemoteUpdateIf.v}
 
-vlog -vlog01compat -work work {./Mpd_Common/ddr2.v}
+vlog -vlog01compat -work work -suppress 2902 {./Mpd_Common/ddr2.v}
 vlog -vlog01compat -work work {./Mpd4/Ddr2SdramIf/testbench/Ddr2SdramIf_full_mem_model.v}
 
 vlog -vlog01compat -work work {./Mpd_Common/ADS5281.v}

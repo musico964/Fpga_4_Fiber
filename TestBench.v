@@ -210,7 +210,7 @@ end
 initial
 begin
 	Sleep(2);
-	use_sdram = 0;
+	use_sdram = 1;
 	dump_fout = 1;
 	MaxTrigOut = 1;
 	apv_SampleMode = 0;	// 0 = 3 samples, 1 = 1 sample
@@ -358,7 +358,7 @@ begin
 
 	$display("***   Event Building test on channel 0,1,2,3");
 //	SingleChannel_EventBuilding_Test(1, use_sdram, 0);	// check use_sdram
-	MultiChannel_EventBuilding_Test_Block(16'h000F, 20, 1);	// use_sdram = fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames
+	MultiChannel_EventBuilding_Test_Block(16'h0FFF, 50, 1, 1);	// use_sdram = fast_readout = 1, 20 trigger, 1 us delay (+3us offset) between APV frames, mblt
 
 //	SingleChannelSample_Test(8);
 //	SingleChannelSample_Test(8);
@@ -806,6 +806,11 @@ begin
 		while( vme_dtackB == 1 )
 			#vme_period;
 		rd_data = {vme_addr, vme_data};
+		if( dump_fout == 1 )
+		begin
+			$fwrite(fout, "%0x\n", rd_data[63:32]);
+			$fwrite(fout, "%0x\n", rd_data[31:0]);
+		end
 		#vme_period;
 		vme_ds0B = 1;
 		vme_ds1B = 1;
@@ -909,8 +914,8 @@ begin
 	vme_lwordB = 1;	// XAM = 0x11
 	internal_vme_addr[31:8] = address[31:8];
 //	internal_vme_data = 32'h0000_0000;	// SST160
-//	internal_vme_data = 32'h0000_0001;	// SST267
-	internal_vme_data = 32'h0000_0002;	// SST320
+	internal_vme_data = 32'h0000_0001;	// SST267
+//	internal_vme_data = 32'h0000_0002;	// SST320
 	#vme_period;
 	vme_asB = 0;
 	vme_iackB = 1;
@@ -1382,6 +1387,7 @@ task MultiChannel_EventBuilding_Test_Block;
 input [15:0] ch_mask;
 input [31:0] num_trig;
 input [31:0] trig_delay_us;
+input mblt;
 integer j, xx, nw;
 begin
 	ch_count = 0;
@@ -1430,7 +1436,7 @@ begin
 		while( rd_data[30] == 1 )	// Output BlockWordCount FIFO is Empty 
 		begin
 			VME_A24D32_Read('h22C, rd_data);	// Read Output BlockWordCount FIFO & related status
-			Sleep(100);	
+			Sleep(500);	
 		end
 
 		Sleep(10);	
@@ -1445,14 +1451,22 @@ begin
 			$display("!!! WARNING !!! 64-bit nwords is not even !!!");
 		for(i=0; i<xx; i=i+1)
 		begin
-			VME_A32D64_2eSstRead(DataReadout_base, 64, rd_data);
+			if( mblt == 0 )
+				VME_A32D64_2eSstRead(DataReadout_base, 64, rd_data);
+			else
+				VME_A32D64_MbltRead(DataReadout_base, 64, rd_data);
 			Sleep(10);	
 		end
 		xx = nw % 64;
 		$display("@%0t Remaining words: %d", $stime, xx);
 		if( xx > 0 )
-			VME_A32D64_2eSstRead(DataReadout_base, xx, rd_data);
-
+		begin
+			if( mblt == 0 )
+				VME_A32D64_2eSstRead(DataReadout_base, xx, rd_data);
+			else
+				VME_A32D64_MbltRead(DataReadout_base, xx, rd_data);
+		end
+	
 		Sleep(10);	
 		VME_A24D32_Read('h224, rd_data);	// Read Word Count (64 bit)
 		Sleep(trig_delay_us*100);	// wait delay us
